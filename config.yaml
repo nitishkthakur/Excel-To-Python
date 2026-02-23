@@ -1,0 +1,6 @@
+# Excel-to-Python Converter Configuration
+
+# When true, hardcoded values that are not referenced by any formula
+# will be excluded from the generated code and input template.
+# When false, all hardcoded values are preserved.
+delete_unreferenced_hardcoded_values: false
