@@ -279,10 +279,19 @@ class FormulaConverter:
         if m:
             return (m.group(1), skip + m.end())
 
-        # String literal
+        # String literal (Excel uses "" for escaped quotes inside strings)
         if expr[0] == '"':
-            end = expr.index('"', 1)
-            return (expr[:end + 1], skip + end + 1)
+            end = 1
+            while end < len(expr):
+                if expr[end] == '"':
+                    if end + 1 < len(expr) and expr[end + 1] == '"':
+                        end += 2  # skip escaped ""
+                        continue
+                    break
+                end += 1
+            raw_str = expr[1:end]
+            py_str = '"' + raw_str.replace('""', '\\"') + '"'
+            return (py_str, skip + end + 1)
 
         # Boolean
         if expr.upper().startswith('TRUE'):
@@ -385,10 +394,15 @@ class FormulaConverter:
         i = start + 1
         in_string = False
         while i < len(expr):
-            if expr[i] == '"' and not in_string:
-                in_string = True
-            elif expr[i] == '"' and in_string:
-                in_string = False
+            if expr[i] == '"':
+                if in_string:
+                    # Check for escaped quote ""
+                    if i + 1 < len(expr) and expr[i + 1] == '"':
+                        i += 2
+                        continue
+                    in_string = False
+                else:
+                    in_string = True
             elif not in_string:
                 if expr[i] == '(':
                     depth += 1
@@ -405,10 +419,21 @@ class FormulaConverter:
         current = []
         depth = 0
         in_string = False
+        i = 0
 
-        for c in args_str:
+        while i < len(args_str):
+            c = args_str[i]
             if c == '"':
-                in_string = not in_string
+                if in_string:
+                    # Check for escaped quote ""
+                    if i + 1 < len(args_str) and args_str[i + 1] == '"':
+                        current.append(c)
+                        current.append(args_str[i + 1])
+                        i += 2
+                        continue
+                    in_string = False
+                else:
+                    in_string = True
                 current.append(c)
             elif in_string:
                 current.append(c)
@@ -423,6 +448,7 @@ class FormulaConverter:
                 current = []
             else:
                 current.append(c)
+            i += 1
 
         if current:
             args.append(''.join(current).strip())

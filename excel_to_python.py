@@ -22,6 +22,11 @@ from openpyxl.utils import get_column_letter, column_index_from_string
 # Regex for valid aRGB hex color strings
 _ARGB_REGEX = re.compile(r'^[0-9A-Fa-f]{8}$')
 
+# Excel default formatting constants
+DEFAULT_COLUMN_WIDTH = 8.43
+DEFAULT_ROW_HEIGHT = 15
+DEFAULT_FONT_SIZE = 11
+
 from formula_converter import (
     FormulaConverter,
     HELPER_FUNCTIONS_CODE,
@@ -75,12 +80,12 @@ def parse_workbook(wb):
 
         # Collect column widths
         for col_dim in ws.column_dimensions.values():
-            if col_dim.width and col_dim.width != 8.43:  # default
+            if col_dim.width and col_dim.width != DEFAULT_COLUMN_WIDTH:
                 sheet_data["col_widths"][col_dim.index] = col_dim.width
 
         # Collect row heights
         for row_dim_key, row_dim in ws.row_dimensions.items():
-            if row_dim.height and row_dim.height != 15:  # default
+            if row_dim.height and row_dim.height != DEFAULT_ROW_HEIGHT:
                 sheet_data["row_heights"][row_dim_key] = row_dim.height
 
         # Collect cell data
@@ -505,7 +510,7 @@ def generate_python_script(sheets, tables, formula_cells, hardcoded_cells,
                     font_args.append("bold=True")
                 if font_info.get("italic"):
                     font_args.append("italic=True")
-                if font_info.get("size") and font_info["size"] != 11:
+                if font_info.get("size") and font_info["size"] != DEFAULT_FONT_SIZE:
                     font_args.append(f"size={font_info['size']}")
                 if font_info.get("color"):
                     font_args.append(f"color={repr(font_info['color'])}")
@@ -597,7 +602,7 @@ def generate_input_template(sheets, hardcoded_cells, output_path):
                 kwargs["bold"] = True
             if font_info.get("italic"):
                 kwargs["italic"] = True
-            if font_info.get("size") and font_info["size"] != 11:
+            if font_info.get("size") and font_info["size"] != DEFAULT_FONT_SIZE:
                 kwargs["size"] = font_info["size"]
             if font_info.get("color"):
                 kwargs["color"] = font_info["color"]

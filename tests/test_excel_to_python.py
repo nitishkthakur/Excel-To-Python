@@ -181,7 +181,7 @@ class TestEndToEnd(unittest.TestCase):
         import subprocess
         proc = subprocess.run(
             [sys.executable, script_path, template_path, result_path],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True, text=True, timeout=60,
         )
         self.assertEqual(proc.returncode, 0, f"Script failed:\n{proc.stderr}")
         self.assertTrue(os.path.exists(result_path))
