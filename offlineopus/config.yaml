@@ -1,0 +1,19 @@
+# Excel-To-Python Configuration
+# ================================
+
+# Path to the source Excel file to convert
+source_excel: "offline-copilot/Indigo.xlsx"
+
+# Output directory for generated files
+output_dir: "generated_output"
+
+# If true, hardcoded values that are never referenced by any formula
+# will be excluded from the input template and generated code.
+# If false, all hardcoded values are preserved as inputs.
+delete_unreferenced_hardcoded_values: true
+
+# Sheets to skip (e.g., intro/documentation sheets with no calculations)
+skip_sheets: []
+
+# Logging level: DEBUG, INFO, WARNING, ERROR
+log_level: "INFO"
