@@ -80,8 +80,8 @@ def extract_sheet_data(path: str, sheet_name: str,
         formulas: list[dict[str, str]] = []
 
         for r in range(reg.min_row, reg.max_row + 1):
+            loaded_rows += 1
             if r == reg.header_row:
-                loaded_rows += 1
                 continue
             cells: list[Any] = []
             for c in range(label_col, strip_max_col + 1):
@@ -94,7 +94,6 @@ def extract_sheet_data(path: str, sheet_name: str,
                         "cached_value": info["value"],
                     })
             row_data.append({"row_number": r, "values": cells})
-            loaded_rows += 1
 
         result_regions.append({
             "region": str(reg),

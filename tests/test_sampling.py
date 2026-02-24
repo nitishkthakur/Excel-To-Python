@@ -164,7 +164,7 @@ class TestColumnN:
 
     def test_strip_width(self, sample_wb):
         """With num_columns=2 the strip should have at most 3 columns
-        (label + 2)."""
+        (1 label + 2 data columns)."""
         data = column_n_extract(sample_wb, "Inputs", num_columns=2)
         for reg in data["regions"]:
             col_span = reg["max_col"] - reg["min_col"] + 1
