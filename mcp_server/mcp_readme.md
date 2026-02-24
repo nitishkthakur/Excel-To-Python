@@ -1,6 +1,6 @@
 # Excel Analysis MCP Server
 
-An MCP (Model Context Protocol) server that reads `.xlsx` workbooks and exposes their content — including formulas, cached values, and structural metadata — to LLM clients such as GitHub Copilot.  The goal is to let the LLM generate a plain-language business summary of what an Excel file calculates, sheet by sheet.
+An MCP (Model Context Protocol) server that reads `.xlsx` workbooks and exposes their content — including formulas, cached values, and structural metadata — to LLM clients such as GitHub Copilot. The goal is to let the LLM generate a plain-language business summary of what an Excel file calculates, sheet by sheet.
 
 ## Quick Start
 
@@ -136,7 +136,7 @@ get_sheet_data(file_path="/data/report.xlsx", sheet_name="Costs",
 
 # All rows from a small lookup table
 get_sheet_data(file_path="/data/report.xlsx", sheet_name="Lookups",
-               format="xml", full=true)
+               format="xml", full=True)
 ```
 
 **Example Markdown output (abbreviated):**
