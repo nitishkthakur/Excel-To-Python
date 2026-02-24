@@ -161,6 +161,7 @@ def _cell_info(ws_formula, ws_value, row: int, col: int) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 DEFAULT_SAMPLE_ROWS = 100  # max rows per region in a sample
+MAX_FORMULA_SCAN_ROWS = 500  # cap on rows scanned for formula detection during sampling
 
 
 def sample_row_indices(region: DataRegion, ws_formula,
@@ -183,8 +184,8 @@ def sample_row_indices(region: DataRegion, ws_formula,
     if region.header_row is not None:
         selected.add(region.header_row)
 
-    # 2. Formula rows (scan up to 500 rows to stay fast)
-    scan_limit = min(region.max_row, region.min_row + 500)
+    # 2. Formula rows (scan up to MAX_FORMULA_SCAN_ROWS rows to stay fast)
+    scan_limit = min(region.max_row, region.min_row + MAX_FORMULA_SCAN_ROWS)
     for r in range(region.min_row, scan_limit + 1):
         for c in range(region.min_col, region.max_col + 1):
             v = ws_formula.cell(row=r, column=c).value

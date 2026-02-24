@@ -114,4 +114,4 @@ def to_xml(data: dict[str, Any]) -> str:
                 f_el.text = f["formula"]
                 f_el.set("cached_value", str(f.get("cached_value", "")))
 
-    return ET.tostring(root, encoding="unicode", xml_declaration=True)
+    return ET.tostring(root, encoding="unicode")
