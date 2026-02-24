@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "excel-analysis": {
+      "command": "python",
+      "args": ["server.py"],
+      "cwd": "mcp_server",
+      "env": {}
+    }
+  }
+}
