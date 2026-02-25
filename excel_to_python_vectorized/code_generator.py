@@ -416,20 +416,60 @@ def _compact_range_repr(nums):
 
 
 def _patch_external_refs(expr, formula, current_sheet):
-    """Replace any leftover external-file variable names with dict access.
+    """Replace external-file reference remnants in the expression.
 
-    External refs produce variable names like ``s_Book_xlsx_Sheet1_A1``
-    but the actual key in ``c`` is ``('Book.xlsx|Sheet1', 'A', 1)``.
-    We detect them from the raw formula and patch the expression.
+    The FormulaConverter doesn't understand ``[Book.xlsx]Sheet!A1`` syntax.
+    It leaves ``[Book.xlsx]`` as literal text and converts the rest as a
+    cross-sheet ref (``s_Sheet_A1``).  After ``_expr_to_dict`` has already
+    converted ``s_Sheet_A1`` → ``c.get(('Sheet','A',1))``, the expression
+    still contains the ``[Book.xlsx]`` prefix.
+
+    This function:
+      1. Strips every ``[filename]`` prefix.
+      2. Re-keys the ``c.get(('Sheet', …))`` call to
+         ``c.get(('filename|Sheet', …))`` so it looks up the external cell
+         store instead.
     """
     refs = extract_references(formula, current_sheet)
     for ref in refs:
-        if ref.external_file and ref.kind == "cell":
-            # The FormulaConverter may have mangled the name
-            var = cell_to_var_name(ref.sheet, ref.col, ref.row)
-            ext_key = f"{ref.external_file}|{ref.sheet}"
-            repl = f"c.get(({repr(ext_key)}, {repr(ref.col)}, {ref.row}))"
-            expr = expr.replace(var, repl)
+        if not ref.external_file:
+            continue
+        ext_key = f"{ref.external_file}|{ref.sheet}"
+        esc_file = re.escape(f"[{ref.external_file}]")
+
+        if ref.kind == "cell":
+            # Pattern left after _expr_to_dict:
+            #   [ExtData.xlsx]c.get(('Prices', 'A', 1))
+            old_dict = f"c.get(({repr(ref.sheet)}, {repr(ref.col)}, {ref.row}))"
+            new_dict = f"c.get(({repr(ext_key)}, {repr(ref.col)}, {ref.row}))"
+
+            # Try to replace [file]c.get(…) first
+            pat = esc_file + re.escape(old_dict)
+            if re.search(pat, expr):
+                expr = re.sub(pat, new_dict, expr, count=1)
+            else:
+                # May also appear with the raw variable name (before _expr_to_dict)
+                var = cell_to_var_name(ref.sheet, ref.col, ref.row)
+                pat2 = esc_file + re.escape(var)
+                repl2 = new_dict
+                expr = re.sub(pat2, repl2, expr, count=1)
+
+        elif ref.kind == "range":
+            old_rng = (f"_rng(c, {repr(ref.sheet)}, {repr(ref.col)}, "
+                       f"{ref.row}, {repr(ref.end_col)}, {ref.end_row})")
+            new_rng = (f"_rng(c, {repr(ext_key)}, {repr(ref.col)}, "
+                       f"{ref.row}, {repr(ref.end_col)}, {ref.end_row})")
+            pat = esc_file + re.escape(old_rng)
+            if re.search(pat, expr):
+                expr = re.sub(pat, new_rng, expr, count=1)
+            else:
+                var = range_to_var_name(ref.sheet, ref.col, ref.row,
+                                        ref.end_col, ref.end_row)
+                pat2 = esc_file + re.escape(var)
+                expr = re.sub(pat2, new_rng, expr, count=1)
+
+    # Final safety: strip any remaining [filename] prefixes
+    expr = re.sub(r"\[([^\]]+\.xlsx?)\]", "", expr, flags=re.IGNORECASE)
     return expr
 
 
