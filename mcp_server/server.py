@@ -13,17 +13,48 @@ import os
 import json
 from mcp.server.fastmcp import FastMCP
 
-from excel_reader import (
+from excel_reader_smart_sampler import (
     sheet_names,
-    extract_sheet_data,
+    extract_sheet_data as extract_sheet_data_smart,
     extract_formulas,
     workbook_summary,
     DEFAULT_SAMPLE_ROWS,
 )
+from excel_sample_full import extract_sheet_data as extract_sheet_data_full
+from column_n import extract_sheet_data as extract_sheet_data_column_n
 from formatters import to_markdown, to_json, to_xml
+
+VALID_MODES = ("smart_random", "full", "column_n")
 
 
 mcp = FastMCP("Excel Analysis Server")
+
+
+# ---------------------------------------------------------------------------
+# Sampling dispatcher
+# ---------------------------------------------------------------------------
+
+def _dispatch_extract(mode: str, file_path: str, sheet_name: str,
+                      max_sample_rows: int = DEFAULT_SAMPLE_ROWS,
+                      nrows: int | None = None,
+                      ncols: int | None = None,
+                      num_columns: int = 10) -> dict:
+    """Route to the correct sampling strategy based on *mode*."""
+    mode = mode.lower().strip()
+    if mode not in VALID_MODES:
+        raise ValueError(
+            f"Invalid mode '{mode}'. Must be one of {VALID_MODES}."
+        )
+
+    if mode == "smart_random":
+        return extract_sheet_data_smart(file_path, sheet_name,
+                                        max_sample_rows=max_sample_rows)
+    elif mode == "full":
+        return extract_sheet_data_full(file_path, sheet_name,
+                                       nrows=nrows, ncols=ncols)
+    elif mode == "column_n":
+        return extract_sheet_data_column_n(file_path, sheet_name,
+                                           num_columns=num_columns)
 
 
 # ---------------------------------------------------------------------------
@@ -59,7 +90,10 @@ def get_sheet_data(
     sheet_name: str,
     format: str = "markdown",
     max_sample_rows: int = DEFAULT_SAMPLE_ROWS,
-    full: bool = False,
+    mode: str = "smart_random",
+    nrows: int | None = None,
+    ncols: int | None = None,
+    num_columns: int = 10,
 ) -> str:
     """Read a sheet and return its data — including formulas — in the requested format.
 
@@ -91,13 +125,20 @@ def get_sheet_data(
             - Example: "xml"      — returns an XML document
         max_sample_rows: Maximum number of rows to return per detected data
             region.  Default is 100.  Increase for wider coverage; decrease to
-            save context tokens.
+            save context tokens.  Only used when mode is "smart_random".
             - Example: 50  — smaller sample to conserve context
             - Example: 200 — larger sample for more thorough analysis
-        full: When True, disables sampling and returns every row.  Use with
-            caution on large sheets — this can produce very long output.
-            - Example: False — (default) use smart sampling
-            - Example: True  — return all rows (small sheets only)
+        mode: Sampling strategy to use.  One of "smart_random", "full", or
+            "column_n".  Default is "smart_random".
+            - "smart_random" — prioritises headers, formula rows, head/mid/tail
+            - "full"         — loads all data within the detected bounds
+            - "column_n"     — loads the label column and the next N columns
+        nrows: Maximum number of rows to load (only used in "full" mode).
+            None means load all rows.
+        ncols: Maximum number of columns to load (only used in "full" mode).
+            None means load all columns.
+        num_columns: Number of data columns to load after the label column
+            (only used in "column_n" mode).  Default is 10.
 
     Example calls:
         # Get a Markdown overview of the Sales sheet (sampled)
@@ -107,12 +148,18 @@ def get_sheet_data(
         get_sheet_data(file_path="/data/report.xlsx", sheet_name="Costs",
                        format="json", max_sample_rows=50)
 
-        # Get every row of a small lookup table as XML
+        # Get every row using full mode
         get_sheet_data(file_path="/data/report.xlsx", sheet_name="Lookups",
-                       format="xml", full=True)
+                       mode="full")
+
+        # Get a vertical strip using column_n mode
+        get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
+                       mode="column_n", num_columns=5)
     """
-    data = extract_sheet_data(file_path, sheet_name,
-                              max_sample_rows=max_sample_rows, full=full)
+    data = _dispatch_extract(mode, file_path, sheet_name,
+                             max_sample_rows=max_sample_rows,
+                             nrows=nrows, ncols=ncols,
+                             num_columns=num_columns)
     fmt = format.lower().strip()
     if fmt == "json":
         return to_json(data)
@@ -201,6 +248,8 @@ def get_sheet_sample(
     sheet_name: str,
     max_rows: int = 30,
     format: str = "markdown",
+    mode: str = "smart_random",
+    num_columns: int = 10,
 ) -> str:
     """Get a very small, representative sample of a sheet — useful for a quick
     preview before deciding whether to request more data.
@@ -220,6 +269,7 @@ def get_sheet_sample(
             - Example: "Sales"
             - Example: "Raw Data"
         max_rows: Maximum number of rows to include in the sample.  Default 30.
+            Only used when mode is "smart_random".
             - Example: 10 — tiny preview, just headers + a few rows
             - Example: 30 — (default) a moderate preview
             - Example: 50 — slightly larger preview
@@ -227,6 +277,13 @@ def get_sheet_sample(
             Default is "markdown".
             - Example: "markdown"
             - Example: "json"
+        mode: Sampling strategy to use.  One of "smart_random", "full", or
+            "column_n".  Default is "smart_random".
+            - "smart_random" — prioritises headers, formula rows, head/mid/tail
+            - "full"         — loads all data within the detected bounds
+            - "column_n"     — loads the label column and the next N columns
+        num_columns: Number of data columns to load after the label column
+            (only used in "column_n" mode).  Default is 10.
 
     Example calls:
         # Quick Markdown preview of the Sales sheet
@@ -235,9 +292,14 @@ def get_sheet_sample(
         # Tiny JSON preview (10 rows) to check column names
         get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Raw Data",
                          max_rows=10, format="json")
+
+        # Preview using column_n mode
+        get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Sales",
+                         mode="column_n", num_columns=5)
     """
-    data = extract_sheet_data(file_path, sheet_name,
-                              max_sample_rows=max_rows)
+    data = _dispatch_extract(mode, file_path, sheet_name,
+                             max_sample_rows=max_rows,
+                             num_columns=num_columns)
     fmt = format.lower().strip()
     if fmt == "json":
         return to_json(data)
