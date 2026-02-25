@@ -1,12 +1,18 @@
 """
 MCP Server — exposes Excel workbook analysis tools to LLM clients.
 
+**Formula-first philosophy**: unless the user explicitly asks for raw
+values, always prefer to fetch *formulas* first.  Formulas reveal the
+calculation logic and business rules; values are just one snapshot of the
+result.  Use ``get_sheet_formulas`` or the formula-aware sampling modes
+before falling back to value-only inspection.
+
 Tools provided:
-  1. list_sheets        – list sheet names in a workbook
-  2. get_sheet_data     – get sheet data as markdown / JSON / XML (auto‑sampled)
-  3. get_sheet_formulas – extract all formulas from a sheet
+  1. list_sheets          – list sheet names in a workbook
+  2. get_sheet_data       – get sheet data as markdown / JSON / XML (auto‑sampled)
+  3. get_sheet_formulas   – extract all formulas from a sheet  ← **start here**
   4. get_workbook_summary – lightweight structural overview of the workbook
-  5. get_sheet_sample   – get a small representative sample of a sheet
+  5. get_sheet_sample     – get a small representative sample of a sheet
 """
 
 import os
@@ -97,10 +103,16 @@ def get_sheet_data(
 ) -> str:
     """Read a sheet and return its data — including formulas — in the requested format.
 
-    Use this tool to retrieve the full content of a specific sheet.  Large
-    sheets are automatically sampled to avoid context overflow: the sample
-    always includes header rows, formula rows, and a spread of head / middle /
-    tail data rows so the LLM can understand the sheet's structure and logic.
+    **Formulas are always included** in the output alongside values.  All three
+    sampling modes extract both formulas and cached values for every cell they
+    visit, so you never need a separate call just to get formulas from the
+    sampled rows.  If you need *only* formulas (e.g. to trace cross-sheet
+    dependencies), prefer ``get_sheet_formulas`` instead.
+
+    Large sheets are automatically sampled to avoid context overflow: the
+    sample always includes header rows, formula rows, and a spread of
+    head / middle / tail data rows so the LLM can understand the sheet's
+    structure and logic.
 
     The output contains detected data regions (the server handles unstructured
     sheets where headers may not be on the first row, or where blank rows and
@@ -129,10 +141,17 @@ def get_sheet_data(
             - Example: 50  — smaller sample to conserve context
             - Example: 200 — larger sample for more thorough analysis
         mode: Sampling strategy to use.  One of "smart_random", "full", or
-            "column_n".  Default is "smart_random".
-            - "smart_random" — prioritises headers, formula rows, head/mid/tail
-            - "full"         — loads all data within the detected bounds
-            - "column_n"     — loads the label column and the next N columns
+            "column_n".  Default is "smart_random".  All three modes return
+            both formulas and values.
+            - "smart_random" — (default) prioritises headers, formula rows,
+              and a spread of head/mid/tail rows.  Best general-purpose choice;
+              keeps token usage low while capturing the calculation logic.
+            - "full" — loads every row/column in the detected region.  Use for
+              small lookup tables or when you need an exhaustive dump; avoid on
+              sheets with thousands of rows.
+            - "column_n" — loads the label column plus the next N columns.
+              Ideal for wide sheets where you only need a vertical slice (e.g.
+              a financial model with many period columns).
         nrows: Maximum number of rows to load (only used in "full" mode).
             None means load all rows.
         ncols: Maximum number of columns to load (only used in "full" mode).
@@ -173,11 +192,13 @@ def get_sheet_formulas(file_path: str, sheet_name: str) -> str:
     """Extract every formula from a sheet, returning each formula's cell address,
     the raw Excel formula string, and its last-cached value.
 
-    Use this tool when you need to understand the calculation logic of a sheet —
-    especially when formulas reference other sheets (e.g. =Sales!D8-B4) or when
-    formulas are deeply nested (derived quantities of derived quantities).  This
-    is the best tool for tracing cross-sheet dependencies and explaining the
-    business logic encoded in formulas.
+    **Use this tool first** when analysing a sheet — formulas reveal the
+    calculation logic and business rules, which are more important than the
+    raw values.  Only fall back to ``get_sheet_data`` for values when the user
+    explicitly asks to inspect data values rather than formulas.
+
+    This is also the best tool for tracing cross-sheet references
+    (e.g. =Sales!D8-B4) and deeply nested derived quantities.
 
     Returns a JSON array of objects.  Each object has:
       - "address"      — cell reference, e.g. "D5"
@@ -259,7 +280,8 @@ def get_sheet_sample(
     but defaults to a much smaller sample (30 rows instead of 100).
 
     Returns the sampled data in the requested format (Markdown, JSON, or XML),
-    including any formulas found in the sampled rows.
+    including any formulas found in the sampled rows.  All three modes return
+    both formulas and values.
 
     Args:
         file_path: Absolute path to the .xlsx file on disk.
@@ -278,10 +300,13 @@ def get_sheet_sample(
             - Example: "markdown"
             - Example: "json"
         mode: Sampling strategy to use.  One of "smart_random", "full", or
-            "column_n".  Default is "smart_random".
-            - "smart_random" — prioritises headers, formula rows, head/mid/tail
-            - "full"         — loads all data within the detected bounds
-            - "column_n"     — loads the label column and the next N columns
+            "column_n".  Default is "smart_random".  All three modes return
+            both formulas and values.
+            - "smart_random" — (default) prioritises headers, formula rows,
+              and a spread of head/mid/tail rows.  Best general-purpose choice.
+            - "full" — loads all data.  Use only for small sheets.
+            - "column_n" — loads the label column plus the next N columns.
+              Great for wide sheets when you only need a few columns.
         num_columns: Number of data columns to load after the label column
             (only used in "column_n" mode).  Default is 10.
 

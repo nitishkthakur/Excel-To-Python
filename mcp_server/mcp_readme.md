@@ -2,6 +2,10 @@
 
 An MCP (Model Context Protocol) server that reads `.xlsx` workbooks and exposes their content — including formulas, cached values, and structural metadata — to LLM clients such as GitHub Copilot. The goal is to let the LLM generate a plain-language business summary of what an Excel file calculates, sheet by sheet.
 
+> **Formula-first philosophy** — unless the user explicitly asks for raw
+> values, always fetch *formulas* first.  Formulas reveal the calculation
+> logic and business rules; values are just one snapshot of the result.
+
 ## Quick Start
 
 ```bash
@@ -43,6 +47,23 @@ Add to `claude_desktop_config.json`:
   }
 }
 ```
+
+---
+
+## Sampling Strategies
+
+All three strategies extract **both formulas and values** from every cell
+they visit — you never need a separate call just to get formulas from the
+sampled rows.
+
+| Mode | When to use | What it loads |
+|---|---|---|
+| `"smart_random"` | **Default / general-purpose.** Best balance of token cost and coverage. | Headers, all formula rows (up to half the budget), plus head/mid/tail data rows. |
+| `"full"` | Small lookup tables or when you need every single row. Avoid on sheets with thousands of rows. | Every row and column in each detected region (optionally capped by `nrows`/`ncols`). |
+| `"column_n"` | Wide sheets (many period columns) where you only need a vertical slice. | The label column + the next *N* data columns, all rows. |
+
+All three modes are available in **`get_sheet_data`** and
+**`get_sheet_sample`** via the `mode` parameter.
 
 ---
 
@@ -112,17 +133,48 @@ get_workbook_summary(file_path="/data/report.xlsx")
 
 ---
 
+### `get_sheet_formulas`
+
+Extract every formula from a sheet.  **Use this first** when analysing a
+sheet — formulas encode the business logic.  Best for tracing cross-sheet
+references and deeply nested derived quantities.
+
+| Argument | Type | Required | Description | Example |
+|---|---|---|---|---|
+| `file_path` | string | yes | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
+| `sheet_name` | string | yes | Exact sheet name | `"Summary"` |
+
+**Example call:**
+
+```
+get_sheet_formulas(file_path="/data/report.xlsx", sheet_name="Summary")
+```
+
+**Example output:**
+
+```json
+[
+  {"address": "B4", "formula": "=SUM(B2:B3)", "cached_value": 4500},
+  {"address": "B6", "formula": "=Sales!D500-B4", "cached_value": 120500}
+]
+```
+
+---
+
 ### `get_sheet_data`
 
-Read a sheet and return its data (with formulas) in the requested format.  Large sheets are automatically sampled.
+Read a sheet and return its data (with formulas) in the requested format.  Large sheets are automatically sampled.  **All three sampling modes return both formulas and values.**
 
 | Argument | Type | Required | Default | Description | Example values |
 |---|---|---|---|---|---|
 | `file_path` | string | yes | — | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
 | `sheet_name` | string | yes | — | Exact sheet name (case-sensitive) | `"Sales"`, `"P&L Summary"` |
 | `format` | string | no | `"markdown"` | Output format: `"markdown"`, `"json"`, or `"xml"` | `"json"` |
-| `max_sample_rows` | int | no | `100` | Max rows per data region | `50`, `200` |
-| `full` | bool | no | `false` | Disable sampling and return every row | `true` |
+| `mode` | string | no | `"smart_random"` | Sampling strategy: `"smart_random"`, `"full"`, or `"column_n"` | `"full"` |
+| `max_sample_rows` | int | no | `100` | Max rows per region (only for `smart_random` mode) | `50`, `200` |
+| `nrows` | int | no | `None` | Max rows to load (only for `full` mode) | `500` |
+| `ncols` | int | no | `None` | Max columns to load (only for `full` mode) | `5` |
+| `num_columns` | int | no | `10` | Data columns after label column (only for `column_n` mode) | `5` |
 
 **Example calls:**
 
@@ -134,9 +186,13 @@ get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales")
 get_sheet_data(file_path="/data/report.xlsx", sheet_name="Costs",
                format="json", max_sample_rows=50)
 
-# All rows from a small lookup table
+# All rows using full mode
 get_sheet_data(file_path="/data/report.xlsx", sheet_name="Lookups",
-               format="xml", full=True)
+               mode="full")
+
+# Vertical strip using column_n mode
+get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
+               mode="column_n", num_columns=5)
 ```
 
 **Example Markdown output (abbreviated):**
@@ -169,42 +225,18 @@ _Sampled 18 of 500 rows._
 
 ---
 
-### `get_sheet_formulas`
-
-Extract every formula from a sheet.  Best for tracing cross-sheet references and deeply nested derived quantities.
-
-| Argument | Type | Required | Description | Example |
-|---|---|---|---|---|
-| `file_path` | string | yes | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
-| `sheet_name` | string | yes | Exact sheet name | `"Summary"` |
-
-**Example call:**
-
-```
-get_sheet_formulas(file_path="/data/report.xlsx", sheet_name="Summary")
-```
-
-**Example output:**
-
-```json
-[
-  {"address": "B4", "formula": "=SUM(B2:B3)", "cached_value": 4500},
-  {"address": "B6", "formula": "=Sales!D500-B4", "cached_value": 120500}
-]
-```
-
----
-
 ### `get_sheet_sample`
 
-Get a very small sample of a sheet — useful for a quick preview before requesting full data.
+Get a very small sample of a sheet — useful for a quick preview before requesting full data.  **All three sampling modes return both formulas and values.**
 
 | Argument | Type | Required | Default | Description | Example values |
 |---|---|---|---|---|---|
 | `file_path` | string | yes | — | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
 | `sheet_name` | string | yes | — | Exact sheet name | `"Raw Data"` |
-| `max_rows` | int | no | `30` | Max rows to include | `10`, `50` |
+| `max_rows` | int | no | `30` | Max rows to include (only for `smart_random` mode) | `10`, `50` |
 | `format` | string | no | `"markdown"` | Output format | `"json"`, `"xml"` |
+| `mode` | string | no | `"smart_random"` | Sampling strategy: `"smart_random"`, `"full"`, or `"column_n"` | `"column_n"` |
+| `num_columns` | int | no | `10` | Data columns after label column (only for `column_n` mode) | `5` |
 
 **Example calls:**
 
@@ -215,15 +247,40 @@ get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Sales")
 # Tiny JSON preview (10 rows) to check column names
 get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Raw Data",
                  max_rows=10, format="json")
+
+# Preview using column_n mode
+get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Sales",
+                 mode="column_n", num_columns=5)
 ```
 
 ---
 
 ## Recommended Tool Combinations
 
-### 1. Full Workbook Analysis  (generate a business summary)
+### 1. Formula-Focused Analysis  (trace calculation chains — **recommended default**)
 
-This is the most common workflow.  It gives the LLM enough context to write a plain-language summary of what the workbook calculates.
+When analysing an Excel file, **start with formulas** unless the user
+explicitly asks for data values.
+
+```
+Step 1 → get_workbook_summary(file_path="/data/budget.xlsx")
+         Identify sheets that have formulas (formula_count > 0).
+
+Step 2 → get_sheet_formulas(file_path="/data/budget.xlsx",
+                            sheet_name="Assumptions")
+Step 3 → get_sheet_formulas(file_path="/data/budget.xlsx",
+                            sheet_name="P&L")
+         Pull formulas from every relevant sheet.
+
+Step 4 → Ask the LLM:
+         "Trace the cross-sheet formula references.  Starting from the
+          Assumptions sheet, explain how each derived quantity flows into
+          the P&L sheet."
+```
+
+### 2. Full Workbook Analysis  (generate a business summary)
+
+This workflow gives the LLM enough context to write a plain-language summary of what the workbook calculates.
 
 ```
 Step 1 → get_workbook_summary(file_path="/data/report.xlsx")
@@ -246,7 +303,7 @@ Step 3 → get_sheet_formulas(file_path="/data/report.xlsx", sheet_name="Sales")
 
 ---
 
-### 2. Quick Preview of a Large File
+### 3. Quick Preview of a Large File
 
 When the file is very large and you want to minimise context usage:
 
@@ -261,28 +318,6 @@ Step 2 → get_sheet_sample(file_path="/data/big_model.xlsx",
 Step 3 → get_sheet_data(file_path="/data/big_model.xlsx",
                         sheet_name="Revenue", max_sample_rows=50)
          Get a bigger sample with formulas for a more complete picture.
-```
-
----
-
-### 3. Formula-Focused Analysis  (trace calculation chains)
-
-When the goal is to understand the calculation logic rather than the data:
-
-```
-Step 1 → get_workbook_summary(file_path="/data/budget.xlsx")
-         Identify sheets that have formulas (formula_count > 0).
-
-Step 2 → get_sheet_formulas(file_path="/data/budget.xlsx",
-                            sheet_name="Assumptions")
-Step 3 → get_sheet_formulas(file_path="/data/budget.xlsx",
-                            sheet_name="P&L")
-         Pull formulas from every relevant sheet.
-
-Step 4 → Ask the LLM:
-         "Trace the cross-sheet formula references.  Starting from the
-          Assumptions sheet, explain how each derived quantity flows into
-          the P&L sheet."
 ```
 
 ---
@@ -309,7 +344,7 @@ get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
 
 ## Handling Large Files
 
-Sheets with more than **100 rows per data region** are automatically sampled.  The sampling strategy ensures the LLM sees enough to understand the sheet:
+Sheets with more than **100 rows per data region** are automatically sampled when using `smart_random` mode (the default).  The sampling strategy ensures the LLM sees enough to understand the sheet:
 
 1. **Header rows** — always included so column names are visible.
 2. **Formula rows** — always included (up to half the budget) so calculation logic is captured.
@@ -321,7 +356,8 @@ You can control the sample size:
 |---|---|
 | Bigger sample for more coverage | `get_sheet_data(..., max_sample_rows=200)` |
 | Smaller sample to save tokens | `get_sheet_data(..., max_sample_rows=30)` or use `get_sheet_sample` |
-| Disable sampling entirely | `get_sheet_data(..., full=True)` — **use with caution** on huge files |
+| Disable sampling entirely | `get_sheet_data(..., mode="full")` — **use with caution** on huge files |
+| Vertical slice of a wide sheet | `get_sheet_data(..., mode="column_n", num_columns=5)` |
 
 ---
 
@@ -344,5 +380,5 @@ The server handles all of these by scanning for contiguous non-blank row runs an
 |---|---|---|
 | `FileNotFoundError` | Wrong path or relative path | Use an absolute path, e.g. `"/home/user/file.xlsx"` |
 | `KeyError: '<sheet>'` | Sheet name doesn't exist or is misspelled | Call `list_sheets` first to get exact names |
-| Output is too large | Sheet has thousands of rows and `full=True` | Remove `full=True` or reduce `max_sample_rows` |
+| Output is too large | Sheet has thousands of rows and `mode="full"` | Switch to `mode="smart_random"` or reduce `max_sample_rows` |
 | `cached_value` is `null` | File was never opened in Excel after formulas were written | Open and save the file in Excel, then re-run |
