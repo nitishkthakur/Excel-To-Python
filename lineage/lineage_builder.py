@@ -544,15 +544,13 @@ def main():
 
         python -m lineage.lineage_builder <workbook.xlsx> [output_dir]
     """
-    import sys as _sys
-
-    if len(_sys.argv) < 2:
+    if len(sys.argv) < 2:
         print("Usage: python -m lineage.lineage_builder <workbook.xlsx> [output_dir]",
-              file=_sys.stderr)
-        _sys.exit(1)
+              file=sys.stderr)
+        sys.exit(1)
 
-    input_path = _sys.argv[1]
-    output_dir = _sys.argv[2] if len(_sys.argv) >= 3 else "."
+    input_path = sys.argv[1]
+    output_dir = sys.argv[2] if len(sys.argv) >= 3 else "."
     os.makedirs(output_dir, exist_ok=True)
 
     base = os.path.splitext(os.path.basename(input_path))[0]
