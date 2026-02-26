@@ -312,7 +312,12 @@ def _main_open(sheets, hardcoded_cells, external_files):
     for sheet, col, row, val, _ci in hardcoded_cells:
         safe = re.sub(r"[^a-zA-Z0-9]", "_", sheet)
         ref = f"{col}{row}"
-        default = repr(val)
+        # Ensure the default is a valid Python literal; non-serialisable
+        # objects (e.g. openpyxl DataTableFormula) fall back to None.
+        if isinstance(val, (int, float, bool, str, type(None))):
+            default = repr(val)
+        else:
+            default = "None"
         L.append(
             f"    c[({repr(sheet)}, {repr(col)}, {row})] = "
             f"_ws_{safe}[{repr(ref)}].value "

@@ -367,7 +367,10 @@ def generate_python_script(sheets, tables, formula_cells, hardcoded_cells,
     for sheet, col, row, val, cell_info in hardcoded_cells:
         var = cell_to_var_name(sheet, col, row)
         safe_sheet = re.sub(r'[^a-zA-Z0-9]', '_', sheet)
-        default = repr(val)
+        if isinstance(val, (int, float, bool, str, type(None))):
+            default = repr(val)
+        else:
+            default = "None"
         lines.append(
             f"    {var} = inp_ws_{safe_sheet}[{repr(f'{col}{row}')}].value "
             f"if inp_ws_{safe_sheet} is not None and inp_ws_{safe_sheet}[{repr(f'{col}{row}')}].value is not None "
