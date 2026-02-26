@@ -174,6 +174,35 @@ def _expand_group(row_dict):
 _ARGB_RE = re.compile(r"^[0-9A-Fa-f]{8}$")
 
 
+def _is_valid_argb(color):
+    """Return True if *color* is a valid 8-character ARGB hex string."""
+    return bool(color and _ARGB_RE.match(str(color)))
+
+
+def _read_sheet_rows(ws):
+    """Read a worksheet into a list of dicts keyed by the header row.
+
+    Parameters
+    ----------
+    ws : openpyxl.worksheet.worksheet.Worksheet
+        Worksheet whose first row contains column headers.
+
+    Returns
+    -------
+    list[dict]
+        One dict per data row (row 2 onwards).
+    """
+    headers = [ws.cell(row=1, column=c).value
+               for c in range(1, ws.max_column + 1)]
+    col_map = {h: i for i, h in enumerate(headers)}
+    rows = []
+    for r in range(2, ws.max_row + 1):
+        vals = [ws.cell(row=r, column=c).value
+                for c in range(1, ws.max_column + 1)]
+        rows.append({h: vals[i] for h, i in col_map.items()})
+    return rows
+
+
 def _apply_formatting(ws, cell_addr, row_dict):
     """Apply formatting attributes from *row_dict* to a worksheet cell.
 
@@ -202,14 +231,14 @@ def _apply_formatting(ws, cell_addr, row_dict):
     if row_dict.get("FontSize"):
         font_kw["size"] = row_dict["FontSize"]
     fc = row_dict.get("FontColor")
-    if fc and _ARGB_RE.match(str(fc)):
+    if _is_valid_argb(fc):
         font_kw["color"] = str(fc)
     if font_kw:
         cell.font = Font(**font_kw)
 
     # Fill
     fill_color = row_dict.get("FillColor")
-    if fill_color and _ARGB_RE.match(str(fill_color)):
+    if _is_valid_argb(fill_color):
         cell.fill = PatternFill(
             start_color=str(fill_color),
             end_color=str(fill_color),
@@ -259,24 +288,18 @@ def generate_input_template(mapping_path, output_path):
             continue
 
         ws_src = wb_map[sn]
-        headers = [ws_src.cell(row=1, column=c).value for c in range(1, ws_src.max_column + 1)]
-        col_map = {h: i for i, h in enumerate(headers)}
+        src_rows = _read_sheet_rows(ws_src)
 
         ws_out = wb_out.create_sheet(sn)
         ws_out.cell(row=1, column=1, value="Cell")
         ws_out.cell(row=1, column=2, value="Value")
 
         out_row = 2
-        for r in range(2, ws_src.max_row + 1):
-            row_vals = [ws_src.cell(row=r, column=c).value for c in range(1, ws_src.max_column + 1)]
-            rtype = row_vals[col_map.get("Type", 2)]
-            include = row_vals[col_map.get("IncludeFlag", len(headers) - 1)]
-            if rtype != "Input" or not include:
+        for row_dict in src_rows:
+            if row_dict.get("Type") != "Input" or not row_dict.get("IncludeFlag"):
                 continue
-            cell_addr = row_vals[col_map.get("Cell", 1)]
-            value = row_vals[col_map.get("Value", 4)]
-            ws_out.cell(row=out_row, column=1, value=cell_addr)
-            ws_out.cell(row=out_row, column=2, value=value)
+            ws_out.cell(row=out_row, column=1, value=row_dict.get("Cell"))
+            ws_out.cell(row=out_row, column=2, value=row_dict.get("Value"))
             out_row += 1
 
     if has_default and "Sheet" in wb_out.sheetnames and len(wb_out.sheetnames) > 1:
@@ -364,17 +387,7 @@ def regenerate_workbook(mapping_path, output_path, input_values_path=None):
             continue
 
         ws_src = wb_map[sn]
-        headers = [ws_src.cell(row=1, column=c).value
-                   for c in range(1, ws_src.max_column + 1)]
-        col_map = {h: i for i, h in enumerate(headers)}
-
-        # Read all data rows into dicts
-        data_rows = []
-        for r in range(2, ws_src.max_row + 1):
-            vals = [ws_src.cell(row=r, column=c).value
-                    for c in range(1, ws_src.max_column + 1)]
-            row_dict = {h: vals[i] for h, i in col_map.items()}
-            data_rows.append(row_dict)
+        data_rows = _read_sheet_rows(ws_src)
 
         # Filter to included rows
         data_rows = [d for d in data_rows if d.get("IncludeFlag")]
@@ -412,7 +425,7 @@ def regenerate_workbook(mapping_path, output_path, input_values_path=None):
         for mc in sheet_meta.get("merged_cells", []):
             try:
                 ws_out.merge_cells(mc)
-            except Exception:
+            except (ValueError, TypeError):
                 pass
 
         for col_key, width in sheet_meta.get("col_widths", {}).items():
