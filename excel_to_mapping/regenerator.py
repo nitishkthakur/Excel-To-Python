@@ -429,8 +429,7 @@ def regenerate_workbook(mapping_path, output_path, input_values_path=None):
 
         for col_key, width in sheet_meta.get("col_widths", {}).items():
             try:
-                col_idx = int(col_key)
-                ws_out.column_dimensions[get_column_letter(col_idx)].width = width
+                ws_out.column_dimensions[str(col_key)].width = width
             except (ValueError, TypeError):
                 pass
 

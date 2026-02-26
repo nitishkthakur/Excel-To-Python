@@ -508,5 +508,256 @@ class TestGenerateMappingReportSampleWorkbook(unittest.TestCase):
         os.remove(rpt)
 
 
+# ---------------------------------------------------------------------------
+# Regenerator tests
+# ---------------------------------------------------------------------------
+
+from excel_to_mapping.regenerator import (
+    regenerate_workbook,
+    generate_input_template,
+    _shift_formula,
+    _expand_group,
+)
+
+
+class TestShiftFormula(unittest.TestCase):
+    def test_no_offset(self):
+        self.assertEqual(_shift_formula("=A1+B1", "S", 0, 0), "=A1+B1")
+
+    def test_vertical_offset(self):
+        result = _shift_formula("=A2*B2", "S", row_offset=1, col_offset=0)
+        self.assertEqual(result, "=A3*B3")
+
+    def test_horizontal_offset(self):
+        result = _shift_formula("=A1*1.1", "S", row_offset=0, col_offset=1)
+        self.assertEqual(result, "=B1*1.1")
+
+    def test_absolute_ref_unchanged(self):
+        result = _shift_formula("=$A$1+B2", "S", row_offset=1, col_offset=1)
+        self.assertIn("$A$1", result)
+
+    def test_cross_sheet_ref(self):
+        result = _shift_formula("=Input!A2*2", "Calc", row_offset=1, col_offset=0)
+        self.assertIn("Input!", result)
+        self.assertIn("A3", result)
+
+
+class TestExpandGroup(unittest.TestCase):
+    def test_vertical_group(self):
+        row_dict = {
+            "Sheet": "S", "Cell": "C2:C6",
+            "Formula": "=A2-B2", "GroupDirection": "vertical",
+        }
+        expanded = _expand_group(row_dict)
+        self.assertEqual(len(expanded), 5)
+        self.assertEqual(expanded[0], ("C2", "=A2-B2"))
+        self.assertEqual(expanded[1], ("C3", "=A3-B3"))
+        self.assertEqual(expanded[4], ("C6", "=A6-B6"))
+
+    def test_horizontal_group(self):
+        row_dict = {
+            "Sheet": "S", "Cell": "B2:F2",
+            "Formula": "=B1*1.1", "GroupDirection": "horizontal",
+        }
+        expanded = _expand_group(row_dict)
+        self.assertEqual(len(expanded), 5)
+        self.assertEqual(expanded[0][0], "B2")
+        self.assertEqual(expanded[1][0], "C2")
+        self.assertEqual(expanded[4][0], "F2")
+
+
+class TestRegenerateSimple(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "simple.xlsx")
+        _create_simple_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_regenerate_creates_file(self):
+        out = os.path.join(self.tmpdir, "regen.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        self.assertTrue(os.path.exists(out))
+
+    def test_regenerate_values_match(self):
+        out = os.path.join(self.tmpdir, "regen2.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb_o = load_workbook(self.wb_path)
+        wb_r = load_workbook(out)
+        ws_o = wb_o["Data"]
+        ws_r = wb_r["Data"]
+        for row in ws_o.iter_rows():
+            for cell in row:
+                if cell.value is not None:
+                    r_val = ws_r[f"{cell.column_letter}{cell.row}"].value
+                    self.assertEqual(cell.value, r_val,
+                                     f"Mismatch at {cell.column_letter}{cell.row}")
+        wb_o.close()
+        wb_r.close()
+
+
+class TestRegenerateVerticalDrag(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "vert.xlsx")
+        _create_vertical_drag_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_formulas_expanded(self):
+        out = os.path.join(self.tmpdir, "regen.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb = load_workbook(out)
+        ws = wb["Sales"]
+        for r in range(2, 7):
+            self.assertEqual(ws[f"C{r}"].value, f"=A{r}-B{r}")
+        self.assertEqual(ws["C7"].value, "=SUM(C2:C6)")
+        wb.close()
+
+
+class TestRegenerateMultiSheet(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "multi.xlsx")
+        _create_multi_sheet_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_all_sheets_regenerated(self):
+        out = os.path.join(self.tmpdir, "regen.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb = load_workbook(out)
+        self.assertIn("Input", wb.sheetnames)
+        self.assertIn("Calc", wb.sheetnames)
+        wb.close()
+
+    def test_cross_sheet_formula_intact(self):
+        out = os.path.join(self.tmpdir, "regen_cs.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb = load_workbook(out)
+        ws = wb["Calc"]
+        self.assertEqual(ws["A2"].value, "=Input!A2*2")
+        wb.close()
+
+
+class TestInputTemplate(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "simple.xlsx")
+        _create_simple_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_template_created(self):
+        out = os.path.join(self.tmpdir, "template.xlsx")
+        generate_input_template(self.rpt_path, out)
+        self.assertTrue(os.path.exists(out))
+
+    def test_template_has_inputs(self):
+        out = os.path.join(self.tmpdir, "template2.xlsx")
+        generate_input_template(self.rpt_path, out)
+        wb = load_workbook(out)
+        ws = wb["Data"]
+        vals = []
+        for r in range(2, 20):
+            v = ws.cell(row=r, column=2).value
+            if v is not None:
+                vals.append(v)
+        self.assertIn(10, vals)
+        self.assertIn(5, vals)
+        wb.close()
+
+    def test_regenerate_with_overrides(self):
+        tpl_path = os.path.join(self.tmpdir, "template3.xlsx")
+        generate_input_template(self.rpt_path, tpl_path)
+
+        # Modify an input value in the template
+        wb_tpl = load_workbook(tpl_path)
+        ws_tpl = wb_tpl["Data"]
+        # Find and change Price=10 to 20
+        for r in range(2, 20):
+            if ws_tpl.cell(row=r, column=1).value == "A2":
+                ws_tpl.cell(row=r, column=2, value=20)
+                break
+        wb_tpl.save(tpl_path)
+        wb_tpl.close()
+
+        out = os.path.join(self.tmpdir, "regen_override.xlsx")
+        regenerate_workbook(self.rpt_path, out, input_values_path=tpl_path)
+        wb = load_workbook(out)
+        ws = wb["Data"]
+        self.assertEqual(ws["A2"].value, 20)
+        wb.close()
+
+
+class TestIncludeFlagFiltering(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "simple.xlsx")
+        _create_simple_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_exclude_row(self):
+        """When IncludeFlag is set to False the cell should be absent."""
+        # Modify the mapping report: set IncludeFlag=False for D2 (output)
+        wb_rpt = load_workbook(self.rpt_path)
+        ws = wb_rpt["Data"]
+        # Find the IncludeFlag column
+        include_col = None
+        for c in range(1, ws.max_column + 1):
+            if ws.cell(row=1, column=c).value == "IncludeFlag":
+                include_col = c
+                break
+        cell_col = None
+        for c in range(1, ws.max_column + 1):
+            if ws.cell(row=1, column=c).value == "Cell":
+                cell_col = c
+                break
+        # Find D2 row and set IncludeFlag to False
+        for r in range(2, ws.max_row + 1):
+            if ws.cell(row=r, column=cell_col).value == "D2":
+                ws.cell(row=r, column=include_col, value=False)
+                break
+        modified_rpt = os.path.join(self.tmpdir, "report_modified.xlsx")
+        wb_rpt.save(modified_rpt)
+        wb_rpt.close()
+
+        out = os.path.join(self.tmpdir, "regen_filtered.xlsx")
+        regenerate_workbook(modified_rpt, out)
+        wb = load_workbook(out)
+        ws_out = wb["Data"]
+        # D2 should be None (excluded)
+        self.assertIsNone(ws_out["D2"].value)
+        # C2 should still be present
+        self.assertEqual(ws_out["C2"].value, "=A2*B2")
+        wb.close()
+
+
 if __name__ == "__main__":
     unittest.main()

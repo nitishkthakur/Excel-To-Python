@@ -1,17 +1,25 @@
 """Excel-to-Mapping Converter.
 
-Analyses Excel workbooks and produces a mapping report that separates
-each sheet's cells into three categories:
+Analyses Excel workbooks and produces a **tabular** mapping report that
+classifies each sheet's cells into three categories via a ``Type`` column:
 
-  * **Inputs** – hardcoded (non-formula) values.
-  * **Calculations** – formula cells, with continuous dragged formulas
-    collapsed into compact group representations.
-  * **Outputs** – formula cells whose results are *not* referenced by
-    any other formula (i.e. terminal / final results).
+  * **Input** – hardcoded (non-formula) values.
+  * **Calculation** – formula cells (intermediate results referenced by
+    other formulas), with dragged formulas collapsed into groups.
+  * **Output** – formula cells whose results are *not* referenced by any
+    other formula (terminal / final results).
 
-One output sheet is generated per input sheet.
+An ``IncludeFlag`` column (default ``True``) lets a human reviewer mark
+which rows to keep.  The companion :mod:`regenerator` module reads the
+mapping report back and reconstructs an Excel workbook that honours the
+reviewer's selections.
 """
 
 from .mapper import generate_mapping_report
+from .regenerator import regenerate_workbook, generate_input_template
 
-__all__ = ["generate_mapping_report"]
+__all__ = [
+    "generate_mapping_report",
+    "regenerate_workbook",
+    "generate_input_template",
+]
