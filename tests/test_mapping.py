@@ -1,4 +1,4 @@
-"""Tests for the excel_to_mapping module."""
+"""Tests for the excel_to_mapping module (tabular format)."""
 
 import os
 import shutil
@@ -15,8 +15,8 @@ from excel_to_mapping.mapper import (
     generate_mapping_report,
     _build_all_referenced_cells,
     _classify_formula_cells,
-    _build_sheet_mapping,
-    _grouped_descriptions,
+    _build_sheet_rows,
+    COLUMNS,
 )
 from excel_to_python import parse_workbook, classify_cells
 
@@ -113,6 +113,19 @@ def _create_no_formulas_workbook(path):
     wb.close()
 
 
+def _read_report_rows(ws):
+    """Read all data rows from a tabular report sheet as list of dicts."""
+    ncols = len(COLUMNS) + 1
+    headers = [ws.cell(row=1, column=c).value for c in range(1, ncols)]
+    rows = []
+    for r in range(2, ws.max_row + 1):
+        vals = [ws.cell(row=r, column=c).value for c in range(1, ncols)]
+        if all(v is None for v in vals):
+            continue
+        rows.append(dict(zip(headers, vals)))
+    return rows
+
+
 # ---------------------------------------------------------------------------
 # Unit tests: classification helpers
 # ---------------------------------------------------------------------------
@@ -163,42 +176,39 @@ class TestClassifyFormulaCells(unittest.TestCase):
             ("S", "D", 2, "=A2+B2", {}),
         ]
         calcs, outputs = _classify_formula_cells(formulas)
-        # Neither C2 nor D2 is referenced by the other
         self.assertEqual(len(calcs), 0)
         self.assertEqual(len(outputs), 2)
 
 
 # ---------------------------------------------------------------------------
-# Unit tests: grouped descriptions
+# Unit tests: _build_sheet_rows
 # ---------------------------------------------------------------------------
 
-class TestGroupedDescriptions(unittest.TestCase):
+class TestBuildSheetRows(unittest.TestCase):
     def test_vertical_group_collapsed(self):
-        cells = [
+        """Five dragged cells should produce one grouped row."""
+        formula_cells = [
             ("Sales", "C", r, f"=A{r}-B{r}", {})
             for r in range(2, 7)
         ]
-        descs = _grouped_descriptions(cells)
-        # 5 dragged cells should collapse into one group description
-        self.assertEqual(len(descs), 1)
-        self.assertIn("5 cells", descs[0])
-        self.assertIn("vertical", descs[0])
+        rows = _build_sheet_rows("Sales", [], formula_cells)
+        grouped = [r for r in rows if r["GroupID"] is not None]
+        self.assertEqual(len(grouped), 1)
+        self.assertEqual(grouped[0]["GroupSize"], 5)
+        self.assertEqual(grouped[0]["GroupDirection"], "vertical")
 
-    def test_single_formula_not_collapsed(self):
-        cells = [("S", "D", 2, "=SUM(C2:C6)", {})]
-        descs = _grouped_descriptions(cells)
-        self.assertEqual(len(descs), 1)
-        self.assertIn("SUM", descs[0])
+    def test_single_formula_not_grouped(self):
+        formula_cells = [("S", "D", 2, "=SUM(C2:C6)", {})]
+        rows = _build_sheet_rows("S", [], formula_cells)
+        self.assertEqual(len(rows), 1)
+        self.assertIsNone(rows[0]["GroupID"])
+        self.assertIn("SUM", rows[0]["Formula"])
 
     def test_empty_input(self):
-        self.assertEqual(_grouped_descriptions([]), [])
+        self.assertEqual(_build_sheet_rows("S", [], []), [])
 
 
-# ---------------------------------------------------------------------------
-# Integration: _build_sheet_mapping
-# ---------------------------------------------------------------------------
-
-class TestBuildSheetMapping(unittest.TestCase):
+class TestBuildSheetRowsIntegration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmpdir = tempfile.mkdtemp()
@@ -216,21 +226,20 @@ class TestBuildSheetMapping(unittest.TestCase):
         shutil.rmtree(cls.tmpdir)
 
     def test_inputs_present(self):
-        inputs, _, _ = _build_sheet_mapping(
+        rows = _build_sheet_rows(
             "Data", self.hardcoded_cells, self.formula_cells)
-        # Should include Price, 10, Qty, 5 header values etc.
-        values = [v for _, _, v in inputs]
+        input_rows = [r for r in rows if r["Type"] == "Input"]
+        values = [r["Value"] for r in input_rows]
         self.assertIn(10, values)
         self.assertIn(5, values)
 
     def test_calculations_and_outputs_split(self):
-        _, calcs, outputs = _build_sheet_mapping(
+        rows = _build_sheet_rows(
             "Data", self.hardcoded_cells, self.formula_cells)
-        # C2 is intermediate, D2 is output
-        calc_text = " ".join(calcs)
-        out_text = " ".join(outputs)
-        self.assertIn("C2", calc_text)
-        self.assertIn("D2", out_text)
+        calc_cells = [r["Cell"] for r in rows if r["Type"] == "Calculation"]
+        out_cells = [r["Cell"] for r in rows if r["Type"] == "Output"]
+        self.assertIn("C2", calc_cells)
+        self.assertIn("D2", out_cells)
 
 
 # ---------------------------------------------------------------------------
@@ -260,15 +269,36 @@ class TestGenerateMappingReportSimple(unittest.TestCase):
         self.assertIn("Data", wb.sheetnames)
         wb.close()
 
-    def test_report_contains_sections(self):
+    def test_report_has_tabular_header(self):
         rpt = os.path.join(self.tmpdir, "report3.xlsx")
         generate_mapping_report(self.wb_path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Data"]
-        values = [ws.cell(row=r, column=1).value for r in range(1, 30)]
-        self.assertIn("Inputs", values)
-        self.assertIn("Calculations", values)
-        self.assertIn("Outputs", values)
+        headers = [ws.cell(row=1, column=c).value
+                   for c in range(1, len(COLUMNS) + 1)]
+        self.assertEqual(headers, COLUMNS)
+        wb.close()
+
+    def test_report_contains_all_types(self):
+        rpt = os.path.join(self.tmpdir, "report4.xlsx")
+        generate_mapping_report(self.wb_path, output_path=rpt)
+        wb = load_workbook(rpt)
+        ws = wb["Data"]
+        data = _read_report_rows(ws)
+        types = {r["Type"] for r in data}
+        self.assertIn("Input", types)
+        self.assertIn("Calculation", types)
+        self.assertIn("Output", types)
+        wb.close()
+
+    def test_report_has_metadata_sheet(self):
+        rpt = os.path.join(self.tmpdir, "report5.xlsx")
+        generate_mapping_report(self.wb_path, output_path=rpt)
+        wb = load_workbook(rpt)
+        self.assertIn("_Metadata", wb.sheetnames)
+        ws = wb["_Metadata"]
+        self.assertEqual(ws.cell(row=1, column=1).value, "SheetName")
+        self.assertEqual(ws.cell(row=2, column=1).value, "Data")
         wb.close()
 
 
@@ -288,17 +318,11 @@ class TestGenerateMappingReportVerticalDrag(unittest.TestCase):
         generate_mapping_report(self.wb_path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Sales"]
-        # Collect all cell values in columns A-B
-        all_text = []
-        for r in range(1, 40):
-            for c in range(1, 4):
-                v = ws.cell(row=r, column=c).value
-                if v is not None:
-                    all_text.append(str(v))
-        joined = " ".join(all_text)
-        # The 5 dragged C2:C6 formulas should be collapsed (mention "5 cells")
-        self.assertIn("5 cells", joined)
-        self.assertIn("vertical", joined)
+        data = _read_report_rows(ws)
+        grouped = [r for r in data if r.get("GroupSize") is not None]
+        self.assertEqual(len(grouped), 1)
+        self.assertEqual(grouped[0]["GroupSize"], 5)
+        self.assertEqual(grouped[0]["GroupDirection"], "vertical")
         wb.close()
 
     def test_sum_is_output(self):
@@ -306,20 +330,13 @@ class TestGenerateMappingReportVerticalDrag(unittest.TestCase):
         generate_mapping_report(self.wb_path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Sales"]
-        # Find the Outputs section and check SUM is there
-        in_outputs = False
-        found_sum = False
-        for r in range(1, 40):
-            v = ws.cell(row=r, column=1).value
-            if v == "Outputs":
-                in_outputs = True
-                continue
-            if in_outputs:
-                v2 = ws.cell(row=r, column=2).value
-                if v2 and "SUM" in str(v2):
-                    found_sum = True
-                    break
-        self.assertTrue(found_sum, "SUM formula should appear in Outputs section")
+        data = _read_report_rows(ws)
+        output_rows = [r for r in data if r["Type"] == "Output"]
+        formulas = [r["Formula"] for r in output_rows if r["Formula"]]
+        self.assertTrue(
+            any("SUM" in f for f in formulas),
+            "SUM formula should appear as an Output row",
+        )
         wb.close()
 
 
@@ -340,6 +357,7 @@ class TestGenerateMappingReportMultiSheet(unittest.TestCase):
         wb = load_workbook(rpt)
         self.assertIn("Input", wb.sheetnames)
         self.assertIn("Calc", wb.sheetnames)
+        self.assertIn("_Metadata", wb.sheetnames)
         wb.close()
 
     def test_subset_sheets(self):
@@ -356,17 +374,11 @@ class TestGenerateMappingReportMultiSheet(unittest.TestCase):
         generate_mapping_report(self.wb_path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Calc"]
-        all_text = []
-        for r in range(1, 30):
-            for c in range(1, 4):
-                v = ws.cell(row=r, column=c).value
-                if v is not None:
-                    all_text.append(str(v))
-        joined = " ".join(all_text)
-        # A2 on Calc sheet references Input!A2 and is used by B2 → calculation
-        self.assertIn("A2", joined)
-        # B2 is not referenced → output
-        self.assertIn("B2", joined)
+        data = _read_report_rows(ws)
+        calc_cells = [r["Cell"] for r in data if r["Type"] == "Calculation"]
+        out_cells = [r["Cell"] for r in data if r["Type"] == "Output"]
+        self.assertIn("A2", calc_cells)
+        self.assertIn("B2", out_cells)
         wb.close()
 
 
@@ -386,15 +398,11 @@ class TestGenerateMappingReportHorizontalDrag(unittest.TestCase):
         generate_mapping_report(self.wb_path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Forecast"]
-        all_text = []
-        for r in range(1, 30):
-            for c in range(1, 4):
-                v = ws.cell(row=r, column=c).value
-                if v is not None:
-                    all_text.append(str(v))
-        joined = " ".join(all_text)
-        self.assertIn("5 cells", joined)
-        self.assertIn("horizontal", joined)
+        data = _read_report_rows(ws)
+        grouped = [r for r in data if r.get("GroupSize") is not None]
+        self.assertEqual(len(grouped), 1)
+        self.assertEqual(grouped[0]["GroupSize"], 5)
+        self.assertEqual(grouped[0]["GroupDirection"], "horizontal")
         wb.close()
 
 
@@ -414,12 +422,10 @@ class TestGenerateMappingReportEdgeCases(unittest.TestCase):
         generate_mapping_report(path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Static"]
-        vals = [ws.cell(row=r, column=1).value for r in range(1, 20)]
-        self.assertIn("Inputs", vals)
-        self.assertIn("Calculations", vals)
-        self.assertIn("Outputs", vals)
-        # Should show (none) for Calculations and Outputs
-        self.assertIn("(none)", vals)
+        data = _read_report_rows(ws)
+        types = {r["Type"] for r in data}
+        # Only inputs, no calculations or outputs
+        self.assertEqual(types, {"Input"})
         wb.close()
 
     def test_all_formulas(self):
@@ -429,10 +435,11 @@ class TestGenerateMappingReportEdgeCases(unittest.TestCase):
         generate_mapping_report(path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Formulas"]
-        vals = [ws.cell(row=r, column=1).value for r in range(1, 20)]
-        self.assertIn("Inputs", vals)
-        # Inputs should show (none) since there are no hardcoded values
-        self.assertIn("(none)", vals)
+        data = _read_report_rows(ws)
+        types = {r["Type"] for r in data}
+        # No inputs; only Calculation and/or Output
+        self.assertNotIn("Input", types)
+        self.assertTrue(len(data) > 0)
         wb.close()
 
     def test_nonexistent_sheet_ignored(self):
@@ -442,10 +449,20 @@ class TestGenerateMappingReportEdgeCases(unittest.TestCase):
         generate_mapping_report(path, sheet_names=["NoSuchSheet"],
                                 output_path=rpt)
         wb = load_workbook(rpt)
-        # No sheet named NoSuchSheet should be created
         self.assertNotIn("NoSuchSheet", wb.sheetnames)
-        # The file should still be valid (openpyxl keeps default Sheet)
         self.assertTrue(len(wb.sheetnames) >= 1)
+        wb.close()
+
+    def test_include_flag_defaults_true(self):
+        path = os.path.join(self.tmpdir, "simple_inc.xlsx")
+        _create_simple_workbook(path)
+        rpt = os.path.join(self.tmpdir, "rpt_inc.xlsx")
+        generate_mapping_report(path, output_path=rpt)
+        wb = load_workbook(rpt)
+        ws = wb["Data"]
+        data = _read_report_rows(ws)
+        for row in data:
+            self.assertTrue(row["IncludeFlag"])
         wb.close()
 
 
@@ -469,6 +486,7 @@ class TestGenerateMappingReportSampleWorkbook(unittest.TestCase):
         self.assertIn("Inputs", wb.sheetnames)
         self.assertIn("Summary", wb.sheetnames)
         self.assertIn("Rates", wb.sheetnames)
+        self.assertIn("_Metadata", wb.sheetnames)
         wb.close()
 
     def test_inputs_sheet_has_inputs(self):
@@ -476,13 +494,10 @@ class TestGenerateMappingReportSampleWorkbook(unittest.TestCase):
         generate_mapping_report(self.sample_path, output_path=rpt)
         wb = load_workbook(rpt)
         ws = wb["Inputs"]
-        vals = []
-        for r in range(1, 50):
-            v = ws.cell(row=r, column=2).value
-            if v is not None:
-                vals.append(v)
-        # Should have input values like 10.5, 25, 7.25 etc.
-        self.assertTrue(any(isinstance(v, (int, float)) for v in vals))
+        data = _read_report_rows(ws)
+        input_rows = [r for r in data if r["Type"] == "Input"]
+        values = [r["Value"] for r in input_rows]
+        self.assertTrue(any(isinstance(v, (int, float)) for v in values))
         wb.close()
 
     def test_default_output_path(self):
@@ -490,8 +505,258 @@ class TestGenerateMappingReportSampleWorkbook(unittest.TestCase):
         rpt = generate_mapping_report(self.sample_path)
         self.assertTrue(os.path.exists(rpt))
         self.assertIn("mapping_report.xlsx", rpt)
-        # Clean up
         os.remove(rpt)
+
+
+# ---------------------------------------------------------------------------
+# Regenerator tests
+# ---------------------------------------------------------------------------
+
+from excel_to_mapping.regenerator import (
+    regenerate_workbook,
+    generate_input_template,
+    _shift_formula,
+    _expand_group,
+)
+
+
+class TestShiftFormula(unittest.TestCase):
+    def test_no_offset(self):
+        self.assertEqual(_shift_formula("=A1+B1", "S", 0, 0), "=A1+B1")
+
+    def test_vertical_offset(self):
+        result = _shift_formula("=A2*B2", "S", row_offset=1, col_offset=0)
+        self.assertEqual(result, "=A3*B3")
+
+    def test_horizontal_offset(self):
+        result = _shift_formula("=A1*1.1", "S", row_offset=0, col_offset=1)
+        self.assertEqual(result, "=B1*1.1")
+
+    def test_absolute_ref_unchanged(self):
+        result = _shift_formula("=$A$1+B2", "S", row_offset=1, col_offset=1)
+        self.assertIn("$A$1", result)
+
+    def test_cross_sheet_ref(self):
+        result = _shift_formula("=Input!A2*2", "Calc", row_offset=1, col_offset=0)
+        self.assertIn("Input!", result)
+        self.assertIn("A3", result)
+
+
+class TestExpandGroup(unittest.TestCase):
+    def test_vertical_group(self):
+        row_dict = {
+            "Sheet": "S", "Cell": "C2:C6",
+            "Formula": "=A2-B2", "GroupDirection": "vertical",
+        }
+        expanded = _expand_group(row_dict)
+        self.assertEqual(len(expanded), 5)
+        self.assertEqual(expanded[0], ("C2", "=A2-B2"))
+        self.assertEqual(expanded[1], ("C3", "=A3-B3"))
+        self.assertEqual(expanded[4], ("C6", "=A6-B6"))
+
+    def test_horizontal_group(self):
+        row_dict = {
+            "Sheet": "S", "Cell": "B2:F2",
+            "Formula": "=B1*1.1", "GroupDirection": "horizontal",
+        }
+        expanded = _expand_group(row_dict)
+        self.assertEqual(len(expanded), 5)
+        self.assertEqual(expanded[0][0], "B2")
+        self.assertEqual(expanded[1][0], "C2")
+        self.assertEqual(expanded[4][0], "F2")
+
+
+class TestRegenerateSimple(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "simple.xlsx")
+        _create_simple_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_regenerate_creates_file(self):
+        out = os.path.join(self.tmpdir, "regen.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        self.assertTrue(os.path.exists(out))
+
+    def test_regenerate_values_match(self):
+        out = os.path.join(self.tmpdir, "regen2.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb_o = load_workbook(self.wb_path)
+        wb_r = load_workbook(out)
+        ws_o = wb_o["Data"]
+        ws_r = wb_r["Data"]
+        for row in ws_o.iter_rows():
+            for cell in row:
+                if cell.value is not None:
+                    r_val = ws_r[f"{cell.column_letter}{cell.row}"].value
+                    self.assertEqual(cell.value, r_val,
+                                     f"Mismatch at {cell.column_letter}{cell.row}")
+        wb_o.close()
+        wb_r.close()
+
+
+class TestRegenerateVerticalDrag(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "vert.xlsx")
+        _create_vertical_drag_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_formulas_expanded(self):
+        out = os.path.join(self.tmpdir, "regen.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb = load_workbook(out)
+        ws = wb["Sales"]
+        for r in range(2, 7):
+            self.assertEqual(ws[f"C{r}"].value, f"=A{r}-B{r}")
+        self.assertEqual(ws["C7"].value, "=SUM(C2:C6)")
+        wb.close()
+
+
+class TestRegenerateMultiSheet(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "multi.xlsx")
+        _create_multi_sheet_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_all_sheets_regenerated(self):
+        out = os.path.join(self.tmpdir, "regen.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb = load_workbook(out)
+        self.assertIn("Input", wb.sheetnames)
+        self.assertIn("Calc", wb.sheetnames)
+        wb.close()
+
+    def test_cross_sheet_formula_intact(self):
+        out = os.path.join(self.tmpdir, "regen_cs.xlsx")
+        regenerate_workbook(self.rpt_path, out)
+        wb = load_workbook(out)
+        ws = wb["Calc"]
+        self.assertEqual(ws["A2"].value, "=Input!A2*2")
+        wb.close()
+
+
+class TestInputTemplate(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "simple.xlsx")
+        _create_simple_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_template_created(self):
+        out = os.path.join(self.tmpdir, "template.xlsx")
+        generate_input_template(self.rpt_path, out)
+        self.assertTrue(os.path.exists(out))
+
+    def test_template_has_inputs(self):
+        out = os.path.join(self.tmpdir, "template2.xlsx")
+        generate_input_template(self.rpt_path, out)
+        wb = load_workbook(out)
+        ws = wb["Data"]
+        vals = []
+        for r in range(2, 20):
+            v = ws.cell(row=r, column=2).value
+            if v is not None:
+                vals.append(v)
+        self.assertIn(10, vals)
+        self.assertIn(5, vals)
+        wb.close()
+
+    def test_regenerate_with_overrides(self):
+        tpl_path = os.path.join(self.tmpdir, "template3.xlsx")
+        generate_input_template(self.rpt_path, tpl_path)
+
+        # Modify an input value in the template
+        wb_tpl = load_workbook(tpl_path)
+        ws_tpl = wb_tpl["Data"]
+        # Find and change Price=10 to 20
+        for r in range(2, 20):
+            if ws_tpl.cell(row=r, column=1).value == "A2":
+                ws_tpl.cell(row=r, column=2, value=20)
+                break
+        wb_tpl.save(tpl_path)
+        wb_tpl.close()
+
+        out = os.path.join(self.tmpdir, "regen_override.xlsx")
+        regenerate_workbook(self.rpt_path, out, input_values_path=tpl_path)
+        wb = load_workbook(out)
+        ws = wb["Data"]
+        self.assertEqual(ws["A2"].value, 20)
+        wb.close()
+
+
+class TestIncludeFlagFiltering(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.wb_path = os.path.join(cls.tmpdir, "simple.xlsx")
+        _create_simple_workbook(cls.wb_path)
+        cls.rpt_path = os.path.join(cls.tmpdir, "report.xlsx")
+        generate_mapping_report(cls.wb_path, output_path=cls.rpt_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_exclude_row(self):
+        """When IncludeFlag is set to False the cell should be absent."""
+        # Modify the mapping report: set IncludeFlag=False for D2 (output)
+        wb_rpt = load_workbook(self.rpt_path)
+        ws = wb_rpt["Data"]
+        # Find the IncludeFlag column
+        include_col = None
+        for c in range(1, ws.max_column + 1):
+            if ws.cell(row=1, column=c).value == "IncludeFlag":
+                include_col = c
+                break
+        cell_col = None
+        for c in range(1, ws.max_column + 1):
+            if ws.cell(row=1, column=c).value == "Cell":
+                cell_col = c
+                break
+        # Find D2 row and set IncludeFlag to False
+        for r in range(2, ws.max_row + 1):
+            if ws.cell(row=r, column=cell_col).value == "D2":
+                ws.cell(row=r, column=include_col, value=False)
+                break
+        modified_rpt = os.path.join(self.tmpdir, "report_modified.xlsx")
+        wb_rpt.save(modified_rpt)
+        wb_rpt.close()
+
+        out = os.path.join(self.tmpdir, "regen_filtered.xlsx")
+        regenerate_workbook(modified_rpt, out)
+        wb = load_workbook(out)
+        ws_out = wb["Data"]
+        # D2 should be None (excluded)
+        self.assertIsNone(ws_out["D2"].value)
+        # C2 should still be present
+        self.assertEqual(ws_out["C2"].value, "=A2*B2")
+        wb.close()
 
 
 if __name__ == "__main__":
