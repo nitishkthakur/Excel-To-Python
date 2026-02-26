@@ -190,3 +190,47 @@ Excel file (.xlsx)
 * **New sampling strategy** — see §3.3 above for the four-step checklist.
 * **New output format** — add a `to_<format>(data)` function in `formatters.py` and a branch in `server.py`.
 * **New Excel function** — add a `xl_<name>` implementation in `HELPER_FUNCTIONS_CODE` (inside `formula_converter.py`) and map the Excel name in `FormulaConverter._function_map`.
+
+---
+
+## 8  `lineage/` Package
+
+Extracts data-flow lineage from Excel workbooks and renders visual graphs.
+
+### 8.1  Modules
+
+| Module | Purpose |
+|--------|---------|
+| `lineage_builder.py` | Builds simple (sheet-level) and complex (column-level) lineage from a workbook. Inherits formula de-duplication from the smart formula sampler. Outputs lineage data as Excel files. |
+| `lineage_graph.py` | Reads lineage Excel files and renders them as PNG graphs using `networkx` and `matplotlib`. Colour-coded nodes (green=input, orange=calculation, salmon=output). |
+
+### 8.2  Key concepts
+
+* **Simple lineage** — each sheet is a single node; edges show cross-sheet data flow. Each node label shows counts of inputs, calculations, and outputs.
+* **Complex lineage** — each `Sheet!Column` is a node; edges represent formula dependencies. Automatically pruned to keep graphs readable.
+* **Formula de-duplication** — reuses `normalise_formula()` and `deduplicate_workbook_formulas()` from `mcp_server/smart_formula_sampler.py` so that dragged formulas (e.g. 10 000 identical rows) appear as a single pattern.
+
+### 8.3  Usage
+
+```bash
+# Build lineage Excel files
+python -m lineage.lineage_builder Indigo.xlsx output_dir/
+
+# Render graphs
+python -m lineage.lineage_graph simple output_dir/Indigo_simple_lineage.xlsx simple.png
+python -m lineage.lineage_graph complex output_dir/Indigo_complex_lineage.xlsx complex.png
+```
+
+See `lineage/DOCUMENTATION.md` for full API reference and Indigo.xlsx results.
+
+---
+
+## 9  Vectorized Converter — Indigo.xlsx Testing
+
+The vectorised converter (`excel_to_python_vectorized/`) was tested against `Indigo.xlsx` with these results:
+
+* **95.6%** of formula cells vectorised (3 766 / 3 938) into 339 loops.
+* Generated script compiles and runs successfully end-to-end.
+* A bug was found and fixed: `DataTableFormula` objects from openpyxl were not safely serialised as Python literals. Both `code_generator.py` and `excel_to_python.py` now fall back to `None` for non-primitive types.
+
+See `excel_to_python_vectorized/INDIGO_TEST_REPORT.md` for the full test report.
