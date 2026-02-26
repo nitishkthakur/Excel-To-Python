@@ -113,13 +113,14 @@ def _extract_formatting(cell_info):
 
 def _sort_key(row_dict):
     """Sort by Type (Input < Calculation < Output), then row, then column."""
-    cell = row_dict["Cell"]
+    cell = str(row_dict.get("Cell") or "")
     # For ranges like "C2:C6", use the start cell for sorting
     start = cell.split(":")[0]
     m = re.match(r"([A-Z]+)(\d+)", start)
-    col_idx = col_letter_to_index(m.group(1)) if m else 0
-    row_num = int(m.group(2)) if m else 0
-    return (_TYPE_ORDER.get(row_dict["Type"], 9), row_num, col_idx)
+    if not m:
+        return (_TYPE_ORDER.get(row_dict["Type"], 9), 0, 0)
+    return (_TYPE_ORDER.get(row_dict["Type"], 9),
+            int(m.group(2)), col_letter_to_index(m.group(1)))
 
 
 def _build_sheet_rows(sheet_name, hardcoded_cells, formula_cells):

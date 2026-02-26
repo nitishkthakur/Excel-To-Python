@@ -115,10 +115,11 @@ def _create_no_formulas_workbook(path):
 
 def _read_report_rows(ws):
     """Read all data rows from a tabular report sheet as list of dicts."""
-    headers = [ws.cell(row=1, column=c).value for c in range(1, 20)]
+    ncols = len(COLUMNS) + 1
+    headers = [ws.cell(row=1, column=c).value for c in range(1, ncols)]
     rows = []
     for r in range(2, ws.max_row + 1):
-        vals = [ws.cell(row=r, column=c).value for c in range(1, 20)]
+        vals = [ws.cell(row=r, column=c).value for c in range(1, ncols)]
         if all(v is None for v in vals):
             continue
         rows.append(dict(zip(headers, vals)))
