@@ -64,7 +64,6 @@ def _shift_formula(formula, current_sheet, row_offset, col_offset):
     refs_sorted = sorted(refs, key=lambda r: r.start, reverse=True)
 
     for ref in refs_sorted:
-        new_parts = []
         if ref.kind == "cell":
             new_col_idx = ref.col_idx + (0 if ref.col_abs else col_offset)
             new_row = ref.row + (0 if ref.row_abs else row_offset)
