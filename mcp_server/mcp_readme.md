@@ -30,8 +30,6 @@ Add the following to your workspace `.vscode/mcp.json` (create the file if it do
 }
 ```
 
-Alternatively, copy or symlink the provided `mcp.json` from this directory into your client's configuration folder.
-
 ### Connecting from Claude Desktop
 
 Add to `claude_desktop_config.json`:
@@ -52,18 +50,19 @@ Add to `claude_desktop_config.json`:
 
 ## Sampling Strategies
 
-All three strategies extract **both formulas and values** from every cell
+All five strategies extract **both formulas and values** from every cell
 they visit — you never need a separate call just to get formulas from the
 sampled rows.
 
-| Mode | When to use | What it loads |
-|---|---|---|
-| `"smart_random"` | **Default / general-purpose.** Best balance of token cost and coverage. | Headers, all formula rows (up to half the budget), plus head/mid/tail data rows. |
-| `"full"` | Small lookup tables or when you need every single row. Avoid on sheets with thousands of rows. | Every row and column in each detected region (optionally capped by `nrows`/`ncols`). |
-| `"column_n"` | Wide sheets (many period columns) where you only need a vertical slice. | The label column + the next *N* data columns, all rows. |
+| Mode | When to use | What it loads | Budget applies to |
+|---|---|---|---|
+| `"smart_random"` | **First-time exploration / overview.** Best balance of token cost and coverage. Use ONLY when exploring the Excel file for the first time or getting an overview. | Headers, all formula rows (up to half the budget), plus head/mid/tail data rows. | Rows per sheet |
+| `"full"` | **Detailed analysis of a specific sheet.** Use when comprehensively analysing a particular sheet. Avoid on sheets with thousands of rows. | Every row and column in each detected region (optionally capped by `nrows`/`ncols`). | Rows/cols per region |
+| `"column_n"` | Wide sheets (many period columns) where you only need a vertical slice. | The label column + the next *N* data columns, all rows. | Columns per region |
+| `"row_head"` | **Scanning non-priority sheets efficiently.** Captures all patch headers and the first few data rows. Perfect for scanning sheets where you need the structure but not all data. | Header row + first N data rows of each detected patch. Budget divided across patches proportionally. | Rows per sheet |
+| `"column_head"` | **Financial sheets with date columns.** Columns are dates (Q1 2023, Q2 2023, …) and rows are entities (Income, Profit, Revenue). Captures entity labels + first N date columns. | All rows, first N columns of each patch. Budget divided across patches proportionally. | Columns per sheet |
 
-All three modes are available in **`get_sheet_data`** and
-**`get_sheet_sample`** via the `mode` parameter.
+All five modes are available in **`get_sheet_data`** and **`get_sheet_sample`** via the `mode` parameter.
 
 ---
 
@@ -71,7 +70,7 @@ All three modes are available in **`get_sheet_data`** and
 
 ### `list_sheets`
 
-List all sheet names in an Excel workbook.  Use this as the first step when you receive an unknown file.
+List all sheet names in an Excel workbook. Use this as the first step when you receive an unknown file.
 
 | Argument | Type | Required | Description | Example |
 |---|---|---|---|---|
@@ -81,19 +80,14 @@ List all sheet names in an Excel workbook.  Use this as the first step when you 
 
 ```
 list_sheets(file_path="/home/user/reports/q4_financials.xlsx")
-```
-
-**Example output:**
-
-```json
-["Sales", "Costs", "Summary"]
+→ '["Sales", "Costs", "Summary"]'
 ```
 
 ---
 
 ### `get_workbook_summary`
 
-Return a lightweight structural summary of the entire workbook — sheet names, dimensions, detected data regions, and formula counts.  **Call this first** to decide which sheets deserve deeper analysis.
+Return a lightweight structural summary of the entire workbook — sheet names, dimensions, detected data regions, and formula counts. **Call this first** to decide which sheets deserve deeper analysis.
 
 | Argument | Type | Required | Description | Example |
 |---|---|---|---|---|
@@ -105,159 +99,147 @@ Return a lightweight structural summary of the entire workbook — sheet names, 
 get_workbook_summary(file_path="/data/report.xlsx")
 ```
 
-**Example output (abbreviated):**
-
-```json
-{
-  "file": "/data/report.xlsx",
-  "sheets": [
-    {
-      "name": "Sales",
-      "max_row": 500,
-      "max_column": 10,
-      "regions": ["DataRegion(rows=1-2, cols=1-1, header=1)",
-                  "DataRegion(rows=4-500, cols=1-10, header=4)"],
-      "region_count": 2,
-      "formula_count": 48
-    },
-    {
-      "name": "Costs",
-      "max_row": 20,
-      "max_column": 5,
-      "region_count": 1,
-      "formula_count": 8
-    }
-  ]
-}
-```
-
 ---
 
 ### `get_sheet_formulas`
 
-Extract every formula from a sheet.  **Use this first** when analysing a
-sheet — formulas encode the business logic.  Best for tracing cross-sheet
-references and deeply nested derived quantities.
+Extract every formula from a sheet. **Use this first** when analysing a sheet — formulas encode the business logic.
 
 | Argument | Type | Required | Description | Example |
 |---|---|---|---|---|
 | `file_path` | string | yes | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
-| `sheet_name` | string | yes | Exact sheet name | `"Summary"` |
-
-**Example call:**
-
-```
-get_sheet_formulas(file_path="/data/report.xlsx", sheet_name="Summary")
-```
-
-**Example output:**
-
-```json
-[
-  {"address": "B4", "formula": "=SUM(B2:B3)", "cached_value": 4500},
-  {"address": "B6", "formula": "=Sales!D500-B4", "cached_value": 120500}
-]
-```
+| `sheet_name` | string | yes | Exact sheet name (case-sensitive) | `"Summary"` |
 
 ---
 
 ### `get_sheet_data`
 
-Read a sheet and return its data (with formulas) in the requested format.  Large sheets are automatically sampled.  **All three sampling modes return both formulas and values.**
+Read a sheet and return its data (with formulas) in the requested format. Large sheets are automatically sampled. **All five sampling modes return both formulas and values.**
 
-| Argument | Type | Required | Default | Description | Example values |
+| Argument | Type | Required | Default | Description | When to set |
 |---|---|---|---|---|---|
-| `file_path` | string | yes | — | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
-| `sheet_name` | string | yes | — | Exact sheet name (case-sensitive) | `"Sales"`, `"P&L Summary"` |
-| `format` | string | no | `"markdown"` | Output format: `"markdown"`, `"json"`, or `"xml"` | `"json"` |
-| `mode` | string | no | `"smart_random"` | Sampling strategy: `"smart_random"`, `"full"`, or `"column_n"` | `"full"` |
-| `max_sample_rows` | int | no | `100` | Max rows per region (only for `smart_random` mode) | `50`, `200` |
-| `nrows` | int | no | `None` | Max rows to load (only for `full` mode) | `500` |
-| `ncols` | int | no | `None` | Max columns to load (only for `full` mode) | `5` |
-| `num_columns` | int | no | `10` | Data columns after label column (only for `column_n` mode) | `5` |
+| `file_path` | string | yes | — | Absolute path to the `.xlsx` file | Always required |
+| `sheet_name` | string | yes | — | Exact sheet name (case-sensitive) | Always required |
+| `format` | string | no | `"markdown"` | Output format: `"markdown"`, `"json"`, or `"xml"` | Set to `"json"` for programmatic processing, `"xml"` for XML interchange |
+| `mode` | string | no | `"smart_random"` | Sampling strategy — see table below | Set based on your analysis goal |
+| `max_sample_rows` | int | no | `100` | Row budget **per sheet** (for `smart_random` and `row_head` modes) | Increase for wider coverage, decrease to save tokens |
+| `nrows` | int | no | `None` | Max rows per region (only `full` mode) | Set when you want to cap full-mode output |
+| `ncols` | int | no | `None` | Max columns per region (only `full` mode) | Set when you want to cap full-mode output |
+| `num_columns` | int | no | `10` | Data columns after label column (only `column_n` mode) | Set to 3-5 for narrow views |
+| `max_cols` | int | no | `20` | Column budget **per sheet** (only `column_head` mode) | Set to 10 for narrow, 30 for wide coverage |
 
-**Example calls:**
+**Mode selection guide:**
 
-```
-# Markdown overview (default, sampled)
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales")
-
-# JSON with a smaller sample
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Costs",
-               format="json", max_sample_rows=50)
-
-# All rows using full mode
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Lookups",
-               mode="full")
-
-# Vertical strip using column_n mode
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
-               mode="column_n", num_columns=5)
-```
-
-**Example Markdown output (abbreviated):**
-
-```markdown
-## Sheet: Sales
-
-_Sampled 18 of 500 rows._
-
-### Region 1  (rows 1–2, cols A–A)
-
-| Acme Corp |
-| --- |
-| Q4 2025 Sales Report |
-
-### Region 2  (rows 4–500, cols A–D)
-
-| Product | Units | Price | Revenue |
-| --- | --- | --- | --- |
-| Widget A | 100 | 9.99 | 999 |
-| Widget B | 250 | 14.99 | 3747.5 |
-| ... | ... | ... | ... |
-
-**Formulas:**
-
-- `D5`: `=B5*C5`  → 999
-- `D6`: `=B6*C6`  → 3747.5
-- `D500`: `=SUM(D5:D499)`  → 125000
-```
+| Mode value | When to set this value |
+|---|---|
+| `"smart_random"` | Set this when exploring an Excel file for the first time or getting a general overview. This is the default. |
+| `"full"` | Set this when you need to comprehensively analyse a specific sheet in detail — all rows, all columns. |
+| `"column_n"` | Set this when the sheet is very wide (many columns) and you only need the label column + a few data columns. |
+| `"row_head"` | Set this to scan sheets efficiently — captures all patch headers and first few rows. Use for non-priority sheets. |
+| `"column_head"` | Set this for financial sheets where columns are dates and rows are entities (Income, Profit, etc.). |
 
 ---
 
 ### `get_sheet_sample`
 
-Get a very small sample of a sheet — useful for a quick preview before requesting full data.  **All three sampling modes return both formulas and values.**
+Get a very small sample of a sheet — useful for a quick preview. Identical to `get_sheet_data` but defaults to 30 rows instead of 100.
 
-| Argument | Type | Required | Default | Description | Example values |
-|---|---|---|---|---|---|
-| `file_path` | string | yes | — | Absolute path to the `.xlsx` file | `"/data/report.xlsx"` |
-| `sheet_name` | string | yes | — | Exact sheet name | `"Raw Data"` |
-| `max_rows` | int | no | `30` | Max rows to include (only for `smart_random` mode) | `10`, `50` |
-| `format` | string | no | `"markdown"` | Output format | `"json"`, `"xml"` |
-| `mode` | string | no | `"smart_random"` | Sampling strategy: `"smart_random"`, `"full"`, or `"column_n"` | `"column_n"` |
-| `num_columns` | int | no | `10` | Data columns after label column (only for `column_n` mode) | `5` |
-
-**Example calls:**
-
-```
-# Quick Markdown preview
-get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Sales")
-
-# Tiny JSON preview (10 rows) to check column names
-get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Raw Data",
-                 max_rows=10, format="json")
-
-# Preview using column_n mode
-get_sheet_sample(file_path="/data/report.xlsx", sheet_name="Sales",
-                 mode="column_n", num_columns=5)
-```
+| Argument | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `file_path` | string | yes | — | Absolute path to the `.xlsx` file |
+| `sheet_name` | string | yes | — | Exact sheet name |
+| `max_rows` | int | no | `30` | Row budget **per sheet** (for `smart_random` and `row_head` modes) |
+| `format` | string | no | `"markdown"` | Output format |
+| `mode` | string | no | `"smart_random"` | Sampling strategy (same 5 modes as `get_sheet_data`) |
+| `num_columns` | int | no | `10` | Data columns after label (only `column_n` mode) |
+| `max_cols` | int | no | `20` | Column budget **per sheet** (only `column_head` mode) |
 
 ---
 
-## Recommended Tool Combinations
+## Recommended Tool Combinations for LLMs
 
-### 1. Formula-Focused Analysis  (trace calculation chains — **recommended default**)
+### Pathway 1: Reading an Unknown Excel File for Overview
+
+Use this when the user provides an Excel file you have never seen before
+and you need to understand its structure and content.
+
+```
+Step 1 → get_workbook_summary(file_path="/data/unknown.xlsx")
+         Read the structural summary: sheet names, dimensions,
+         region counts, formula counts.  Identify which sheets
+         are large, which have formulas, and which are small.
+
+Step 2 → For each sheet, get a quick sample in smart_random mode:
+         get_sheet_sample(file_path="/data/unknown.xlsx",
+                          sheet_name="<sheet>",
+                          mode="smart_random",
+                          max_rows=20)
+
+Step 3 → get_sheet_formulas(file_path="/data/unknown.xlsx",
+                            sheet_name="<sheet_with_formulas>")
+         Pull formulas from sheets that have formula_count > 0
+         to understand the calculation logic.
+
+Step 4 → Synthesise a summary:
+         "Based on the workbook summary and samples, here is what
+          this Excel file contains and calculates…"
+```
+
+### Pathway 2: User Mentions an Important Sheet
+
+Use this when the user says something like *"The P&L sheet is the most
+important one"* or *"Focus on the Revenue sheet"*.
+
+```
+Step 1 → get_workbook_summary(file_path="/data/financial_model.xlsx")
+         Understand the full workbook structure.
+
+Step 2 → Load the important sheet in FULL mode for detailed analysis:
+         get_sheet_data(file_path="/data/financial_model.xlsx",
+                        sheet_name="P&L",
+                        mode="full")
+
+Step 3 → Load all OTHER sheets in ROW_HEAD mode for efficient scanning:
+         get_sheet_data(file_path="/data/financial_model.xlsx",
+                        sheet_name="<other_sheet>",
+                        mode="row_head",
+                        max_sample_rows=30)
+         This captures all headers and first few rows of every patch
+         without consuming excessive tokens.
+
+Step 4 → get_sheet_formulas(file_path="/data/financial_model.xlsx",
+                            sheet_name="P&L")
+         Trace the formula dependencies in the important sheet.
+
+Step 5 → Produce the detailed analysis of the important sheet,
+         referencing context from the other sheets scanned in Step 3.
+```
+
+### Pathway 3: Financial Model with Date Columns
+
+Use this for workbooks where sheets have many quarterly/monthly date
+columns spanning multiple years and row indices are financial entities.
+
+```
+Step 1 → get_workbook_summary(file_path="/data/forecast.xlsx")
+
+Step 2 → For wide sheets with date columns, use column_head mode:
+         get_sheet_data(file_path="/data/forecast.xlsx",
+                        sheet_name="Revenue",
+                        mode="column_head",
+                        max_cols=10)
+         This reads ALL entity rows but only the first 10 date columns,
+         so the LLM can see all entities and relate them to dates.
+
+Step 3 → For the key analysis sheet, use full mode:
+         get_sheet_data(file_path="/data/forecast.xlsx",
+                        sheet_name="Summary",
+                        mode="full")
+
+Step 4 → get_sheet_formulas for sheets with cross-references.
+```
+
+### Pathway 4: Formula-Focused Analysis (Trace Calculation Chains)
 
 When analysing an Excel file, **start with formulas** unless the user
 explicitly asks for data values.
@@ -278,79 +260,17 @@ Step 4 → Ask the LLM:
           the P&L sheet."
 ```
 
-### 2. Full Workbook Analysis  (generate a business summary)
-
-This workflow gives the LLM enough context to write a plain-language summary of what the workbook calculates.
-
-```
-Step 1 → get_workbook_summary(file_path="/data/report.xlsx")
-         Understand how many sheets exist, their sizes, and formula counts.
-
-Step 2 → get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales")
-         Repeat for each sheet (or focus on sheets with formulas).
-
-Step 3 → get_sheet_formulas(file_path="/data/report.xlsx", sheet_name="Sales")
-         Pull the full formula list for sheets with cross-sheet references or
-         complex nested calculations.  Ask the LLM to trace the dependency
-         chain and explain each derived quantity.
-```
-
-**Prompt to the LLM after gathering data:**
-
-> "Based on the workbook summary and the sheet data above, write a business
-> summary of what this Excel file calculates. For each sheet, explain: the
-> purpose, key inputs, key outputs, and how formulas derive the outputs."
-
----
-
-### 3. Quick Preview of a Large File
-
-When the file is very large and you want to minimise context usage:
-
-```
-Step 1 → list_sheets(file_path="/data/big_model.xlsx")
-         See all sheet names.
-
-Step 2 → get_sheet_sample(file_path="/data/big_model.xlsx",
-                          sheet_name="Revenue", max_rows=20)
-         Glance at the structure and column headers.
-
-Step 3 → get_sheet_data(file_path="/data/big_model.xlsx",
-                        sheet_name="Revenue", max_sample_rows=50)
-         Get a bigger sample with formulas for a more complete picture.
-```
-
----
-
-### 4. Comparing Formats  (pick the best for your use case)
-
-| Format | Best for |
-|---|---|
-| `"markdown"` | Human-readable output, quick summaries, conversational use |
-| `"json"` | Programmatic processing, feeding into downstream scripts |
-| `"xml"` | Structured interchange, systems that consume XML |
-
-```
-# Get the same sheet in all three formats to compare
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
-               format="markdown")
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
-               format="json")
-get_sheet_data(file_path="/data/report.xlsx", sheet_name="Sales",
-               format="xml")
-```
-
 ---
 
 ## Handling Large Files
 
-Sheets with more than **100 rows per data region** are automatically sampled when using `smart_random` mode (the default).  The sampling strategy ensures the LLM sees enough to understand the sheet:
+Sheets with more than **100 rows per data region** are automatically sampled when using `smart_random` mode (the default). The sampling strategy ensures the LLM sees enough to understand the sheet:
 
 1. **Header rows** — always included so column names are visible.
 2. **Formula rows** — always included (up to half the budget) so calculation logic is captured.
 3. **Head / middle / tail** data rows — evenly spread to show the range of values.
 
-You can control the sample size:
+**Budget is always per sheet** — for modes that support multiple patches (`row_head`, `column_head`), the budget is divided across patches proportionally to their size.
 
 | Goal | How |
 |---|---|
@@ -358,6 +278,8 @@ You can control the sample size:
 | Smaller sample to save tokens | `get_sheet_data(..., max_sample_rows=30)` or use `get_sheet_sample` |
 | Disable sampling entirely | `get_sheet_data(..., mode="full")` — **use with caution** on huge files |
 | Vertical slice of a wide sheet | `get_sheet_data(..., mode="column_n", num_columns=5)` |
+| Efficient header scan | `get_sheet_data(..., mode="row_head", max_sample_rows=30)` |
+| Date-column financial sheets | `get_sheet_data(..., mode="column_head", max_cols=10)` |
 
 ---
 
@@ -370,7 +292,7 @@ Real-world Excel files are often messy:
 - Headers that don't start on row 1
 - Multiple "patches" of data on the same sheet with their own headers
 
-The server handles all of these by scanning for contiguous non-blank row runs and treating each as an independent **data region**.  Each region is reported separately with its own detected headers, row data, and formulas.
+The server handles all of these by scanning for contiguous non-blank row runs and treating each as an independent **data region**. Each region is reported separately with its own detected headers, row data, and formulas.
 
 ---
 
@@ -380,5 +302,6 @@ The server handles all of these by scanning for contiguous non-blank row runs an
 |---|---|---|
 | `FileNotFoundError` | Wrong path or relative path | Use an absolute path, e.g. `"/home/user/file.xlsx"` |
 | `KeyError: '<sheet>'` | Sheet name doesn't exist or is misspelled | Call `list_sheets` first to get exact names |
-| Output is too large | Sheet has thousands of rows and `mode="full"` | Switch to `mode="smart_random"` or reduce `max_sample_rows` |
+| Output is too large | Sheet has thousands of rows and `mode="full"` | Switch to `mode="smart_random"` or `mode="row_head"` or reduce `max_sample_rows` |
 | `cached_value` is `null` | File was never opened in Excel after formulas were written | Open and save the file in Excel, then re-run |
+| Wide sheet too many columns | Financial model with 50+ date columns | Use `mode="column_head"` with `max_cols=10` |
