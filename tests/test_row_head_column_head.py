@@ -14,6 +14,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from create_sample_workbook import create_sample_workbook
 
+from openpyxl.utils import get_column_letter
+
 from excel_reader_smart_sampler import (
     extract_sheet_data as smart_extract,
     sheet_names,
@@ -122,10 +124,6 @@ def multi_patch_wb(tmp_path_factory):
     return path
 
 
-# We need get_column_letter for the wide_wb fixture
-from openpyxl.utils import get_column_letter
-
-
 # ---------------------------------------------------------------------------
 # Helpers for assertions
 # ---------------------------------------------------------------------------
@@ -225,7 +223,6 @@ class TestRowHead:
         data = row_head_extract(multi_patch_wb, "Data", max_rows=100)
         # All patches are small enough to be kept whole with a large budget
         for reg in data["regions"]:
-            expected_rows = reg["max_row"] - reg["min_row"]  # minus header
             assert len(reg["rows"]) >= 1
 
 
@@ -259,11 +256,10 @@ class TestColumnHead:
         """column_head loads ALL rows, only limits columns."""
         data = column_head_extract(sample_wb, "Inputs", max_cols=2)
         for reg in data["regions"]:
-            # All non-header rows should be present
             total_rows_in_reg = reg["max_row"] - reg["min_row"] + 1
-            # rows in output = total - 1 (header excluded from row data)
-            header_excluded = 1 if reg["headers"] else 0
-            assert len(reg["rows"]) >= total_rows_in_reg - header_excluded
+            # Header row is excluded from row data output
+            expected_data_rows = total_rows_in_reg - (1 if reg["headers"] else 0)
+            assert len(reg["rows"]) >= expected_data_rows
 
     def test_column_budget_limits_width(self, sample_wb):
         """With a small column budget, the strip width should be limited."""
@@ -462,6 +458,26 @@ class TestBudgetAllocation:
                      "header_row": 1}]
         budgets = _allocate_col_budget(regions, 100)
         assert budgets[0] == 3  # only 3 cols in region
+
+    def test_allocate_budget_no_overrun_many_regions(self):
+        """With many regions and small budget, total should not exceed budget."""
+        regions = [
+            {"min_row": i * 20, "max_row": i * 20 + 10,
+             "min_col": 1, "max_col": 5, "header_row": i * 20}
+            for i in range(10)
+        ]
+        budgets = _allocate_budget(regions, 10)
+        assert sum(budgets) <= 10
+
+    def test_allocate_col_budget_no_overrun_many_regions(self):
+        """With many regions and small budget, total should not exceed budget."""
+        regions = [
+            {"min_row": i * 20, "max_row": i * 20 + 10,
+             "min_col": 1, "max_col": 20, "header_row": i * 20}
+            for i in range(10)
+        ]
+        budgets = _allocate_col_budget(regions, 10)
+        assert sum(budgets) <= 10
 
 
 # ===========================================================================

@@ -55,7 +55,25 @@ def _allocate_budget(regions: list[dict], total_budget: int) -> list[int]:
 
     # Proportional allocation (vectorized)
     raw = (sizes / total_size) * total_budget
-    budgets = np.maximum(np.floor(raw).astype(int), 2)
+
+    # Only enforce minimum of 2 per region if budget allows
+    min_per_region = 2 if total_budget >= 2 * len(regions) else 1
+    budgets = np.maximum(np.floor(raw).astype(int), min_per_region)
+
+    # If sum exceeds total_budget, scale back proportionally
+    current_sum = int(budgets.sum())
+    if current_sum > total_budget:
+        budgets = np.maximum(np.floor(raw).astype(int), 1)
+        current_sum = int(budgets.sum())
+        # Trim further if still over budget
+        while current_sum > total_budget:
+            order = np.argsort(sizes)  # trim smallest first
+            for idx in order:
+                if current_sum <= total_budget:
+                    break
+                if budgets[idx] > 1:
+                    budgets[idx] -= 1
+                    current_sum -= 1
 
     # Distribute any remaining budget to the largest regions
     remaining = total_budget - int(budgets.sum())
