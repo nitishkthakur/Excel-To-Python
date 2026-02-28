@@ -13,6 +13,7 @@ Tools provided:
   3. get_sheet_formulas   – extract all formulas from a sheet  ← **start here**
   4. get_workbook_summary – lightweight structural overview of the workbook
   5. get_sheet_sample     – get a small representative sample of a sheet
+  6. search_keywords      – search for keywords and return surrounding rows/columns
 """
 
 import os
@@ -32,6 +33,7 @@ from fetcher_full import extract_sheet_data as extract_sheet_data_full
 from fetcher_column_n import extract_sheet_data as extract_sheet_data_column_n
 from fetcher_row_head import extract_sheet_data as extract_sheet_data_row_head
 from fetcher_column_head import extract_sheet_data as extract_sheet_data_column_head
+from fetcher_keyword import search_keywords as keyword_search
 from formatters import to_markdown, to_json, to_xml
 
 VALID_MODES = ("smart_random", "full", "column_n", "row_head", "column_head")
@@ -450,6 +452,75 @@ def get_sheet_sample(
     if fmt == "xml":
         return to_xml(data)
     return to_markdown(data)
+
+
+@mcp.tool()
+def search_keywords_in_workbook(
+    file_path: Annotated[str, Field(
+        description=(
+            "Absolute path to the .xlsx file on disk. "
+            "Example: '/data/report.xlsx', '/home/user/reports/budget_model.xlsx'"
+        ),
+    )],
+    keywords: Annotated[list[str], Field(
+        description=(
+            "One or more keywords to search for (case-insensitive substring match). "
+            "Example: ['Revenue', 'COGS'] or ['Tax Rate']. "
+            "Each keyword is matched against cell values and formula strings."
+        ),
+    )],
+    sheet_name: Annotated[str | None, Field(
+        default=None,
+        description=(
+            "Optional: restrict the search to a single sheet (case-sensitive). "
+            "If omitted, all sheets in the workbook are searched. "
+            "Example: 'Sales', 'Summary'"
+        ),
+    )] = None,
+) -> str:
+    """Search for keywords in an Excel workbook and return the full rows and
+    columns where they appear — including formulas and cached values.
+
+    Use this tool when you need to locate a specific term, entity, or quantity
+    inside a workbook and understand the formulas that surround it.  For every
+    matching cell the tool returns:
+
+    * **The full row** within the data patch — so you see all values and
+      formulas on the same row as the keyword.
+    * **The full column** within the data patch — so you see how the keyword's
+      column relates to other rows (e.g. the header and downstream formulas).
+    * **Patch headers** — so you know what each column/row represents.
+
+    This is especially useful for tracing calculations: search for "Revenue"
+    and you immediately see the formula in that row and every other entity in
+    the same column.
+
+    Returns a JSON object with:
+      - "keywords"  — the keywords that were searched
+      - "matches"   — list of per-sheet results, each containing:
+          - "sheet_name"
+          - "regions" — list of matching data regions, each with:
+              - "region"        — region description
+              - "headers"       — patch column headers
+              - "matched_cells" — list of cells that matched (address, value,
+                                  formula, keyword)
+              - "rows"          — full row data for every matched row
+              - "columns"       — full column data for every matched column
+
+    Example calls:
+        # Search for "Revenue" across the entire workbook
+        search_keywords_in_workbook(
+            file_path="/data/report.xlsx",
+            keywords=["Revenue"])
+
+        # Search for multiple terms in a specific sheet
+        search_keywords_in_workbook(
+            file_path="/data/report.xlsx",
+            keywords=["Revenue", "COGS", "Gross Profit"],
+            sheet_name="PnL")
+    """
+    result = keyword_search(file_path, keywords, sheet_name=sheet_name)
+    return json.dumps(result, indent=2, default=str)
 
 
 # ---------------------------------------------------------------------------
