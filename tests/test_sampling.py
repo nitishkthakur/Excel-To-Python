@@ -24,8 +24,8 @@ from excel_reader_smart_sampler import (
     open_workbook,
     DEFAULT_SAMPLE_ROWS,
 )
-from excel_sample_full import extract_sheet_data as full_extract
-from column_n import extract_sheet_data as column_n_extract
+from fetcher_full import extract_sheet_data as full_extract
+from fetcher_column_n import extract_sheet_data as column_n_extract
 
 
 # ---------------------------------------------------------------------------

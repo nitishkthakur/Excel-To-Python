@@ -18,6 +18,7 @@ from excel_reader_smart_sampler import (
 )
 
 
+
 def extract_sheet_data(path: str, sheet_name: str,
                        nrows: int | None = None,
                        ncols: int | None = None) -> dict[str, Any]:

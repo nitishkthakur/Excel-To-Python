@@ -21,19 +21,19 @@ from excel_reader_smart_sampler import (
     sheet_names,
     DEFAULT_SAMPLE_ROWS,
 )
-from excel_sample_full import extract_sheet_data as full_extract
-from column_n import extract_sheet_data as column_n_extract
-from row_head_fetcher import (
+from fetcher_full import extract_sheet_data as full_extract
+from fetcher_column_n import extract_sheet_data as column_n_extract
+from fetcher_row_head import (
     extract_sheet_data as row_head_extract,
     _allocate_budget,
     row_head_indices,
 )
-from column_head_fetcher import (
+from fetcher_column_head import (
     extract_sheet_data as column_head_extract,
     _allocate_col_budget,
     column_head_indices,
 )
-from smart_random_fetcher import load_sheet_frames, detect_regions
+from fetcher_smart_random import load_sheet_frames, detect_regions
 
 
 # ---------------------------------------------------------------------------
