@@ -5,37 +5,30 @@ The strategy locates the first column that contains data (typically a
 label column with finance line items such as "Revenue", "COGS", etc.)
 and then loads that column plus the next *num_columns* data columns,
 producing a narrow vertical slice of the sheet.
+
+The implementation is fully vectorized using **pandas** and **numpy**
+for speed.
 """
 
 from typing import Any
 
-from excel_reader_smart_sampler import (
-    open_workbook,
-    open_workbook_values,
+import numpy as np
+import pandas as pd
+from openpyxl.utils import get_column_letter
+
+from fetcher_smart_random import (
+    load_sheet_frames,
     detect_regions,
-    _cell_info,
 )
 
 
 DEFAULT_NUM_COLUMNS = 10
 
 
-def _find_label_column(ws, region) -> int:
-    """Return the column index of the first non-empty column in *region*.
-
-    This column typically holds row labels (e.g. "Revenue", "Expenses").
-    """
-    for c in range(region.min_col, region.max_col + 1):
-        for r in range(region.min_row, region.max_row + 1):
-            if ws.cell(row=r, column=c).value is not None:
-                return c
-    return region.min_col
-
-
 def extract_sheet_data(path: str, sheet_name: str,
                        num_columns: int = DEFAULT_NUM_COLUMNS) -> dict[str, Any]:
     """
-    Extract a vertical strip from a single sheet.
+    Extract a vertical strip from a single sheet (vectorized).
 
     For every detected data region the strip starts at the first column
     that contains data (the *label column*) and extends for
@@ -52,63 +45,84 @@ def extract_sheet_data(path: str, sheet_name: str,
     Returns a dict compatible with the formatter functions (to_markdown,
     to_json, to_xml).
     """
-    wb_f = open_workbook(path)
-    wb_v = open_workbook_values(path)
-    ws_f = wb_f[sheet_name]
-    ws_v = wb_v[sheet_name]
+    df_v, df_f = load_sheet_frames(path, sheet_name)
+    if df_f.empty:
+        return {
+            "sheet_name": sheet_name,
+            "regions": [],
+            "sampled": False,
+            "total_rows": 0,
+            "sampled_rows": 0,
+        }
 
-    regions = detect_regions(ws_f)
+    regions = detect_regions(df_f)
     result_regions: list[dict[str, Any]] = []
     total_rows = 0
     loaded_rows = 0
 
     for reg in regions:
-        total_rows += reg.row_count()
+        rmin, rmax = reg["min_row"], reg["max_row"]
+        cmin, cmax = reg["min_col"], reg["max_col"]
+        total_rows += rmax - rmin + 1
 
-        label_col = _find_label_column(ws_f, reg)
+        # Label column is the first column with data (= min_col, detected by detect_regions)
+        label_col = cmin
         # Strip spans: label_col .. label_col + num_columns  (clamped to region)
-        strip_max_col = min(label_col + num_columns, reg.max_col)
+        strip_max_col = min(label_col + num_columns, cmax)
+        cols = list(range(label_col, strip_max_col + 1))
+        _empty_row = pd.Series([None] * len(cols), index=cols)
 
-        # Extract headers
+        # Headers (vectorized slice)
         headers: list[str] = []
-        if reg.header_row is not None:
-            for c in range(label_col, strip_max_col + 1):
-                v = ws_f.cell(row=reg.header_row, column=c).value
-                headers.append(str(v) if v is not None else "")
+        if reg["header_row"] is not None:
+            hdr_vals = df_f.loc[reg["header_row"], cols]
+            headers = [str(v) if pd.notna(v) else "" for v in hdr_vals]
 
         # Extract all rows in the vertical strip
         row_data: list[dict[str, Any]] = []
         formulas: list[dict[str, str]] = []
 
-        for r in range(reg.min_row, reg.max_row + 1):
+        for r in range(rmin, rmax + 1):
             loaded_rows += 1
-            if r == reg.header_row:
+            if r == reg["header_row"]:
                 continue
+            val_row = df_v.loc[r, cols] if r in df_v.index else _empty_row
+            frm_row = df_f.loc[r, cols]
+
             cells: list[Any] = []
-            for c in range(label_col, strip_max_col + 1):
-                info = _cell_info(ws_f, ws_v, r, c)
-                cells.append(info["value"])
-                if "formula" in info:
+            for c in cols:
+                v_val = val_row[c] if c in val_row.index else None
+                f_val = frm_row[c] if c in frm_row.index else None
+
+                if isinstance(v_val, (np.integer,)):
+                    v_val = int(v_val)
+                elif isinstance(v_val, (np.floating,)):
+                    v_val = float(v_val)
+                if not isinstance(v_val, str) and pd.isna(v_val):
+                    v_val = None
+
+                cells.append(v_val)
+
+                if isinstance(f_val, str) and f_val.startswith("="):
                     formulas.append({
-                        "address": info["address"],
-                        "formula": info["formula"],
-                        "cached_value": info["value"],
+                        "address": f"{get_column_letter(c)}{r}",
+                        "formula": f_val,
+                        "cached_value": v_val,
                     })
+
             row_data.append({"row_number": r, "values": cells})
 
         result_regions.append({
-            "region": str(reg),
-            "min_row": reg.min_row,
-            "max_row": reg.max_row,
+            "region": (f"DataRegion(rows={rmin}-{rmax}, "
+                       f"cols={cmin}-{strip_max_col}, header={reg['header_row']})"),
+            "min_row": rmin,
+            "max_row": rmax,
             "min_col": label_col,
             "max_col": strip_max_col,
             "headers": headers,
             "rows": row_data,
             "formulas": formulas,
         })
-
-    wb_f.close()
-    wb_v.close()
 
     return {
         "sheet_name": sheet_name,
