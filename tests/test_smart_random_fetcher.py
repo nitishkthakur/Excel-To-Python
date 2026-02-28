@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "mcp_server"))
 sys.path.insert(0, os.path.dirname(__file__))
 
 from create_sample_workbook import create_sample_workbook
-from smart_random_fetcher import (
+from fetcher_smart_random import (
     extract_sheet_data,
     load_sheet_frames,
     detect_regions,

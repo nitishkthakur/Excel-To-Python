@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 from openpyxl.utils import get_column_letter
 
-from smart_random_fetcher import (
+from fetcher_smart_random import (
     load_sheet_frames,
     detect_regions,
     _non_null_mask,

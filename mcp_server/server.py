@@ -28,10 +28,10 @@ from excel_reader_smart_sampler import (
     workbook_summary,
     DEFAULT_SAMPLE_ROWS,
 )
-from excel_sample_full import extract_sheet_data as extract_sheet_data_full
-from column_n import extract_sheet_data as extract_sheet_data_column_n
-from row_head_fetcher import extract_sheet_data as extract_sheet_data_row_head
-from column_head_fetcher import extract_sheet_data as extract_sheet_data_column_head
+from fetcher_full import extract_sheet_data as extract_sheet_data_full
+from fetcher_column_n import extract_sheet_data as extract_sheet_data_column_n
+from fetcher_row_head import extract_sheet_data as extract_sheet_data_row_head
+from fetcher_column_head import extract_sheet_data as extract_sheet_data_column_head
 from formatters import to_markdown, to_json, to_xml
 
 VALID_MODES = ("smart_random", "full", "column_n", "row_head", "column_head")

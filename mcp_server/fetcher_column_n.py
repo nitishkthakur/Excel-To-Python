@@ -16,6 +16,7 @@ from excel_reader_smart_sampler import (
     _cell_info,
 )
 
+
 DEFAULT_NUM_COLUMNS = 10
 
 
