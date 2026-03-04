@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from excel_to_mapping.mapper import generate_mapping_report
 from excel_to_mapping.regenerator import regenerate_workbook, generate_input_template
+from excel_to_mapping.structured_input_generator import generate_structured_input
 
 
 def main():
@@ -54,6 +55,21 @@ def main():
     p_tpl.add_argument(
         "--output", default=None,
         help="Output template path (default: ./output/input_template.xlsx)",
+    )
+
+    # ---- structured-input ----
+    p_si = sub.add_parser(
+        "structured-input",
+        help="Generate a user-friendly structured input workbook from a mapping report",
+    )
+    p_si.add_argument("mapping_file", help="Path to the mapping report (.xlsx)")
+    p_si.add_argument(
+        "--excel", default=None,
+        help="Path to the original source Excel (used to infer labels / headers)",
+    )
+    p_si.add_argument(
+        "--output", default=None,
+        help="Output path (default: ./output/structured_input.xlsx)",
     )
 
     # ---- regenerate ----
@@ -90,6 +106,20 @@ def main():
             sys.exit(1)
         out = args.output or os.path.join("output", "input_template.xlsx")
         generate_input_template(args.mapping_file, out)
+
+    elif args.command == "structured-input":
+        if not os.path.exists(args.mapping_file):
+            print(f"Error: File '{args.mapping_file}' not found.")
+            sys.exit(1)
+        if args.excel and not os.path.exists(args.excel):
+            print(f"Error: Excel file '{args.excel}' not found.")
+            sys.exit(1)
+        out = args.output or os.path.join("output", "structured_input.xlsx")
+        generate_structured_input(
+            args.mapping_file,
+            excel_path=args.excel,
+            output_path=out,
+        )
 
     elif args.command == "regenerate":
         if not os.path.exists(args.mapping_file):

@@ -231,6 +231,13 @@ _HEADER_FILL = PatternFill(start_color="4472C4", end_color="4472C4",
                            fill_type="solid")
 _HEADER_FONT = Font(bold=True, color="FFFFFF")
 
+# Row fill colours by cell type
+_TYPE_FILLS = {
+    "Input":       PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid"),  # light green
+    "Calculation": PatternFill(start_color="FFEB9C", end_color="FFEB9C", fill_type="solid"),  # light yellow
+    "Output":      PatternFill(start_color="BDD7EE", end_color="BDD7EE", fill_type="solid"),  # light blue
+}
+
 
 def generate_mapping_report(excel_path, sheet_names=None,
                             config_path=None, output_path=None):
@@ -289,8 +296,18 @@ def generate_mapping_report(excel_path, sheet_names=None,
         # Build and write data rows
         data_rows = _build_sheet_rows(sn, hardcoded_cells, formula_cells)
         for ri, row_dict in enumerate(data_rows, 2):
+            row_fill = _TYPE_FILLS.get(row_dict.get("Type"))
             for ci, col_name in enumerate(COLUMNS, 1):
-                ws.cell(row=ri, column=ci, value=row_dict.get(col_name))
+                val = row_dict.get(col_name)
+                cell = ws.cell(row=ri, column=ci)
+                # Store formula text as a plain string so Excel does not evaluate it
+                if col_name == "Formula" and isinstance(val, str) and val.startswith("="):
+                    cell._value = val
+                    cell.data_type = "s"
+                else:
+                    cell.value = val
+                if row_fill:
+                    cell.fill = row_fill
 
         # Auto-width for key columns
         ws.column_dimensions["A"].width = 14
