@@ -89,6 +89,25 @@ This lets a user add a new time period simply by **appending a row** — no colu
 
 ---
 
+## Line-N Fallback Labels
+
+When a row or metric label cannot be resolved from the source workbook (i.e., `_find_row_label` returns `None` and no embedded string label is present in the vector), the generator assigns a **context-agnostic sequential label** instead of a raw cell reference:
+
+- `Line1`, `Line2`, `Line3`, … (counter resets to 1 for every vector sheet)
+
+This applies in **both layout orientations**:
+
+| Layout | Where the label appears | Fallback |
+|--------|------------------------|----------|
+| **Transposed** (dates as rows) | Row 1, column headers (metric names) | `Line1`, `Line2`, … |
+| **Original** (metrics as rows) | Col A, row labels | `Line1`, `Line2`, … |
+
+**Rule:** A row receives a `LineN` label only when its label is completely unresolvable — i.e., no text string exists to the left of the data in the source sheet AND the vector's first cell is not a string.  Named rows (e.g., "Revenue from operations") always retain their real label.
+
+The fallback `"Row {row_number}"` label is no longer used anywhere in the output.
+
+---
+
 ## Stage 2 — User Edit
 
 The user opens `structured_input.xlsx` and:

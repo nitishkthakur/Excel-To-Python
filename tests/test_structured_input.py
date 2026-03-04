@@ -18,6 +18,8 @@ from excel_to_mapping.structured_input_generator import (
     _split_label_from_vector,
     _find_row_label,
     _find_col_headers_in_source,
+    _is_financial_date,
+    _are_date_headers,
 )
 
 
@@ -79,6 +81,48 @@ def _build_timeseries_excel(path):
     ws_cfg["B1"] = 0.25
     ws_cfg["A2"] = "Discount"
     ws_cfg["B2"] = 0.05
+    wb.save(path)
+    wb.close()
+
+
+def _build_dated_no_labels_excel(path):
+    """Year headers in row 1; data rows have NO labels in col A.
+
+    Sheet "Series":  B1=2021 C1=2022 D1=2023, rows 2-4 = pure numeric data.
+    Expected: transposed=True (year headers), metric headers = Line1/Line2/Line3.
+    """
+    from openpyxl import Workbook as _WB
+    wb = _WB()
+    ws = wb.active
+    ws.title = "Series"
+    ws["B1"] = 2021
+    ws["C1"] = 2022
+    ws["D1"] = 2023
+    for r, base in enumerate([12, 22, 32], start=2):
+        ws.cell(r, 2, base)
+        ws.cell(r, 3, base + 1)
+        ws.cell(r, 4, base + 2)
+    wb.save(path)
+    wb.close()
+
+
+def _build_categorical_no_labels_excel(path):
+    """Non-date column headers; data rows have NO labels in col A.
+
+    Sheet "Categories": B1="Region_A" C1="Region_B" D1="Region_C", rows 2-4 numeric.
+    Expected: transposed=False (no dates), row labels in col A = Line1/Line2/Line3.
+    """
+    from openpyxl import Workbook as _WB
+    wb = _WB()
+    ws = wb.active
+    ws.title = "Categories"
+    ws["B1"] = "Region_A"
+    ws["C1"] = "Region_B"
+    ws["D1"] = "Region_C"
+    for r, base in enumerate([10, 40, 70], start=2):
+        ws.cell(r, 2, base)
+        ws.cell(r, 3, base + 10)
+        ws.cell(r, 4, base + 20)
     wb.save(path)
     wb.close()
 
@@ -611,3 +655,145 @@ class TestIndigoStructuredInput(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ──────────────────────────────────────────────────────────────────
+# Tests for Line-N fallback labels
+# ──────────────────────────────────────────────────────────────────
+
+class TestLineNFallbackLabel(unittest.TestCase):
+    """Verify unlabelled rows get 'Line1', 'Line2', ... not 'Row N'."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def _run(self, excel_builder):
+        excel_path   = os.path.join(self.tmpdir, "src.xlsx")
+        mapping_path = os.path.join(self.tmpdir, "map.xlsx")
+        output_path  = os.path.join(self.tmpdir, "si.xlsx")
+        excel_builder(excel_path)
+        generate_mapping_report(excel_path, output_path=mapping_path)
+        generate_structured_input(mapping_path, excel_path=excel_path,
+                                  output_path=output_path)
+        return load_workbook(output_path)
+
+    def _assert_no_row_n(self, wb):
+        for sn in wb.sheetnames:
+            if sn in ("Index", "Config"):
+                continue
+            ws = wb[sn]
+            for r in range(1, ws.max_row + 1):
+                for c in range(1, ws.max_column + 1):
+                    v = ws.cell(r, c).value
+                    self.assertFalse(
+                        isinstance(v, str) and v.startswith("Row ") and v[4:].isdigit(),
+                        f"Found 'Row N' fallback in {sn}!R{r}C{c}: {v!r}",
+                    )
+
+    # ── transposed layout (year headers, no row labels) ─────────────────────
+
+    def test_transposed_unlabelled_metrics_get_line_n(self):
+        wb = self._run(_build_dated_no_labels_excel)
+        ws = wb["Series"]
+        self.assertIn("Period", str(ws.cell(1, 1).value or ""),
+                      "Expected transposed layout (Period in A1)")
+        metric_headers = [
+            ws.cell(1, c).value
+            for c in range(2, ws.max_column + 1)
+            if ws.cell(1, c).value is not None
+        ]
+        line_labels = [h for h in metric_headers
+                       if isinstance(h, str) and h.startswith("Line")]
+        self.assertGreaterEqual(len(line_labels), 3,
+                                f"Expected Line1/2/3 metric headers, got: {metric_headers}")
+        self.assertIn("Line1", line_labels)
+        self.assertIn("Line2", line_labels)
+        self.assertIn("Line3", line_labels)
+
+    def test_transposed_no_row_n_labels(self):
+        self._assert_no_row_n(self._run(_build_dated_no_labels_excel))
+
+    # ── original layout (non-date headers, no row labels) ────────────────────
+
+    def test_original_unlabelled_rows_get_line_n(self):
+        wb = self._run(_build_categorical_no_labels_excel)
+        ws = wb["Categories"]
+        self.assertIn("Metric", str(ws.cell(1, 1).value or ""),
+                      "Expected original layout (Metric in A1)")
+        col_a = [
+            ws.cell(r, 1).value
+            for r in range(2, ws.max_row + 1)
+            if ws.cell(r, 1).value is not None
+        ]
+        line_labels = [v for v in col_a
+                       if isinstance(v, str) and v.startswith("Line")]
+        self.assertGreaterEqual(len(line_labels), 3,
+                                f"Expected Line1/2/3 row labels, got: {col_a}")
+        self.assertIn("Line1", line_labels)
+        self.assertIn("Line2", line_labels)
+        self.assertIn("Line3", line_labels)
+
+    def test_original_no_row_n_labels(self):
+        self._assert_no_row_n(self._run(_build_categorical_no_labels_excel))
+
+    def test_line_counter_starts_at_one(self):
+        """The first unlabelled row in a sheet must be 'Line1', not 'Line2' or higher."""
+        wb = self._run(_build_categorical_no_labels_excel)
+        ws = wb["Categories"]
+        col_a = [
+            ws.cell(r, 1).value
+            for r in range(2, ws.max_row + 1)
+            if ws.cell(r, 1).value is not None
+        ]
+        line_labels = [v for v in col_a
+                       if isinstance(v, str) and v.startswith("Line")]
+        self.assertTrue(line_labels,
+                        "Expected at least one Line-N label in col A")
+        self.assertEqual(line_labels[0], "Line1",
+                         f"First Line-N label must be 'Line1', got {line_labels[0]!r}")
+
+
+@unittest.skipUnless(
+    os.path.exists(
+        os.path.join(os.path.dirname(__file__), "..", "output", "mapping_report.xlsx")
+    )
+    and os.path.exists(
+        os.path.join(os.path.dirname(__file__), "..", "Indigo.xlsx")
+    ),
+    "Indigo.xlsx or mapping_report.xlsx not available",
+)
+class TestIndigoNoRowNLabel(unittest.TestCase):
+    """Regression: Indigo structured_input.xlsx must contain no 'Row N' labels."""
+
+    WORKSPACE = os.path.join(os.path.dirname(__file__), "..")
+    MAPPING   = os.path.join(WORKSPACE, "output", "mapping_report.xlsx")
+    EXCEL     = os.path.join(WORKSPACE, "Indigo.xlsx")
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.output = os.path.join(self.tmpdir, "si.xlsx")
+        generate_structured_input(self.MAPPING, excel_path=self.EXCEL,
+                                  output_path=self.output)
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def test_no_row_n_label_anywhere(self):
+        wb = load_workbook(self.output)
+        violations = []
+        for sn in wb.sheetnames:
+            if sn in ("Index", "Config"):
+                continue
+            ws = wb[sn]
+            for r in range(1, ws.max_row + 1):
+                for c in range(1, ws.max_column + 1):
+                    v = ws.cell(r, c).value
+                    if isinstance(v, str) and v.startswith("Row ") and v[4:].isdigit():
+                        violations.append(f"{sn}!R{r}C{c}={v!r}")
+        self.assertEqual(violations, [],
+                         f"Found 'Row N' fallbacks: {violations[:10]}")

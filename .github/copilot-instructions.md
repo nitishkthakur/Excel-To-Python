@@ -199,9 +199,15 @@ This pattern is used in `mapper.py` to prevent the Formula column from being exe
 | `_extract_header_vector(vectors)` | Detect and remove year-label header rows (all values look like `2018E`, `2020`, etc.) |
 | `_find_row_label(ws, row, start_col)` | Scan leftward in the source sheet to find a text label for the row |
 | `_find_col_headers_in_source(ws, col_indices, max_row)` | Find best year/period header row above the data; prefers integer years over datetimes |
+| `_is_financial_date(val)` | Return `True` for any recognised financial date/period value (int, datetime, or string) |
+| `_are_date_headers(col_headers)` | Return `True` when ≥ 50 % of a sheet's column headers are financial dates |
 | `generate_structured_input(mapping_path, excel_path, output_path)` | Main entry point |
 
 **Post-processing rule:** Vectors consisting of (label + exactly 1 data cell) are moved to Config as scalars.
+
+**Auto-transpose rule:** When `_are_date_headers` is `True`, the sheet is transposed — col A = period labels (dates grow downward), row 1 = metric names.  When `False`, original orientation is kept (col A = metric labels, row 1 = period/column headers).
+
+**Line-N fallback rule:** When a row or metric label cannot be resolved from the source workbook — `_find_row_label` returns `None` and no embedded string label is present in the vector — the generator assigns `Line1`, `Line2`, `Line3`, … (counter resets per sheet) instead of the legacy `Row {row_number}` fallback.  This applies in both transposed and original layouts.  Named rows always retain their real label.
 
 ---
 

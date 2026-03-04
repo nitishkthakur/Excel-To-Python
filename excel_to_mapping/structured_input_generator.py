@@ -535,6 +535,16 @@ def _build_vector_sheet(wb_out, sn, vectors, wb_src, forced_col_headers=None):
 
     index_rows = []
 
+    # Counter for rows whose label cannot be resolved from the source sheet.
+    # Unlabelled rows across both layout branches share the same sequence so
+    # that Line1, Line2, ... are unique within the output sheet.
+    _unlabeled = [0]
+
+    def _next_line_label():
+        """Return the next 'LineN' fallback label for this sheet."""
+        _unlabeled[0] += 1
+        return f"Line{_unlabeled[0]}"
+
     if transposed:
         # ── TRANSPOSED LAYOUT ──────────────────────────────────────────────
         # Financial date/period labels recognised in column headers.
@@ -554,7 +564,7 @@ def _build_vector_sheet(wb_out, sn, vectors, wb_src, forced_col_headers=None):
             start_col_idx = data_cells[0]["col_idx"] if data_cells else vec[0]["col_idx"]
             if label is None:
                 label = _find_row_label(ws_src, row_num, start_col_idx)
-            metric_labels.append(label or f"Row {row_num}")
+            metric_labels.append(label if label else _next_line_label())
 
         # Pre-build per-metric data lookup: col_idx → value
         metric_data_lookup = [
@@ -667,7 +677,11 @@ def _build_vector_sheet(wb_out, sn, vectors, wb_src, forced_col_headers=None):
             if label is None:
                 label = _find_row_label(ws_src, row_num, start_col_idx)
 
-            label_cell = ws_out.cell(out_row, 1, label or f"Row {row_num}")
+            # Final fallback: generic Line1 / Line2 / ... (context-agnostic)
+            if label is None:
+                label = _next_line_label()
+
+            label_cell = ws_out.cell(out_row, 1, label)
             label_cell.font      = Font(bold=True)
             label_cell.alignment = Alignment(wrap_text=True)
 
