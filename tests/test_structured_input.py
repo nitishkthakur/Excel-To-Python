@@ -328,46 +328,53 @@ class TestGenerateStructuredInput(unittest.TestCase):
     # ── Revenue vector sheet ─────────────────────────────────────────
 
     def test_revenue_headers_contain_year_labels(self):
+        """Year labels end up in col A (transposed layout: dates as rows)."""
         self._run()
         wb = load_workbook(self.output_path)
         ws = wb["Revenue"]
-        headers = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
-        # At least one header must contain a year in [2021, 2022, 2023]
+        # In transposed mode col A (row 1) is the period header, and rows 2+ hold year values.
+        col_a_vals = [ws.cell(r, 1).value for r in range(1, ws.max_row + 1)]
         year_pattern = re.compile(r"202[123]")
         self.assertTrue(
-            any(h and year_pattern.search(str(h)) for h in headers),
-            f"Expected year headers in row 1, got: {headers}",
+            any(v and year_pattern.search(str(v)) for v in col_a_vals),
+            f"Expected year labels in col A, got: {col_a_vals}",
         )
 
     def test_revenue_sales_row_has_correct_values(self):
+        """In transposed layout 'Sales' is a column header; values run down that column."""
         self._run()
         wb = load_workbook(self.output_path)
         ws = wb["Revenue"]
-        # Find the Sales row
-        sales_row = None
-        for r in range(2, ws.max_row + 1):
-            if ws.cell(r, 1).value == "Sales":
-                sales_row = r
+        # Transposed: find the column whose row-1 header is 'Sales'
+        sales_col = None
+        for c in range(2, ws.max_column + 1):
+            h = ws.cell(1, c).value
+            if h and str(h).strip() == "Sales":
+                sales_col = c
                 break
-        self.assertIsNotNone(sales_row, "Sales row not found in Revenue sheet")
-        # Collect all numeric values in that row
-        row_values = [
-            ws.cell(sales_row, c).value
-            for c in range(2, ws.max_column + 1)
-            if ws.cell(sales_row, c).value is not None
+        self.assertIsNotNone(sales_col, "Sales column not found in Revenue sheet")
+        # Collect numeric values from that column (skipping the header row)
+        col_values = [
+            ws.cell(r, sales_col).value
+            for r in range(2, ws.max_row + 1)
+            if ws.cell(r, sales_col).value is not None
         ]
-        self.assertIn(100, row_values, "Expected Sales=100 (2021)")
-        self.assertIn(120, row_values, "Expected Sales=120 (2022)")
-        self.assertIn(140, row_values, "Expected Sales=140 (2023)")
+        self.assertIn(100, col_values, "Expected Sales=100 (2021)")
+        self.assertIn(120, col_values, "Expected Sales=120 (2022)")
+        self.assertIn(140, col_values, "Expected Sales=140 (2023)")
 
     def test_profit_formula_rows_excluded_from_vector_sheet(self):
-        """Profit rows (formula cells) must NOT appear as vector inputs."""
+        """Profit (formula cell) must NOT appear anywhere in the Revenue sheet."""
         self._run()
         wb = load_workbook(self.output_path)
         ws = wb["Revenue"]
-        labels = [ws.cell(r, 1).value for r in range(2, ws.max_row + 1)]
-        self.assertNotIn("Profit", labels,
-                         "Profit is a formula cell and must not be in the input sheet")
+        # In transposed layout metric names are in row 1; also check col A for safety.
+        row1_headers = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
+        col_a_labels = [ws.cell(r, 1).value for r in range(2, ws.max_row + 1)]
+        self.assertNotIn("Profit", row1_headers,
+                         "Profit is a formula cell and must not be a column header")
+        self.assertNotIn("Profit", col_a_labels,
+                         "Profit is a formula cell and must not be a row label")
 
     # ── Config sheet ─────────────────────────────────────────────────
 
@@ -452,13 +459,17 @@ class TestGenerateStructuredInput(unittest.TestCase):
         self._run()
         wb = load_workbook(self.output_path)
         ws = wb["Revenue"]
-        # Find Sales row, check first data cell has a fill
-        for r in range(2, ws.max_row + 1):
-            if ws.cell(r, 1).value == "Sales":
-                fill_rgb = ws.cell(r, 2).fill.fgColor.rgb
-                self.assertNotEqual(fill_rgb, "00000000",
-                                    "Data cells must have a fill colour")
+        # In transposed layout 'Sales' is a column header in row 1.
+        sales_col = None
+        for c in range(2, ws.max_column + 1):
+            h = ws.cell(1, c).value
+            if h and str(h).strip() == "Sales":
+                sales_col = c
                 break
+        if sales_col is not None:
+            fill_rgb = ws.cell(2, sales_col).fill.fgColor.rgb
+            self.assertNotEqual(fill_rgb, "00000000",
+                                "Data cells must have a fill colour")
 
     # ── no-source-excel fallback ──────────────────────────────────────
 
@@ -516,46 +527,61 @@ class TestIndigoStructuredInput(unittest.TestCase):
         self.assertEqual(sheets[1], "Config")
 
     def test_assumptions_sheet_has_year_headers(self):
+        """In transposed layout year labels live in col A (rows 2+)."""
         generate_structured_input(
             self.MAPPING, excel_path=self.EXCEL, output_path=self.output
         )
         wb = load_workbook(self.output)
         self.assertIn("Assumptions Sheet", wb.sheetnames)
         ws = wb["Assumptions Sheet"]
-        headers = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
         year_pattern = re.compile(r"\b20\d{2}")
-        year_headers = [h for h in headers if h and year_pattern.search(str(h))]
+        # col A rows 2+ hold the period labels when the sheet is transposed
+        col_a_vals = [ws.cell(r, 1).value for r in range(2, ws.max_row + 1)
+                      if ws.cell(r, 1).value is not None]
+        year_labels = [v for v in col_a_vals if year_pattern.search(str(v))]
         self.assertGreater(
-            len(year_headers), 3,
-            f"Expected multiple year headers, got: {year_headers}",
+            len(year_labels), 3,
+            f"Expected multiple year labels in col A, got: {col_a_vals[:10]}",
         )
 
     def test_assumptions_ask_row_correct(self):
+        """In transposed layout 'ASK (in million)' is a column header in row 1."""
         generate_structured_input(
             self.MAPPING, excel_path=self.EXCEL, output_path=self.output
         )
         wb = load_workbook(self.output)
         ws = wb["Assumptions Sheet"]
-        ask_row = None
-        for r in range(2, ws.max_row + 1):
-            if ws.cell(r, 1).value == "ASK (in million)":
-                ask_row = r
+        # Find the column whose row-1 header is 'ASK (in million)'
+        ask_col = None
+        for c in range(2, ws.max_column + 1):
+            h = ws.cell(1, c).value
+            if h and "ASK" in str(h):
+                ask_col = c
                 break
-        self.assertIsNotNone(ask_row, "ASK (in million) row not found")
-        row_vals = [ws.cell(ask_row, c).value for c in range(2, ws.max_column + 1)]
-        non_null = [v for v in row_vals if v is not None]
-        self.assertIn(9286, non_null, "Expected ASK=9286 for 2010")
+        self.assertIsNotNone(ask_col, "ASK (in million) column not found")
+        col_vals = [
+            ws.cell(r, ask_col).value
+            for r in range(2, ws.max_row + 1)
+            if ws.cell(r, ask_col).value is not None
+        ]
+        self.assertIn(9286, col_vals, "Expected ASK=9286 for 2010")
 
     def test_income_statement_labels_correct(self):
+        """In transposed layout metric labels are column headers in row 1."""
         generate_structured_input(
             self.MAPPING, excel_path=self.EXCEL, output_path=self.output
         )
         wb = load_workbook(self.output)
         self.assertIn("Income statement", wb.sheetnames)
         ws = wb["Income statement"]
-        labels = [ws.cell(r, 1).value for r in range(2, ws.max_row + 1)]
-        self.assertIn("Revenue from operations", labels)
-        self.assertIn("Other Income", labels)
+        # Transposed: metric names are in row 1 (cols 2+)
+        metric_headers = [
+            ws.cell(1, c).value
+            for c in range(2, ws.max_column + 1)
+            if ws.cell(1, c).value is not None
+        ]
+        self.assertIn("Revenue from operations", metric_headers)
+        self.assertIn("Other Income", metric_headers)
 
     def test_config_has_many_scalars(self):
         generate_structured_input(

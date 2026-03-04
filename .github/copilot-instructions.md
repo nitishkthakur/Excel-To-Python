@@ -4,6 +4,23 @@ This file guides AI coding agents working in this repository.
 
 ---
 
+## Mandatory Documentation Updates
+
+**Every time any change is made to this codebase — new features, bug fixes, refactors, new modules, CLI changes, schema changes, or behaviour changes — the agent MUST update both documentation files before finishing the task:**
+
+| File | What to update |
+|------|---------------|
+| `.github/copilot-instructions.md` | Update the affected section(s): module table, CLI commands, architecture diagram, schema definitions, code-style conventions, or key function tables. Add a new section if the change introduces a new concept not yet covered. |
+| `.github/objective-instructions.md` | Update the affected stage description, design principles, or financial-date / transpose rules. If the change affects the user-facing workflow or the shape of any output file, describe the new behaviour explicitly. |
+
+**Rules:**
+- Do not defer documentation to a follow-up step — update both files in the same response as the code change.
+- Be specific: name the functions, files, columns, or CLI flags that changed.
+- If a section already covers the topic, edit it in place. If no section covers it, add one.
+- Never leave either file in a state that contradicts the current code.
+
+---
+
 ## Project Overview
 
 This repository contains multiple subsystems for analysing, converting, and regenerating Excel workbooks programmatically.

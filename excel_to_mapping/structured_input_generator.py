@@ -63,6 +63,105 @@ _RANGE_RE  = re.compile(r"^([A-Z]+)(\d+):([A-Z]+)(\d+)$")
 
 
 # ──────────────────────────────────────────────────────────────────
+# Financial date / period detection
+# ──────────────────────────────────────────────────────────────────
+
+import datetime as _dt
+
+# Ordered from most-specific to least-specific so that the first full
+# match wins.  All patterns use re.IGNORECASE where case matters.
+_FINANCIAL_DATE_PATTERNS = [
+    # Quarter – number first: 1Q2021, 4Q21, 1Q-2024
+    re.compile(r'^[1-4]Q[-]?\d{2,4}$', re.IGNORECASE),
+    # Quarter – Q prefix: Q12023, Q421, Q1-2024
+    re.compile(r'^Q[1-4][-]?\d{2,4}$', re.IGNORECASE),
+    # Quarter – year first: 2024Q1, 24Q4
+    re.compile(r'^\d{2,4}Q[1-4]$', re.IGNORECASE),
+    # Quarter – year first, number after: 20241Q, 2024-1Q, 24-4Q
+    re.compile(r'^\d{2,4}[-]?[1-4]Q$', re.IGNORECASE),
+    # Half-year – H first: H12024, H1-24
+    re.compile(r'^H[1-2][-]?\d{2,4}$', re.IGNORECASE),
+    # Half-year – year first: 2024H1, 24-H2
+    re.compile(r'^\d{2,4}[-]?H[1-2]$', re.IGNORECASE),
+    # Fiscal year: FY2024, FYE2024, FY24, FY24E, FYE24A
+    re.compile(r'^FYE?\d{2,4}[EABFP]?$', re.IGNORECASE),
+    # Fiscal year – year first: 2024FY, 24FYE
+    re.compile(r'^\d{2,4}FYE?[EABFP]?$', re.IGNORECASE),
+    # Calendar year with fiscal tag: CY2024, CY24E
+    re.compile(r'^CY\d{2,4}[EABFP]?$', re.IGNORECASE),
+    # Year with single-letter financial suffix: 2024E, 2024A, 2024F, 2024B, 2024P
+    re.compile(r'^\d{4}[EABFP]$', re.IGNORECASE),
+    # Suffix-first: E2024, A2024
+    re.compile(r'^[EABFP]\d{4}$', re.IGNORECASE),
+    # Plain 4-digit year (most common): 2023
+    re.compile(r'^\d{4}$'),
+    # Month abbreviation + year: Jan-24, Jan-2024, Jan 2024, Jan'24
+    re.compile(
+        r'^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[- \'\u2019]?\d{2,4}$',
+        re.IGNORECASE,
+    ),
+    # Year + month abbreviation: 2024-Jan, 24-Dec
+    re.compile(
+        r'^\d{2,4}[-/]?(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$',
+        re.IGNORECASE,
+    ),
+    # Year + numeric month: 2024-03, 2024/3
+    re.compile(r'^\d{4}[-/]\d{1,2}$'),
+    # Day-Month-Year or Month-Day-Year: 02-01-2024, 2/1/24, 01/02/2024
+    re.compile(r'^\d{1,2}[-/]\d{1,2}[-/]\d{2,4}$'),
+    # ISO date: 2024-01-02
+    re.compile(r'^\d{4}[-/]\d{2}[-/]\d{2}$'),
+    # Relative period markers (optionally with year): LTM, NTM, TTM, YTD
+    re.compile(r'^(LTM|NTM|TTM|YTD)(\s?\d{4})?$', re.IGNORECASE),
+]
+
+
+def _is_financial_date(val):
+    """Return True if *val* looks like a financial date or period label.
+
+    Handles:
+    * ``int`` / ``float`` — plain years 1900–2100
+    * ``datetime.datetime`` / ``datetime.date`` — any real date
+    * ``str`` — any of the patterns in ``_FINANCIAL_DATE_PATTERNS``:
+      quarter labels (1Q2021, Q12023, 2024Q1, 2024-1Q, 20241Q),
+      half-year (H12024, 2024H1), fiscal-year (FY2024, FYE24),
+      year-with-suffix (2024E/A/F/B/P), plain year (2023),
+      month-year (Jan-24, Jan-2024), date strings (02-01-2024,
+      2024-03-31), relative labels (LTM, NTM, TTM, YTD), and
+      calendar-year tags (CY2024).
+    """
+    if isinstance(val, (_dt.datetime, _dt.date)):
+        return True
+    if isinstance(val, (int, float)) and not isinstance(val, bool):
+        return 1900 <= int(val) <= 2100
+    if not isinstance(val, str):
+        return False
+    s = val.strip()
+    return any(pat.match(s) for pat in _FINANCIAL_DATE_PATTERNS)
+
+
+def _are_date_headers(col_headers):
+    """Return True if the majority of *col_headers* values look like financial dates.
+
+    Parameters
+    ----------
+    col_headers : dict[int, str]
+        Mapping from column index → header string (as returned by
+        :func:`_find_col_headers_in_source`).
+
+    Returns
+    -------
+    bool
+        True when ≥ 50 % of the header values are recognised financial dates.
+    """
+    if not col_headers:
+        return False
+    values = list(col_headers.values())
+    date_count = sum(1 for v in values if _is_financial_date(v))
+    return date_count / len(values) >= 0.5
+
+
+# ──────────────────────────────────────────────────────────────────
 # Helpers
 # ──────────────────────────────────────────────────────────────────
 
@@ -427,83 +526,180 @@ def _build_vector_sheet(wb_out, sn, vectors, wb_src, forced_col_headers=None):
             ws_src, all_data_col_indices, max_data_row=min_data_row
         )
 
-    # Map data col_idx → output column number (B onwards = col 2+)
-    col_idx_to_out_col = {
-        ci: i + 2
-        for i, ci in enumerate(all_data_col_indices)
-    }
+    # ---- Detect whether column headers are financial dates → transpose ----
+    transposed = _are_date_headers(col_headers)
 
     # ---- Create the sheet ----
     sheet_title = sn[:31]
-    ws_out = wb_out.create_sheet(sheet_title)
-
-    # ---- Header row ----
-    _apply_header(ws_out, 1, 1, f"Metric\n[Source: '{sn}']")
-    ws_out.column_dimensions["A"].width = 42
+    ws_out      = wb_out.create_sheet(sheet_title)
 
     index_rows = []
 
-    for ci, out_col in col_idx_to_out_col.items():
-        col_letter = index_to_col_letter(ci)
-        period_lbl = col_headers.get(ci, col_letter)
-        col_name   = f"{period_lbl} [{col_letter}]"
-        _apply_header(ws_out, 1, out_col, col_name)
-        ws_out.column_dimensions[get_column_letter(out_col)].width = 14
+    if transposed:
+        # ── TRANSPOSED LAYOUT ──────────────────────────────────────────────
+        # Financial date/period labels recognised in column headers.
+        # Layout: col A = period label (rows grow downward as new periods are
+        # added); row 1 = metric names (one column per metric).
+        # Users add new time periods by appending rows – no schema changes.
 
-        index_rows.append({
-            "Input File Sheet": sheet_title,
-            "Table": sheet_title,
-            "Column Name": col_name,
-            "Source Sheet": sn,
-            "Source Range": f"{col_letter}* (row varies)",
-            "Description": str(period_lbl),
-            "Vector Length": len(label_data_pairs),
-        })
+        period_order = [
+            (ci, col_headers.get(ci, index_to_col_letter(ci)))
+            for ci in all_data_col_indices
+        ]
 
-    ws_out.freeze_panes = "B2"
+        # Pre-resolve metric labels (may require a source-sheet look-up)
+        metric_labels = []
+        for label, data_cells, vec in label_data_pairs:
+            row_num       = vec[0]["row"]
+            start_col_idx = data_cells[0]["col_idx"] if data_cells else vec[0]["col_idx"]
+            if label is None:
+                label = _find_row_label(ws_src, row_num, start_col_idx)
+            metric_labels.append(label or f"Row {row_num}")
 
-    # ---- Data rows ----
-    for out_row, (label, data_cells, vec) in enumerate(label_data_pairs, start=2):
-        row_num       = vec[0]["row"]
-        start_col_idx = data_cells[0]["col_idx"] if data_cells else vec[0]["col_idx"]
+        # Pre-build per-metric data lookup: col_idx → value
+        metric_data_lookup = [
+            {inp["col_idx"]: inp["value"] for inp in data_cells}
+            for _lbl, data_cells, _vec in label_data_pairs
+        ]
 
-        # If no embedded label, try looking left in source
-        if label is None:
-            label = _find_row_label(ws_src, row_num, start_col_idx)
+        # ---- Header row ----
+        _apply_header(ws_out, 1, 1, f"Period\n[Source: '{sn}']")
+        ws_out.column_dimensions["A"].width = 18
 
-        label_cell = ws_out.cell(out_row, 1, label or f"Row {row_num}")
-        label_cell.font      = Font(bold=True)
-        label_cell.alignment = Alignment(wrap_text=True)
+        for metric_idx, (metric_lbl, (_lbl, data_cells, vec)) in enumerate(
+            zip(metric_labels, label_data_pairs)
+        ):
+            out_col  = metric_idx + 2
+            row_num  = vec[0]["row"]
+            start_ci = data_cells[0]["col_idx"] if data_cells else vec[0]["col_idx"]
+            end_ci   = data_cells[-1]["col_idx"] if data_cells else start_ci
+            _apply_header(ws_out, 1, out_col, metric_lbl)
+            ws_out.column_dimensions[get_column_letter(out_col)].width = 16
+            index_rows.append({
+                "Input File Sheet": sheet_title,
+                "Table": sheet_title,
+                "Column Name": metric_lbl,
+                "Source Sheet": sn,
+                "Source Range": (
+                    f"{index_to_col_letter(start_ci)}{row_num}"
+                    f":{index_to_col_letter(end_ci)}{row_num}"
+                ),
+                "Description": metric_lbl,
+                "Vector Length": len(period_order),
+            })
 
-        # Alternate row shading
-        row_fill          = _INPUT_FILL if out_row % 2 == 0 else _ALT_FILL
-        label_cell.fill   = row_fill
+        ws_out.freeze_panes = "B2"
 
-        for inp in data_cells:
-            oc = col_idx_to_out_col.get(inp["col_idx"])
-            if oc is None:
-                continue
-            c = ws_out.cell(out_row, oc, inp["value"])
-            c.fill = row_fill
+        # ---- Data rows: one row per period ----
+        for out_row, (period_ci, period_label) in enumerate(period_order, start=2):
+            row_fill = _INPUT_FILL if out_row % 2 == 0 else _ALT_FILL
 
-    # ---- Source note at bottom ----
-    if label_data_pairs:
-        nrow      = len(label_data_pairs) + 2
-        first_vec = label_data_pairs[0][2]
-        last_vec  = label_data_pairs[-1][2]
-        start_ref = (f"{index_to_col_letter(first_vec[0]['col_idx'])}"
-                     f"{first_vec[0]['row']}")
-        end_ref   = (f"{index_to_col_letter(last_vec[-1]['col_idx'])}"
-                     f"{last_vec[-1]['row']}")
-        note = ws_out.cell(
-            nrow, 1,
-            f"Source: '{sn}'  |  input cells from {start_ref} to {end_ref}"
-        )
-        note.font = Font(italic=True, color="808080", size=9)
-        ws_out.merge_cells(
-            start_row=nrow, start_column=1,
-            end_row=nrow, end_column=len(all_data_col_indices) + 1
-        )
+            period_cell = ws_out.cell(out_row, 1, period_label)
+            period_cell.font      = Font(bold=True)
+            period_cell.alignment = Alignment(wrap_text=False)
+            period_cell.fill      = row_fill
+
+            for metric_idx in range(len(label_data_pairs)):
+                out_col = metric_idx + 2
+                val     = metric_data_lookup[metric_idx].get(period_ci)
+                c       = ws_out.cell(out_row, out_col, val)
+                c.fill  = row_fill
+
+        # ---- Source note at bottom ----
+        if label_data_pairs:
+            nrow      = len(period_order) + 2
+            first_vec = label_data_pairs[0][2]
+            last_vec  = label_data_pairs[-1][2]
+            start_ref = (f"{index_to_col_letter(first_vec[0]['col_idx'])}"
+                         f"{first_vec[0]['row']}")
+            end_ref   = (f"{index_to_col_letter(last_vec[-1]['col_idx'])}"
+                         f"{last_vec[-1]['row']}")
+            note = ws_out.cell(
+                nrow, 1,
+                f"Source: '{sn}'  |  cells {start_ref}\u2013{end_ref}"
+                f"  [layout: dates as rows, metrics as columns]"
+            )
+            note.font = Font(italic=True, color="808080", size=9)
+            ws_out.merge_cells(
+                start_row=nrow, start_column=1,
+                end_row=nrow, end_column=len(label_data_pairs) + 1
+            )
+
+    else:
+        # ── ORIGINAL LAYOUT ────────────────────────────────────────────────
+        # Column headers are not dates.  Metrics run DOWN rows (col A = metric
+        # label); non-date period values run ACROSS columns.
+
+        # Map data col_idx → output column number (B onwards = col 2+)
+        col_idx_to_out_col = {
+            ci: i + 2
+            for i, ci in enumerate(all_data_col_indices)
+        }
+
+        # ---- Header row ----
+        _apply_header(ws_out, 1, 1, f"Metric\n[Source: '{sn}']")
+        ws_out.column_dimensions["A"].width = 42
+
+        for ci, out_col in col_idx_to_out_col.items():
+            col_letter = index_to_col_letter(ci)
+            period_lbl = col_headers.get(ci, col_letter)
+            col_name   = f"{period_lbl} [{col_letter}]"
+            _apply_header(ws_out, 1, out_col, col_name)
+            ws_out.column_dimensions[get_column_letter(out_col)].width = 14
+            index_rows.append({
+                "Input File Sheet": sheet_title,
+                "Table": sheet_title,
+                "Column Name": col_name,
+                "Source Sheet": sn,
+                "Source Range": f"{col_letter}* (row varies)",
+                "Description": str(period_lbl),
+                "Vector Length": len(label_data_pairs),
+            })
+
+        ws_out.freeze_panes = "B2"
+
+        # ---- Data rows ----
+        for out_row, (label, data_cells, vec) in enumerate(label_data_pairs, start=2):
+            row_num       = vec[0]["row"]
+            start_col_idx = data_cells[0]["col_idx"] if data_cells else vec[0]["col_idx"]
+
+            # If no embedded label, try looking left in source
+            if label is None:
+                label = _find_row_label(ws_src, row_num, start_col_idx)
+
+            label_cell = ws_out.cell(out_row, 1, label or f"Row {row_num}")
+            label_cell.font      = Font(bold=True)
+            label_cell.alignment = Alignment(wrap_text=True)
+
+            # Alternate row shading
+            row_fill          = _INPUT_FILL if out_row % 2 == 0 else _ALT_FILL
+            label_cell.fill   = row_fill
+
+            for inp in data_cells:
+                oc = col_idx_to_out_col.get(inp["col_idx"])
+                if oc is None:
+                    continue
+                c = ws_out.cell(out_row, oc, inp["value"])
+                c.fill = row_fill
+
+        # ---- Source note at bottom ----
+        if label_data_pairs:
+            nrow      = len(label_data_pairs) + 2
+            first_vec = label_data_pairs[0][2]
+            last_vec  = label_data_pairs[-1][2]
+            start_ref = (f"{index_to_col_letter(first_vec[0]['col_idx'])}"
+                         f"{first_vec[0]['row']}")
+            end_ref   = (f"{index_to_col_letter(last_vec[-1]['col_idx'])}"
+                         f"{last_vec[-1]['row']}")
+            note = ws_out.cell(
+                nrow, 1,
+                f"Source: '{sn}'  |  input cells from {start_ref} to {end_ref}"
+            )
+            note.font = Font(italic=True, color="808080", size=9)
+            ws_out.merge_cells(
+                start_row=nrow, start_column=1,
+                end_row=nrow, end_column=len(all_data_col_indices) + 1
+            )
 
     return index_rows
 

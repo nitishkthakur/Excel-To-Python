@@ -44,8 +44,48 @@ A **clean, user-facing input template** derived from the mapping report.
 - **Purely tabular** — no merged cells, no embedded formulas, no decoration.
 - **Dates / time-periods are row indices, not columns.** Each period (year, quarter, month, etc.) occupies one row so that the user can add or remove as many periods as needed without restructuring the file.
 - Scalar inputs (single-cell values) live in the `Config` sheet.
-- Vector inputs (time-series rows) live in named sheets, one per source sheet, with metric labels in column A and period values in subsequent columns.
+- Vector inputs (time-series data) live in named sheets, one per source sheet.  When the original column headers are recognised as financial date/period labels the table is **automatically transposed**: col A = period label, remaining columns = one metric per column.  When headers are not dates the original orientation is kept (col A = metric, remaining columns = one period per column).
 - An `Index` sheet cross-references every table back to its source sheet and cell range.
+
+---
+
+## Financial Date / Period Detection
+
+The generator recognises a wide range of financial date and period formats so it can decide whether to transpose a table.  The following patterns are treated as date-like (handled case-insensitively):
+
+| Category | Examples |
+|----------|---------|
+| Quarter (number first) | `1Q2021`, `4Q21`, `1Q-2024` |
+| Quarter (Q prefix) | `Q12023`, `Q421`, `Q1-2024` |
+| Quarter (year first) | `2024Q1`, `24Q4`, `20241Q`, `2024-1Q` |
+| Half-year | `H12024`, `H1-24`, `2024H1`, `24-H2` |
+| Fiscal year | `FY2024`, `FYE2024`, `FY24E`, `FYE24A` |
+| Calendar year tag | `CY2024`, `CY24E` |
+| Year + financial suffix | `2024E`, `2024A`, `2024F`, `2024B`, `2024P` |
+| Plain year (integer or string) | `2023`, `2024` |
+| Month + year | `Jan-24`, `Jan-2024`, `Jan 2024` |
+| Year + numeric month | `2024-03`, `2024/3` |
+| Full date strings | `02-01-2024`, `2024-01-02`, `01/02/2024` |
+| Relative period labels | `LTM`, `NTM`, `TTM`, `YTD`, `LTM 2024` |
+
+The detection logic lives in `excel_to_mapping/structured_input_generator.py`:
+
+- `_is_financial_date(val)` — returns `True` for a single value (int, float, datetime, or string)
+- `_are_date_headers(col_headers)` — returns `True` when ≥ 50 % of a vector-sheet's column headers are recognised as financial dates
+
+### Auto-transpose rule
+
+When `_are_date_headers` returns `True` for a sheet's column headers, `_build_vector_sheet` writes the table in **transposed** orientation:
+
+```
+Period [Source]   | Revenue  | Costs  | EBITDA  | ...
+------------------+----------+--------+---------+----
+2022              | 100      | 80     | 20      |
+2023              | 110      | 88     | 22      |
+2024E             | 120      | 94     | 26      |
+```
+
+This lets a user add a new time period simply by **appending a row** — no column restructuring required.  When headers are not dates the original orientation (metrics as rows, periods as columns) is preserved.
 
 ---
 
@@ -82,7 +122,7 @@ The regenerator:
 | Principle | Rationale |
 |-----------|-----------|
 | **Tabular intermediates** | Structured files are readable by both humans and code; no opaque binary state. |
-| **Dates as rows, not columns** | Allows arbitrary extension of the time dimension without schema changes. |
+| **Dates as rows, not columns** | When column headers are financial date/period labels the table is transposed so each period occupies one row.  Adding a new time period is simply appending a row; no schema changes are needed. |
 | **Formula logic stays in code** | Users never edit formulas; they only supply input values. |
 | **Format preservation** | The output must be indistinguishable in layout from the original so existing downstream consumers of the Excel file are unaffected. |
 | **Reviewable audit trail** | The mapping report exposes every cell decision (Input / Calculation / Output) so a reviewer can verify the conversion before trusting the output. |
