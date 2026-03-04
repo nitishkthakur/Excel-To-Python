@@ -155,6 +155,9 @@ Produce a clean, tabular input file organised by source sheet — suitable for b
 ### Testing
 - The `ExcelFiles/` folder contains multiple example workbooks. **This pipeline must work over the full variety of files provided.** Test each file individually.
 - Write reusable comparison utilities. Do not eyeball results.
+- Testing happens at every stage in 2 levels:
+        1. **Intermediate file verification** — open and inspect each generated file to confirm it matches expectations.
+        2. **Final output verification** — compare `output.xlsx` against the original workbook cell-by-cell, logging all mismatches for resolution. Then, if it does not match, Identify which stage(s) introduced the mismatch by comparing intermediate files against the original workbook. Then, finetune the code to produce the correct intermediate files, which will in turn produce the correct final output.
 
 ### Code Quality
 - Write modular, well-documented code.
@@ -168,3 +171,7 @@ Produce a clean, tabular input file organised by source sheet — suitable for b
 - `DOCUMENTATION.md` — detailed architecture and usage guide (described above)
 - Test scripts — comprehensive tests for each pipeline stage
 - Mermaid diagrams — illustrating the pipeline flow and the structure of each intermediate file
+
+### Other Notes
+- Use Vectorization at every stage possible - avoid cell-by-cell processing when generating intermediate files or final output. This is to ensure the pipeline can scale to large workbooks and that the python code is readable and maintainable. **This is a must**
+- When testing, if polling takes too long, try to understand why and mayne consider checking progress.

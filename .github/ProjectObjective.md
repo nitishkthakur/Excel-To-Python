@@ -85,6 +85,7 @@ Both paths must produce an identical `output.xlsx` that matches the original wor
 - **Always test. Always verify results.** 
 - Write modular, well-documented code. Produce a documentation file that explains the overall architecture, the purpose of each module, and how they interact.
 - For mapping_report.xlsx, the input files, output files - all make sure to read the file and check if the content is as expected. It is meant for human and downstream code understanding. Decide what it must look like and what it must have. Check any information captured in it with the original file. Make each stage bulletproof before moving on. If the content is not as expected, understand why and fix the issue before proceeding to the next stage. Read outputs of every stage till they are perfect. 
+- In the folder called ExcelFiles, there are multiple example excel files over which this must work. Use them for testing and debugging. Understand every mismatch in output vs original file before proceeding to the next stage. This code must work over the entire variety of excel files provided. This is crucial - test this over each file. 
 
 ---
 
@@ -96,4 +97,5 @@ Both paths must produce an identical `output.xlsx` that matches the original wor
 - Documentation.md - must contain detailed documentation of the overall architecture, the purpose of each module, and how they interact. It should also include instructions for running the code, testing, and troubleshooting.
 - Test scripts - must include comprehensive tests for each stage of the pipeline
 - Mermaid diagrams - must include diagrams that illustrate the architecture and flow of the pipeline, as well as the structure of the intermediate files.
+
 
