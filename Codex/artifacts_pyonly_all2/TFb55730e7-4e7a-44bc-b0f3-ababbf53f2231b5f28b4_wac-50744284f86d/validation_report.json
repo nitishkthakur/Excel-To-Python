@@ -1,0 +1,144 @@
+{
+  "source_workbook": "ExcelFiles/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d.xlsx",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Guide",
+        "Daily cash flow",
+        "Monthly cash flow",
+        "Annual cash flow",
+        "Income",
+        "Expenses",
+        "Discretionary",
+        "Savings"
+      ],
+      "cell_counts": {
+        "Guide": 829,
+        "Daily cash flow": 280,
+        "Monthly cash flow": 763,
+        "Annual cash flow": 174,
+        "Income": 129,
+        "Expenses": 232,
+        "Discretionary": 199,
+        "Savings": 109
+      },
+      "type_counts": {
+        "Guide": {
+          "Input": 829,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Daily cash flow": {
+          "Input": 178,
+          "Calculation": 0,
+          "Output": 102
+        },
+        "Monthly cash flow": {
+          "Input": 706,
+          "Calculation": 0,
+          "Output": 57
+        },
+        "Annual cash flow": {
+          "Input": 165,
+          "Calculation": 0,
+          "Output": 9
+        },
+        "Income": {
+          "Input": 120,
+          "Calculation": 2,
+          "Output": 7
+        },
+        "Expenses": {
+          "Input": 211,
+          "Calculation": 0,
+          "Output": 21
+        },
+        "Discretionary": {
+          "Input": 185,
+          "Calculation": 0,
+          "Output": 14
+        },
+        "Savings": {
+          "Input": 101,
+          "Calculation": 1,
+          "Output": 7
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Guide_Table1",
+        "Guide_Table2",
+        "Daily cash flow_Table1",
+        "Daily cash flow_Table2",
+        "Daily cash flow_Table3",
+        "Monthly cash flow_Table1",
+        "Monthly cash flow_Table2",
+        "Annual cash flow_Table1",
+        "Annual cash flow_Table2",
+        "Annual cash flow_Table3",
+        "Annual cash flow_Table4",
+        "Annual cash flow_Table5",
+        "Annual cash flow_Table6",
+        "Income_Table1",
+        "Income_Table2",
+        "Expenses_Table1",
+        "Expenses_Table2",
+        "Discretionary_Table1",
+        "Discretionary_Table2",
+        "Savings_Table1",
+        "Savings_Table2"
+      ],
+      "index_rows": 760,
+      "config_rows": 13,
+      "table_sheets": [
+        "Guide_Table1",
+        "Guide_Table2",
+        "Daily cash flow_Table1",
+        "Daily cash flow_Table2",
+        "Daily cash flow_Table3",
+        "Monthly cash flow_Table1",
+        "Monthly cash flow_Table2",
+        "Annual cash flow_Table1",
+        "Annual cash flow_Table2",
+        "Annual cash flow_Table3",
+        "Annual cash flow_Table4",
+        "Annual cash flow_Table5",
+        "Annual cash flow_Table6",
+        "Income_Table1",
+        "Income_Table2",
+        "Expenses_Table1",
+        "Expenses_Table2",
+        "Discretionary_Table1",
+        "Discretionary_Table2",
+        "Savings_Table1",
+        "Savings_Table2"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

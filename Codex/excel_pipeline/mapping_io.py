@@ -124,6 +124,8 @@ def read_mapping_report(mapping_report_path: Path) -> MappingModel:
             group_direction = get_value(row, "GroupDirection")
             group_size = get_value(row, "GroupSize")
             pattern_formula = get_value(row, "PatternFormula")
+            if isinstance(pattern_formula, str) and pattern_formula.startswith("'="):
+                pattern_formula = pattern_formula[1:]
             style_json = get_value(row, "StyleJSON")
 
             value = deserialize_value(value_json) if value_json else _value_display

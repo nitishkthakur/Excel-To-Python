@@ -1,0 +1,115 @@
+{
+  "source_workbook": "ExcelFiles/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f.xlsx",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "START",
+        "PLANNED EXPENSES",
+        "ACTUAL EXPENSES",
+        "EXPENSE VARIANCES",
+        "EXPENSE ANALYSIS"
+      ],
+      "cell_counts": {
+        "START": 24,
+        "PLANNED EXPENSES": 643,
+        "ACTUAL EXPENSES": 615,
+        "EXPENSE VARIANCES": 620,
+        "EXPENSE ANALYSIS": 251
+      },
+      "type_counts": {
+        "START": {
+          "Input": 24,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "PLANNED EXPENSES": {
+          "Input": 536,
+          "Calculation": 25,
+          "Output": 82
+        },
+        "ACTUAL EXPENSES": {
+          "Input": 506,
+          "Calculation": 25,
+          "Output": 84
+        },
+        "EXPENSE VARIANCES": {
+          "Input": 307,
+          "Calculation": 12,
+          "Output": 301
+        },
+        "EXPENSE ANALYSIS": {
+          "Input": 226,
+          "Calculation": 15,
+          "Output": 10
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "START_Table1",
+        "PLANNED EXPENSES_Table1",
+        "PLANNED EXPENSES_Table2",
+        "PLANNED EXPENSES_Table3",
+        "PLANNED EXPENSES_Table4",
+        "PLANNED EXPENSES_Table5",
+        "ACTUAL EXPENSES_Table1",
+        "ACTUAL EXPENSES_Table2",
+        "ACTUAL EXPENSES_Table3",
+        "ACTUAL EXPENSES_Table4",
+        "ACTUAL EXPENSES_Table5",
+        "EXPENSE VARIANCES_Table1",
+        "EXPENSE VARIANCES_Table2",
+        "EXPENSE VARIANCES_Table3",
+        "EXPENSE VARIANCES_Table4",
+        "EXPENSE VARIANCES_Table5",
+        "EXPENSE ANALYSIS_Table1"
+      ],
+      "index_rows": 616,
+      "config_rows": 11,
+      "table_sheets": [
+        "START_Table1",
+        "PLANNED EXPENSES_Table1",
+        "PLANNED EXPENSES_Table2",
+        "PLANNED EXPENSES_Table3",
+        "PLANNED EXPENSES_Table4",
+        "PLANNED EXPENSES_Table5",
+        "ACTUAL EXPENSES_Table1",
+        "ACTUAL EXPENSES_Table2",
+        "ACTUAL EXPENSES_Table3",
+        "ACTUAL EXPENSES_Table4",
+        "ACTUAL EXPENSES_Table5",
+        "EXPENSE VARIANCES_Table1",
+        "EXPENSE VARIANCES_Table2",
+        "EXPENSE VARIANCES_Table3",
+        "EXPENSE VARIANCES_Table4",
+        "EXPENSE VARIANCES_Table5",
+        "EXPENSE ANALYSIS_Table1"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

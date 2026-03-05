@@ -1,0 +1,140 @@
+{
+  "output_root": "artifacts_pyonly_all2",
+  "total_files": 22,
+  "success_count": 22,
+  "failure_count": 0,
+  "results": [
+    {
+      "source_workbook": "ExcelFiles/ACC-Ltd.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Aurobindo-Pharma.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Automation_Justification.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Bharti-Airtel(2).xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Bharti-Airtel(3).xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Financial_model_1.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Gail-India.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/Indigo.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2.xlsx",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/capbudg.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/carlease.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/fcfest.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/fcffst.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/infltn.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/model.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/ratings.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    },
+    {
+      "source_workbook": "ExcelFiles/statmnts.xls",
+      "success": true,
+      "unstructured_mismatches": 0,
+      "structured_mismatches": 0
+    }
+  ]
+}

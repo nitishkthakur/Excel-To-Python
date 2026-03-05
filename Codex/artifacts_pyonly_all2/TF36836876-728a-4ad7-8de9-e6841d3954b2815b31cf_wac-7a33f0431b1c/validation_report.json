@@ -1,0 +1,76 @@
+{
+  "source_workbook": "ExcelFiles/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c.xlsx",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Income statement",
+        "Variables"
+      ],
+      "cell_counts": {
+        "Income statement": 480,
+        "Variables": 8
+      },
+      "type_counts": {
+        "Income statement": {
+          "Input": 472,
+          "Calculation": 0,
+          "Output": 8
+        },
+        "Variables": {
+          "Input": 8,
+          "Calculation": 0,
+          "Output": 0
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Income statement_Table1",
+        "Income statement_Table2",
+        "Income statement_Table3",
+        "Income statement_Table4",
+        "Income statement_Table5",
+        "Income statement_Table6",
+        "Income statement_Table7",
+        "Variables_Table1"
+      ],
+      "index_rows": 96,
+      "config_rows": 6,
+      "table_sheets": [
+        "Income statement_Table1",
+        "Income statement_Table2",
+        "Income statement_Table3",
+        "Income statement_Table4",
+        "Income statement_Table5",
+        "Income statement_Table6",
+        "Income statement_Table7",
+        "Variables_Table1"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

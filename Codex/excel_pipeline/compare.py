@@ -58,8 +58,8 @@ def _style_signature(cell: Any) -> tuple[Any, ...]:
 
 
 def _values_equal(expected: Any, actual: Any) -> bool:
-    if isinstance(expected, float) and isinstance(actual, float):
-        return math.isclose(expected, actual, rel_tol=1e-9, abs_tol=1e-9)
+    if isinstance(expected, (int, float)) and isinstance(actual, (int, float)):
+        return math.isclose(float(expected), float(actual), rel_tol=1e-9, abs_tol=1e-9)
     return _normalize_value(expected) == _normalize_value(actual)
 
 
@@ -69,7 +69,9 @@ def compare_workbooks(
     max_mismatches: int = 200,
 ) -> list[Mismatch]:
     expected_wb = load_workbook(expected_path, data_only=False)
+    expected_values_wb = load_workbook(expected_path, data_only=True)
     actual_wb = load_workbook(actual_path, data_only=False)
+    actual_values_wb = load_workbook(actual_path, data_only=True)
 
     mismatches: list[Mismatch] = []
 
@@ -87,49 +89,32 @@ def compare_workbooks(
 
     for sheet_name in expected_wb.sheetnames:
         ws_expected = expected_wb[sheet_name]
+        ws_expected_values = expected_values_wb[sheet_name]
         ws_actual = actual_wb[sheet_name]
+        ws_actual_values = actual_values_wb[sheet_name]
 
         coords = set(ws_expected._cells.keys()) | set(ws_actual._cells.keys())  # pylint: disable=protected-access
         for row, col in sorted(coords):
                 exp_cell = ws_expected.cell(row=row, column=col)
+                exp_val_cell = ws_expected_values.cell(row=row, column=col)
                 act_cell = ws_actual.cell(row=row, column=col)
+                act_val_cell = ws_actual_values.cell(row=row, column=col)
 
-                exp_value = exp_cell.value
-                act_value = act_cell.value
-
-                exp_is_formula = (
-                    (isinstance(exp_value, str) and exp_value.startswith("="))
-                    or (hasattr(exp_value, "t") and exp_value.__class__.__name__.endswith("Formula"))
-                )
-                act_is_formula = (
-                    (isinstance(act_value, str) and act_value.startswith("="))
-                    or (hasattr(act_value, "t") and act_value.__class__.__name__.endswith("Formula"))
-                )
+                exp_value = exp_val_cell.value
+                act_value = act_val_cell.value
 
                 coord = exp_cell.coordinate
 
-                if exp_is_formula:
-                    if not act_is_formula or _normalize_value(exp_value) != _normalize_value(act_value):
-                        mismatches.append(
-                            Mismatch(
-                                sheet=sheet_name,
-                                cell=coord,
-                                category="formula",
-                                expected=_json_safe(exp_value),
-                                actual=_json_safe(act_value),
-                            )
+                if not _values_equal(exp_value, act_value):
+                    mismatches.append(
+                        Mismatch(
+                            sheet=sheet_name,
+                            cell=coord,
+                            category="value",
+                            expected=_json_safe(exp_value),
+                            actual=_json_safe(act_value),
                         )
-                else:
-                    if not _values_equal(exp_value, act_value):
-                        mismatches.append(
-                            Mismatch(
-                                sheet=sheet_name,
-                                cell=coord,
-                                category="value",
-                                expected=_json_safe(exp_value),
-                                actual=_json_safe(act_value),
-                            )
-                        )
+                    )
 
                 if _style_signature(exp_cell) != _style_signature(act_cell):
                     mismatches.append(

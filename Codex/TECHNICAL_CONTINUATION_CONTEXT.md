@@ -13,8 +13,9 @@ Core rule: `mapping_report.xlsx` is the source-of-truth contract for all downstr
 - Stage verification implemented at 2 levels:
   - Intermediate verification (Layer1/Layer2a/Layer2b).
   - Final output verification (cell-by-cell comparison to normalized original).
-- Latest aggregate validation in `artifacts/summary.json`:
+- Latest aggregate validation (Python-only runtime) in `artifacts_pyonly_all2`:
   - `total_files=22`, `success_count=22`, `failure_count=0`.
+  - Both unstructured and structured paths: zero final mismatches.
 
 ## 3. Repo Technical Map
 - `excel_pipeline/normalize.py`
@@ -31,7 +32,13 @@ Core rule: `mapping_report.xlsx` is the source-of-truth contract for all downstr
 - `excel_pipeline/reconstruct.py`
   - Rebuilds workbook using mapping + input overrides.
 - `excel_pipeline/runtime.py`
-  - Runtime calculation for unstructured/structured modes.
+  - Runtime entrypoints delegating to Python-only calculation engine.
+- `excel_pipeline/vectorized_runtime.py`
+  - Python-only formula execution engine:
+    - vectorized dragged SUM groups (pandas/NumPy),
+    - isolated/non-group formulas via `xlcalculator` + `formulas` fallback,
+    - static fallback for unsupported/special formulas,
+    - no-input-change fast path.
 - `excel_pipeline/codegen.py`
   - Emits `unstructured_calculate.py` and `structured_calculate.py`.
 - `excel_pipeline/compare.py`
@@ -96,7 +103,7 @@ Example now captured for user request (GAIL BALANCESHEET):
 
 ### 5.3 Reconstruction strategy
 - Uses normalized workbook as template for formatting fidelity.
-- Applies mapped inputs/formulas as overrides.
+- Applies mapped inputs; formula cells are materialized as values by Python runtime.
 - Special formula objects (e.g. `DataTableFormula`) preserved from template when required.
 
 ### 5.4 Verification + diagnosis
@@ -112,9 +119,11 @@ Example now captured for user request (GAIL BALANCESHEET):
 ## 6. Vectorization + Performance Notes
 Implemented vectorization/sparse patterns:
 - Pandas-based dragged-formula grouping.
+- Pandas MultiIndex-based vectorized execution for dragged SUM formula groups.
 - DataFrame-based mapping report row materialization.
 - Sparse cell traversal via populated cell store (avoid max-row/max-col full scans).
 - Parallel directory processing in runner (`--workers`).
+- Runtime fast path: if included inputs are unchanged, formula values are emitted from mapping cache.
 
 Operational note:
 - For large files, use `--workers` and persistent `.cache/normalized`.
@@ -190,11 +199,12 @@ key_algorithms:
 critical_files:
   - excel_pipeline/mapping.py
   - excel_pipeline/mapping_io.py
+  - excel_pipeline/vectorized_runtime.py
   - excel_pipeline/layer2_structured.py
   - excel_pipeline/verify.py
   - excel_pipeline/runner.py
 artifacts:
-  summary: "artifacts/summary.json"
+  summary: "artifacts_pyonly_all2/*/validation_report.json"
   per_workbook_report: "artifacts/<Workbook>/validation_report.json"
 next_action_if_resuming:
   - "run single target workbook"
@@ -264,3 +274,4 @@ Use one line per session to preserve continuity.
 | Date | Summary | Result | Next Step |
 |---|---|---|---|
 | 2026-03-05 | Implemented full pipeline + vectorized formula grouping + stage verification + docs + drag summary fields | 22/22 pass | Continue from user-requested refinements only |
+| 2026-03-05 | Enforced Python-only runtime calculations, added vectorized dragged SUM execution + isolated formula fallback evaluators, fixed slow workbook path, and revalidated full set | 22/22 pass (python-only) | Add affected-formula dependency pruning for changed-input runs (optional perf enhancement) |

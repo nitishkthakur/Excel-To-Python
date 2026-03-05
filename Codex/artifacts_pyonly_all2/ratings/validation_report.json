@@ -1,0 +1,168 @@
+{
+  "source_workbook": "ExcelFiles/ratings.xls",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/ratings/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/ratings/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/ratings/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/ratings/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/ratings/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/ratings/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/ratings/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Sheet1",
+        "Sheet2",
+        "Sheet3",
+        "Sheet4",
+        "Sheet5",
+        "Sheet6",
+        "Sheet7",
+        "Sheet8",
+        "Sheet9",
+        "Sheet10",
+        "Sheet11",
+        "Sheet12",
+        "Sheet13",
+        "Sheet14",
+        "Sheet15",
+        "Sheet16"
+      ],
+      "cell_counts": {
+        "Sheet1": 279,
+        "Sheet2": 0,
+        "Sheet3": 0,
+        "Sheet4": 0,
+        "Sheet5": 0,
+        "Sheet6": 0,
+        "Sheet7": 0,
+        "Sheet8": 0,
+        "Sheet9": 0,
+        "Sheet10": 0,
+        "Sheet11": 0,
+        "Sheet12": 0,
+        "Sheet13": 0,
+        "Sheet14": 0,
+        "Sheet15": 0,
+        "Sheet16": 0
+      },
+      "type_counts": {
+        "Sheet1": {
+          "Input": 275,
+          "Calculation": 2,
+          "Output": 2
+        },
+        "Sheet2": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet3": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet4": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet5": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet6": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet7": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet8": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet9": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet10": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet11": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet12": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet13": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet14": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet15": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Sheet16": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Sheet1_Table1",
+        "Sheet1_Table2",
+        "Sheet1_Table3",
+        "Sheet1_Table4",
+        "Sheet1_Table5"
+      ],
+      "index_rows": 218,
+      "config_rows": 2,
+      "table_sheets": [
+        "Sheet1_Table1",
+        "Sheet1_Table2",
+        "Sheet1_Table3",
+        "Sheet1_Table4",
+        "Sheet1_Table5"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

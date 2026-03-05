@@ -1,0 +1,209 @@
+{
+  "source_workbook": "ExcelFiles/Automation_Justification.xls",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/Automation_Justification/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/Automation_Justification/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/Automation_Justification/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/Automation_Justification/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/Automation_Justification/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/Automation_Justification/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/Automation_Justification/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "XXXXXXXXXXXXXXXXXXXXXXXXX",
+        "Instruction",
+        "Financial Inputs",
+        "Labor Savings",
+        "PM Labor Savings ",
+        "Production Increase",
+        "Scrap Savings",
+        "Miscellaneous Savings",
+        "Savings Summary",
+        "Investment Summary",
+        "Financial Spreadsheet ",
+        "Module1",
+        "YyUb15rA40OfsReezZBJfoS3m"
+      ],
+      "cell_counts": {
+        "XXXXXXXXXXXXXXXXXXXXXXXXX": 0,
+        "Instruction": 1168,
+        "Financial Inputs": 1857,
+        "Labor Savings": 2204,
+        "PM Labor Savings ": 1132,
+        "Production Increase": 2133,
+        "Scrap Savings": 1901,
+        "Miscellaneous Savings": 1779,
+        "Savings Summary": 2257,
+        "Investment Summary": 1261,
+        "Financial Spreadsheet ": 3921,
+        "Module1": 0,
+        "YyUb15rA40OfsReezZBJfoS3m": 0
+      },
+      "type_counts": {
+        "XXXXXXXXXXXXXXXXXXXXXXXXX": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Instruction": {
+          "Input": 1168,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Financial Inputs": {
+          "Input": 1856,
+          "Calculation": 0,
+          "Output": 1
+        },
+        "Labor Savings": {
+          "Input": 2194,
+          "Calculation": 7,
+          "Output": 3
+        },
+        "PM Labor Savings ": {
+          "Input": 1129,
+          "Calculation": 3,
+          "Output": 0
+        },
+        "Production Increase": {
+          "Input": 2122,
+          "Calculation": 7,
+          "Output": 4
+        },
+        "Scrap Savings": {
+          "Input": 1894,
+          "Calculation": 6,
+          "Output": 1
+        },
+        "Miscellaneous Savings": {
+          "Input": 1778,
+          "Calculation": 0,
+          "Output": 1
+        },
+        "Savings Summary": {
+          "Input": 2249,
+          "Calculation": 8,
+          "Output": 0
+        },
+        "Investment Summary": {
+          "Input": 1252,
+          "Calculation": 2,
+          "Output": 7
+        },
+        "Financial Spreadsheet ": {
+          "Input": 3712,
+          "Calculation": 182,
+          "Output": 27
+        },
+        "Module1": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "YyUb15rA40OfsReezZBJfoS3m": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Financial Inputs_Table1",
+        "Financial Inputs_Table2",
+        "Financial Inputs_Table3",
+        "Financial Inputs_Table4",
+        "Labor Savings_Table1",
+        "Labor Savings_Table2",
+        "Labor Savings_Table3",
+        "Labor Savings_Table4",
+        "Labor Savings_Table5",
+        "Labor Savings_Table6",
+        "Labor Savings_Table7",
+        "Labor Savings_Table8",
+        "PM Labor Savings _Table1",
+        "PM Labor Savings _Table2",
+        "Production Increase_Table1",
+        "Production Increase_Table2",
+        "Production Increase_Table3",
+        "Production Increase_Table4",
+        "Scrap Savings_Table1",
+        "Scrap Savings_Table2",
+        "Miscellaneous Savings_Table1",
+        "Investment Summary_Table1",
+        "Investment Summary_Table2",
+        "Investment Summary_Table3",
+        "Financial Spreadsheet _Table1",
+        "Financial Spreadsheet _Table2",
+        "Financial Spreadsheet _Table3",
+        "Financial Spreadsheet _Table4",
+        "Financial Spreadsheet _Table5",
+        "Financial Spreadsheet _Table6",
+        "Financial Spreadsheet _Table7",
+        "Financial Spreadsheet _Table8",
+        "Financial Spreadsheet _Table9",
+        "Financial Spreadsheet _Table10",
+        "Financial Spreadsheet _Table11",
+        "Financial Spreadsheet _Table12"
+      ],
+      "index_rows": 362,
+      "config_rows": 156,
+      "table_sheets": [
+        "Financial Inputs_Table1",
+        "Financial Inputs_Table2",
+        "Financial Inputs_Table3",
+        "Financial Inputs_Table4",
+        "Labor Savings_Table1",
+        "Labor Savings_Table2",
+        "Labor Savings_Table3",
+        "Labor Savings_Table4",
+        "Labor Savings_Table5",
+        "Labor Savings_Table6",
+        "Labor Savings_Table7",
+        "Labor Savings_Table8",
+        "PM Labor Savings _Table1",
+        "PM Labor Savings _Table2",
+        "Production Increase_Table1",
+        "Production Increase_Table2",
+        "Production Increase_Table3",
+        "Production Increase_Table4",
+        "Scrap Savings_Table1",
+        "Scrap Savings_Table2",
+        "Miscellaneous Savings_Table1",
+        "Investment Summary_Table1",
+        "Investment Summary_Table2",
+        "Investment Summary_Table3",
+        "Financial Spreadsheet _Table1",
+        "Financial Spreadsheet _Table2",
+        "Financial Spreadsheet _Table3",
+        "Financial Spreadsheet _Table4",
+        "Financial Spreadsheet _Table5",
+        "Financial Spreadsheet _Table6",
+        "Financial Spreadsheet _Table7",
+        "Financial Spreadsheet _Table8",
+        "Financial Spreadsheet _Table9",
+        "Financial Spreadsheet _Table10",
+        "Financial Spreadsheet _Table11",
+        "Financial Spreadsheet _Table12"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

@@ -1,0 +1,150 @@
+{
+  "source_workbook": "ExcelFiles/statmnts.xls",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/statmnts/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/statmnts/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/statmnts/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/statmnts/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/statmnts/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/statmnts/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/statmnts/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Instructions",
+        "Operations",
+        "Financing",
+        "Income",
+        "Balance sheet",
+        "Cash flows"
+      ],
+      "cell_counts": {
+        "Instructions": 30,
+        "Operations": 1061,
+        "Financing": 161,
+        "Income": 344,
+        "Balance sheet": 140,
+        "Cash flows": 290
+      },
+      "type_counts": {
+        "Instructions": {
+          "Input": 30,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Operations": {
+          "Input": 1038,
+          "Calculation": 23,
+          "Output": 0
+        },
+        "Financing": {
+          "Input": 132,
+          "Calculation": 24,
+          "Output": 5
+        },
+        "Income": {
+          "Input": 305,
+          "Calculation": 38,
+          "Output": 1
+        },
+        "Balance sheet": {
+          "Input": 80,
+          "Calculation": 52,
+          "Output": 8
+        },
+        "Cash flows": {
+          "Input": 234,
+          "Calculation": 55,
+          "Output": 1
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Instructions_Table1",
+        "Instructions_Table2",
+        "Instructions_Table3",
+        "Operations_Table1",
+        "Operations_Table2",
+        "Operations_Table3",
+        "Operations_Table4",
+        "Operations_Table5",
+        "Operations_Table6",
+        "Operations_Table7",
+        "Operations_Table8",
+        "Financing_Table1",
+        "Financing_Table2",
+        "Financing_Table3",
+        "Financing_Table4",
+        "Financing_Table5",
+        "Financing_Table6",
+        "Financing_Table7",
+        "Financing_Table8",
+        "Financing_Table9",
+        "Income_Table1",
+        "Income_Table2",
+        "Income_Table3",
+        "Income_Table4",
+        "Balance sheet_Table1",
+        "Balance sheet_Table2",
+        "Balance sheet_Table3",
+        "Balance sheet_Table4",
+        "Balance sheet_Table5",
+        "Cash flows_Table1",
+        "Cash flows_Table2"
+      ],
+      "index_rows": 208,
+      "config_rows": 15,
+      "table_sheets": [
+        "Instructions_Table1",
+        "Instructions_Table2",
+        "Instructions_Table3",
+        "Operations_Table1",
+        "Operations_Table2",
+        "Operations_Table3",
+        "Operations_Table4",
+        "Operations_Table5",
+        "Operations_Table6",
+        "Operations_Table7",
+        "Operations_Table8",
+        "Financing_Table1",
+        "Financing_Table2",
+        "Financing_Table3",
+        "Financing_Table4",
+        "Financing_Table5",
+        "Financing_Table6",
+        "Financing_Table7",
+        "Financing_Table8",
+        "Financing_Table9",
+        "Income_Table1",
+        "Income_Table2",
+        "Income_Table3",
+        "Income_Table4",
+        "Balance sheet_Table1",
+        "Balance sheet_Table2",
+        "Balance sheet_Table3",
+        "Balance sheet_Table4",
+        "Balance sheet_Table5",
+        "Cash flows_Table1",
+        "Cash flows_Table2"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

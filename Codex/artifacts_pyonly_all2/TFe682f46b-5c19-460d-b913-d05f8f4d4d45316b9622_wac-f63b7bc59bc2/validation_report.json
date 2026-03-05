@@ -1,0 +1,61 @@
+{
+  "source_workbook": "ExcelFiles/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2.xlsx",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Loan calculator"
+      ],
+      "cell_counts": {
+        "Loan calculator": 1268
+      },
+      "type_counts": {
+        "Loan calculator": {
+          "Input": 423,
+          "Calculation": 0,
+          "Output": 845
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Loan calculator_Table1",
+        "Loan calculator_Table2",
+        "Loan calculator_Table3",
+        "Loan calculator_Table4"
+      ],
+      "index_rows": 76,
+      "config_rows": 6,
+      "table_sheets": [
+        "Loan calculator_Table1",
+        "Loan calculator_Table2",
+        "Loan calculator_Table3",
+        "Loan calculator_Table4"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

@@ -1,0 +1,89 @@
+{
+  "source_workbook": "ExcelFiles/infltn.xls",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/infltn/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/infltn/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/infltn/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/infltn/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/infltn/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/infltn/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/infltn/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Real rate",
+        "Infl factor",
+        "NPV"
+      ],
+      "cell_counts": {
+        "Real rate": 461,
+        "Infl factor": 98,
+        "NPV": 289
+      },
+      "type_counts": {
+        "Real rate": {
+          "Input": 455,
+          "Calculation": 4,
+          "Output": 2
+        },
+        "Infl factor": {
+          "Input": 79,
+          "Calculation": 14,
+          "Output": 5
+        },
+        "NPV": {
+          "Input": 257,
+          "Calculation": 30,
+          "Output": 2
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Real rate_Table1",
+        "Real rate_Table2",
+        "Real rate_Table3",
+        "Infl factor_Table1",
+        "Infl factor_Table2",
+        "Infl factor_Table3",
+        "Infl factor_Table4",
+        "NPV_Table1",
+        "NPV_Table2",
+        "NPV_Table3",
+        "NPV_Table4"
+      ],
+      "index_rows": 70,
+      "config_rows": 11,
+      "table_sheets": [
+        "Real rate_Table1",
+        "Real rate_Table2",
+        "Real rate_Table3",
+        "Infl factor_Table1",
+        "Infl factor_Table2",
+        "Infl factor_Table3",
+        "Infl factor_Table4",
+        "NPV_Table1",
+        "NPV_Table2",
+        "NPV_Table3",
+        "NPV_Table4"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

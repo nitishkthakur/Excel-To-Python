@@ -1,0 +1,59 @@
+{
+  "source_workbook": "ExcelFiles/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5.xlsx",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Loan analysis"
+      ],
+      "cell_counts": {
+        "Loan analysis": 736
+      },
+      "type_counts": {
+        "Loan analysis": {
+          "Input": 220,
+          "Calculation": 0,
+          "Output": 516
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Loan analysis_Table1",
+        "Loan analysis_Table2",
+        "Loan analysis_Table3"
+      ],
+      "index_rows": 24,
+      "config_rows": 3,
+      "table_sheets": [
+        "Loan analysis_Table1",
+        "Loan analysis_Table2",
+        "Loan analysis_Table3"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

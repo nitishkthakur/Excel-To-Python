@@ -9,6 +9,10 @@ This implementation converts each workbook in `ExcelFiles/` through 3 layers, wi
 - **Layer 3a/3b**: generated `unstructured_calculate.py` and `structured_calculate.py`
 - **Verification**: stage checks + final workbook cell-by-cell comparison
 
+Calculation source-of-truth at runtime is now Python code only:
+- Output workbooks are written with computed values for formula cells.
+- Runtime does not rely on Excel recalculation.
+
 The pipeline is implemented in `excel_pipeline/` and orchestrated by `run_pipeline.py`.
 
 ## Cross-Platform Support
@@ -20,11 +24,18 @@ The pipeline is implemented in `excel_pipeline/` and orchestrated by `run_pipeli
 Vectorization is applied wherever workbook APIs allow it:
 
 - **Dragged formula grouping**: pandas vectorized run segmentation (`groupby`, `diff`, `cumsum`)
+- **Dragged SUM formula execution**: pandas/NumPy vectorized group evaluation from `PatternFormula` in mapping
 - **Mapping write path**: per-sheet DataFrame materialization + bulk row emission
 - **Sparse traversal**: avoids full-grid scans; operates on populated-cell collections
 - **Structured input assembly**: patch-level batch processing and index mapping
 
 `openpyxl` workbook writes are still cell-address based by design, but expensive analysis paths were moved to vectorized/tabular operations.
+
+Runtime execution path for formulas:
+- Vectorized dragged groups first (currently grouped `SUM` patterns).
+- Isolated and non-vectorized formulas via Python evaluators (`xlcalculator` primary, `formulas` fallback).
+- Static fallback only for unsupported/special formulas.
+- Fast path: if no included inputs changed, formula cells are materialized directly from mapping cached values.
 
 ## Module Map
 - `excel_pipeline/normalize.py`: workbook normalization (`.xls` -> `.xlsx`)
@@ -33,7 +44,8 @@ Vectorization is applied wherever workbook APIs allow it:
 - `excel_pipeline/layer2_unstructured.py`: Layer 2a generator
 - `excel_pipeline/layer2_structured.py`: Layer 2b generator
 - `excel_pipeline/reconstruct.py`: workbook reconstruction from mapping + inputs
-- `excel_pipeline/runtime.py`: runtime calculators for unstructured/structured paths
+- `excel_pipeline/runtime.py`: runtime entrypoints (Python-only calculators)
+- `excel_pipeline/vectorized_runtime.py`: vectorized + evaluator-based Python formula runtime
 - `excel_pipeline/codegen.py`: generated calculator emitters
 - `excel_pipeline/compare.py`: final output comparison
 - `excel_pipeline/verify.py`: stage-level verification + root-cause diagnosis
@@ -80,7 +92,7 @@ For each workbook:
 - Layer 2b: structured index mappings are complete and value-consistent
 
 2. **Final output verification**
-- Compare generated output workbook against original workbook cell-by-cell
+- Compare generated output workbook against original workbook **cell values** (data-only) + style signature
 - If mismatch occurs, diagnosis maps failure to Layer 1 / Layer 2 / Layer 3
 
 Reports are written to each workbook artifact folder as `validation_report.json`.
@@ -107,6 +119,7 @@ Reports are written to each workbook artifact folder as `validation_report.json`
 - Smoke test: `tests/test_pipeline.py`
 - Full validation script: `tests/run_full_validation.py`
 - Main validation artifact: `artifacts/summary.json`
+- Python-only runtime batch validation artifact (latest): `artifacts_pyonly_all2/*/validation_report.json`
 
 ## Troubleshooting
 - **`.xls` conversion fails**:
@@ -115,6 +128,7 @@ Reports are written to each workbook artifact folder as `validation_report.json`
 - **Large workbook performance**:
   - Increase `--workers`
   - Keep `--cache-dir` persistent to reuse converted `.xlsx`
+  - Python runtime has no-input-change fast path to avoid unnecessary evaluator cost
 - **Unexpected mismatch**:
   - Open `artifacts/<WorkbookName>/validation_report.json`
   - Inspect `intermediate_checks.stage_verification` and `diagnosis`

@@ -1,0 +1,82 @@
+{
+  "source_workbook": "ExcelFiles/fcffst.xls",
+  "artifacts": {
+    "mapping_report": "artifacts_pyonly_all2/fcffst/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_pyonly_all2/fcffst/unstructured_inputs.xlsx",
+    "structured_input": "artifacts_pyonly_all2/fcffst/structured_input.xlsx",
+    "unstructured_calculate": "artifacts_pyonly_all2/fcffst/unstructured_calculate.py",
+    "structured_calculate": "artifacts_pyonly_all2/fcffst/structured_calculate.py",
+    "output_unstructured": "artifacts_pyonly_all2/fcffst/output_unstructured.xlsx",
+    "output_structured": "artifacts_pyonly_all2/fcffst/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Sheet1",
+        "NewFCFFStableGrowth"
+      ],
+      "cell_counts": {
+        "Sheet1": 0,
+        "NewFCFFStableGrowth": 274
+      },
+      "type_counts": {
+        "Sheet1": {
+          "Input": 0,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "NewFCFFStableGrowth": {
+          "Input": 247,
+          "Calculation": 15,
+          "Output": 12
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "NewFCFFStableGrowth_Table1",
+        "NewFCFFStableGrowth_Table2",
+        "NewFCFFStableGrowth_Table3",
+        "NewFCFFStableGrowth_Table4",
+        "NewFCFFStableGrowth_Table5",
+        "NewFCFFStableGrowth_Table6",
+        "NewFCFFStableGrowth_Table7",
+        "NewFCFFStableGrowth_Table8",
+        "NewFCFFStableGrowth_Table9",
+        "NewFCFFStableGrowth_Table10",
+        "NewFCFFStableGrowth_Table11"
+      ],
+      "index_rows": 75,
+      "config_rows": 15,
+      "table_sheets": [
+        "NewFCFFStableGrowth_Table1",
+        "NewFCFFStableGrowth_Table2",
+        "NewFCFFStableGrowth_Table3",
+        "NewFCFFStableGrowth_Table4",
+        "NewFCFFStableGrowth_Table5",
+        "NewFCFFStableGrowth_Table6",
+        "NewFCFFStableGrowth_Table7",
+        "NewFCFFStableGrowth_Table8",
+        "NewFCFFStableGrowth_Table9",
+        "NewFCFFStableGrowth_Table10",
+        "NewFCFFStableGrowth_Table11"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}
