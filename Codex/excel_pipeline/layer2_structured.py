@@ -222,23 +222,30 @@ def create_structured_input(mapping_report_path: Path, output_path: Path) -> Pat
                     for col_offset, src_col in enumerate(
                         range(patch.min_col, patch.max_col + 1), start=0
                     ):
-                        row_values.append(lookup.get((sheet, src_row, src_col)))
-                        source_cell = f"{get_column_letter(src_col)}{src_row}"
-                        input_cell = f"{get_column_letter(2 + col_offset)}{2 + row_offset}"
-                        index_rows.append(
-                            StructuredMappingRow(
-                                source_sheet=sheet,
-                                source_cell=source_cell,
-                                input_sheet=input_sheet_name,
-                                input_cell=input_cell,
-                                table_name=input_sheet_name,
-                                entry_type="Table",
-                                is_transposed=False,
-                                patch_bounds=patch.bounds,
-                                metric_label=metric_label,
-                                period_label=col_labels[col_offset],
-                            )
+                        coord = (src_row, src_col)
+                        value = (
+                            lookup.get((sheet, src_row, src_col))
+                            if coord in patch.coords
+                            else None
                         )
+                        row_values.append(value)
+                        if coord in patch.coords:
+                            source_cell = f"{get_column_letter(src_col)}{src_row}"
+                            input_cell = f"{get_column_letter(2 + col_offset)}{2 + row_offset}"
+                            index_rows.append(
+                                StructuredMappingRow(
+                                    source_sheet=sheet,
+                                    source_cell=source_cell,
+                                    input_sheet=input_sheet_name,
+                                    input_cell=input_cell,
+                                    table_name=input_sheet_name,
+                                    entry_type="Table",
+                                    is_transposed=False,
+                                    patch_bounds=patch.bounds,
+                                    metric_label=metric_label,
+                                    period_label=col_labels[col_offset],
+                                )
+                            )
 
                     ws_table.append([metric_label, *row_values])
             else:
@@ -249,23 +256,30 @@ def create_structured_input(mapping_report_path: Path, output_path: Path) -> Pat
                     for row_offset, src_row in enumerate(
                         range(patch.min_row, patch.max_row + 1), start=0
                     ):
-                        col_values.append(lookup.get((sheet, src_row, src_col)))
-                        source_cell = f"{get_column_letter(src_col)}{src_row}"
-                        input_cell = f"{get_column_letter(2 + row_offset)}{2 + col_offset}"
-                        index_rows.append(
-                            StructuredMappingRow(
-                                source_sheet=sheet,
-                                source_cell=source_cell,
-                                input_sheet=input_sheet_name,
-                                input_cell=input_cell,
-                                table_name=input_sheet_name,
-                                entry_type="Table",
-                                is_transposed=True,
-                                patch_bounds=patch.bounds,
-                                metric_label=row_labels[row_offset],
-                                period_label=period_label,
-                            )
+                        coord = (src_row, src_col)
+                        value = (
+                            lookup.get((sheet, src_row, src_col))
+                            if coord in patch.coords
+                            else None
                         )
+                        col_values.append(value)
+                        if coord in patch.coords:
+                            source_cell = f"{get_column_letter(src_col)}{src_row}"
+                            input_cell = f"{get_column_letter(2 + row_offset)}{2 + col_offset}"
+                            index_rows.append(
+                                StructuredMappingRow(
+                                    source_sheet=sheet,
+                                    source_cell=source_cell,
+                                    input_sheet=input_sheet_name,
+                                    input_cell=input_cell,
+                                    table_name=input_sheet_name,
+                                    entry_type="Table",
+                                    is_transposed=True,
+                                    patch_bounds=patch.bounds,
+                                    metric_label=row_labels[row_offset],
+                                    period_label=period_label,
+                                )
+                            )
 
                     ws_table.append([period_label, *col_values])
 

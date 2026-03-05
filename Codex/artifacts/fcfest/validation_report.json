@@ -1,0 +1,73 @@
+{
+  "source_workbook": "ExcelFiles/fcfest.xls",
+  "artifacts": {
+    "mapping_report": "artifacts/fcfest/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts/fcfest/unstructured_inputs.xlsx",
+    "structured_input": "artifacts/fcfest/structured_input.xlsx",
+    "unstructured_calculate": "artifacts/fcfest/unstructured_calculate.py",
+    "structured_calculate": "artifacts/fcfest/structured_calculate.py",
+    "output_unstructured": "artifacts/fcfest/output_unstructured.xlsx",
+    "output_structured": "artifacts/fcfest/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "NewFCFEStableGrowth"
+      ],
+      "cell_counts": {
+        "NewFCFEStableGrowth": 1176
+      },
+      "type_counts": {
+        "NewFCFEStableGrowth": {
+          "Input": 1141,
+          "Calculation": 20,
+          "Output": 15
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "NewFCFEStableGrowth_Table1",
+        "NewFCFEStableGrowth_Table2",
+        "NewFCFEStableGrowth_Table3",
+        "NewFCFEStableGrowth_Table4",
+        "NewFCFEStableGrowth_Table5",
+        "NewFCFEStableGrowth_Table6",
+        "NewFCFEStableGrowth_Table7",
+        "NewFCFEStableGrowth_Table8",
+        "NewFCFEStableGrowth_Table9",
+        "NewFCFEStableGrowth_Table10"
+      ],
+      "index_rows": 76,
+      "config_rows": 18,
+      "table_sheets": [
+        "NewFCFEStableGrowth_Table1",
+        "NewFCFEStableGrowth_Table2",
+        "NewFCFEStableGrowth_Table3",
+        "NewFCFEStableGrowth_Table4",
+        "NewFCFEStableGrowth_Table5",
+        "NewFCFEStableGrowth_Table6",
+        "NewFCFEStableGrowth_Table7",
+        "NewFCFEStableGrowth_Table8",
+        "NewFCFEStableGrowth_Table9",
+        "NewFCFEStableGrowth_Table10"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

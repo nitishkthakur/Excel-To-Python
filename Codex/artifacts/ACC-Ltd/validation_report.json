@@ -161,7 +161,7 @@
         "DuPoint Analysis_Table3",
         "DuPoint Analysis_Table4"
       ],
-      "index_rows": 1787,
+      "index_rows": 1099,
       "config_rows": 39,
       "table_sheets": [
         "Intro_Table1",
@@ -240,11 +240,20 @@
         "DuPoint Analysis_Table3",
         "DuPoint Analysis_Table4"
       ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
     }
   },
   "mismatches": {
     "unstructured": [],
     "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
   },
   "success": true
 }

@@ -64,6 +64,7 @@ Classify every cell into exactly one of three types:
 
 - For dragged/repeated formulas, detect the pattern and group them. Record: `GroupID`, `GroupDirection`, `GroupSize`, `PatternFormula`.
 - Per-cell metadata: `Sheet`, `Cell`, `Type`, `Formula`, `Value`, number format, font (bold / italic / size / color), fill color, alignment, `WrapText`, `IncludeFlag`.
+- Important: Detect and record when a formula has been dragged across multiple cells (rows or columns).Document it in the mapping_report.xlsx. This is crucial for vectorization.
 
 ### Output Structure
 
@@ -171,6 +172,8 @@ Produce a clean, tabular input file organised by source sheet — suitable for b
 - `DOCUMENTATION.md` — detailed architecture and usage guide (described above)
 - Test scripts — comprehensive tests for each pipeline stage
 - Mermaid diagrams — illustrating the pipeline flow and the structure of each intermediate file
+- Write a document which shows me the exact commands on runningeach section: Only 1, 1 -> 2a, 1 -> 2b, 1->2a->3a, 1->2b->3b. Give me the exact commands for this
+
 
 ### Other Notes
 - Use Vectorization at every stage possible - avoid cell-by-cell processing when generating intermediate files or final output. This is to ensure the pipeline can scale to large workbooks and that the python code is readable and maintainable. **This is a must**

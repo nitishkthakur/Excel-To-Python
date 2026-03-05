@@ -11,7 +11,7 @@ from .types import CellRecord, MappingModel, SheetLayout
 from .utils import deserialize_value
 
 
-MAPPING_SHEET_EXCLUDE = {"_Metadata", "Index", "Config"}
+MAPPING_SHEET_EXCLUDE = {"_Metadata", "_FormulaGroups", "Index", "Config"}
 
 
 def _parse_metadata_sheet(ws: Any) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
@@ -35,7 +35,13 @@ def _parse_metadata_sheet(ws: Any) -> tuple[dict[str, Any], dict[str, dict[str, 
                     workbook_meta[key] = value
         elif section == "SheetLayout" and sheet:
             if key in {"MergedRanges", "RowDimensions", "ColumnDimensions"}:
-                layout_meta[sheet][key] = json.loads(value) if value else []
+                if not value:
+                    layout_meta[sheet][key] = []
+                else:
+                    try:
+                        layout_meta[sheet][key] = json.loads(value)
+                    except Exception:
+                        layout_meta[sheet][key] = []
             elif key == "Index":
                 layout_meta[sheet][key] = int(value)
             else:
@@ -80,37 +86,47 @@ def read_mapping_report(mapping_report_path: Path) -> MappingModel:
         if sheet_name in MAPPING_SHEET_EXCLUDE:
             continue
         ws = wb[sheet_name]
+        headers = [cell.value for cell in ws[1]]
+        index = {name: i for i, name in enumerate(headers) if name is not None}
+
+        def get_value(row: tuple[Any, ...], key: str, default: Any = None) -> Any:
+            idx = index.get(key)
+            if idx is None or idx >= len(row):
+                return default
+            value = row[idx]
+            return default if value is None else value
+
         for row in ws.iter_rows(min_row=2, values_only=True):
             if not any(x is not None for x in row):
                 continue
 
-            (
-                record_sheet,
-                cell,
-                row_idx,
-                col_idx,
-                cell_type,
-                formula,
-                _value_display,
-                value_json,
-                number_format,
-                font_bold,
-                font_italic,
-                font_size,
-                font_color,
-                fill_color,
-                horizontal_alignment,
-                vertical_alignment,
-                wrap_text,
-                include_flag,
-                group_id,
-                group_direction,
-                group_size,
-                pattern_formula,
-                style_json,
-            ) = row
+            record_sheet = get_value(row, "Sheet")
+            cell = get_value(row, "Cell")
+            row_idx = get_value(row, "Row", 0)
+            col_idx = get_value(row, "Column", 0)
+            cell_type = get_value(row, "Type", "Input")
+            formula = get_value(row, "Formula")
+            if isinstance(formula, str) and formula.startswith("'="):
+                formula = formula[1:]
+            _value_display = get_value(row, "Value")
+            value_json = get_value(row, "ValueJSON", "")
+            number_format = get_value(row, "NumberFormat")
+            font_bold = get_value(row, "FontBold")
+            font_italic = get_value(row, "FontItalic")
+            font_size = get_value(row, "FontSize")
+            font_color = get_value(row, "FontColor")
+            fill_color = get_value(row, "FillColor")
+            horizontal_alignment = get_value(row, "HorizontalAlignment")
+            vertical_alignment = get_value(row, "VerticalAlignment")
+            wrap_text = get_value(row, "WrapText")
+            include_flag = get_value(row, "IncludeFlag", False)
+            group_id = get_value(row, "GroupID")
+            group_direction = get_value(row, "GroupDirection")
+            group_size = get_value(row, "GroupSize")
+            pattern_formula = get_value(row, "PatternFormula")
+            style_json = get_value(row, "StyleJSON")
 
-            value = deserialize_value(value_json) if value_json else None
+            value = deserialize_value(value_json) if value_json else _value_display
 
             cells_by_sheet[sheet_name].append(
                 CellRecord(

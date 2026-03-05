@@ -265,7 +265,7 @@
         "DCF Valuation_Table19",
         "DCF Valuation_Table20"
       ],
-      "index_rows": 3657,
+      "index_rows": 2398,
       "config_rows": 137,
       "table_sheets": [
         "Cover_Table1",
@@ -420,11 +420,20 @@
         "DCF Valuation_Table19",
         "DCF Valuation_Table20"
       ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
     }
   },
   "mismatches": {
     "unstructured": [],
     "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
   },
   "success": true
 }

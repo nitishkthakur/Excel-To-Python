@@ -86,6 +86,9 @@ def _collect_cells(wb_f, wb_v, sheet_names: list[str]) -> dict[tuple[str, int, i
                 # Cached value from data-only workbook
                 vcell = ws_v[cell.coordinate]
                 value = vcell.value if formula else cell.value
+                # Handle DataTableFormula objects (Excel What-If data tables)
+                if not isinstance(value, (str, int, float, bool, type(None))):
+                    value = vcell.value
                 fmt = extract_formatting(cell)
                 key = (sname, cell.row, cell.column)
                 cells[key] = CellData(
@@ -282,6 +285,7 @@ def _write_report(
     sheet_names: list[str],
     output_path: str,
     original_meta: dict[str, dict[str, Any]],
+    defined_names: dict[str, str] | None = None,
 ) -> None:
     wb = openpyxl.Workbook()
     wb.remove(wb.active)                    # remove default sheet
@@ -351,6 +355,15 @@ def _write_report(
             meta.get("groups", 0),
         ])
 
+    # _DefinedNames sheet — stores workbook-level named ranges
+    if defined_names:
+        ws_dn = wb.create_sheet("_DefinedNames")
+        ws_dn.append(["Name", "Reference"])
+        for c in range(1, 3):
+            ws_dn.cell(row=1, column=c).font = openpyxl.styles.Font(bold=True)
+        for name, ref in sorted(defined_names.items()):
+            ws_dn.append([name, ref])
+
     wb.save(output_path)
 
 
@@ -415,7 +428,35 @@ def generate_mapping_report(excel_path: str, output_dir: str) -> str:
 
     report_path = os.path.join(output_dir, "mapping_report.xlsx")
     print(f"  Writing mapping report → {report_path}")
-    _write_report(cells, sheet_names, report_path, original_meta)
+
+    # Extract workbook-level defined names (named ranges)
+    defined_names: dict[str, str] = {}
+    for name, dn in wb_f.defined_names.items():
+        ref = dn.attr_text
+        # Skip names that reference errors like #REF!
+        if '#REF!' in ref or ref.startswith('#'):
+            continue
+        # Skip external workbook references like [10]Sheet!$A$1
+        if '[' in ref:
+            continue
+        # Skip multi-range references (commas outside of quotes)
+        if ',' in ref:
+            continue
+        # Skip NA() or similar function-based definitions
+        if '(' in ref:
+            continue
+        # Must reference a sheet in this workbook
+        if '!' not in ref:
+            continue
+        # Only accept single-cell references (not ranges with ':')
+        # Range refs need special handling and are less common in formula usage
+        if ':' in ref:
+            continue
+        defined_names[name] = ref
+    if defined_names:
+        print(f"    → {len(defined_names)} defined names extracted")
+
+    _write_report(cells, sheet_names, report_path, original_meta, defined_names)
 
     wb_f.close()
     wb_v.close()

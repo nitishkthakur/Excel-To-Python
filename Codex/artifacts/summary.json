@@ -1,0 +1,4162 @@
+{
+  "excel_dir": "ExcelFiles",
+  "output_root": "artifacts",
+  "total_files": 22,
+  "success_count": 22,
+  "failure_count": 0,
+  "results": [
+    {
+      "source_workbook": "ExcelFiles/ACC-Ltd.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/ACC-Ltd/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/ACC-Ltd/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/ACC-Ltd/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/ACC-Ltd/unstructured_calculate.py",
+        "structured_calculate": "artifacts/ACC-Ltd/structured_calculate.py",
+        "output_unstructured": "artifacts/ACC-Ltd/output_unstructured.xlsx",
+        "output_structured": "artifacts/ACC-Ltd/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Intro",
+            "Revenue Model",
+            "FAS",
+            "Financial Statements",
+            "Asset schedule",
+            "Balance Sheet",
+            "DCF",
+            "Relative",
+            "DuPoint Analysis"
+          ],
+          "cell_counts": {
+            "Intro": 161,
+            "Revenue Model": 322,
+            "FAS": 111,
+            "Financial Statements": 392,
+            "Asset schedule": 626,
+            "Balance Sheet": 389,
+            "DCF": 162,
+            "Relative": 252,
+            "DuPoint Analysis": 144
+          },
+          "type_counts": {
+            "Intro": {
+              "Input": 161,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Revenue Model": {
+              "Input": 154,
+              "Calculation": 127,
+              "Output": 41
+            },
+            "FAS": {
+              "Input": 111,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Financial Statements": {
+              "Input": 142,
+              "Calculation": 232,
+              "Output": 18
+            },
+            "Asset schedule": {
+              "Input": 300,
+              "Calculation": 321,
+              "Output": 5
+            },
+            "Balance Sheet": {
+              "Input": 255,
+              "Calculation": 125,
+              "Output": 9
+            },
+            "DCF": {
+              "Input": 105,
+              "Calculation": 54,
+              "Output": 3
+            },
+            "Relative": {
+              "Input": 130,
+              "Calculation": 101,
+              "Output": 21
+            },
+            "DuPoint Analysis": {
+              "Input": 108,
+              "Calculation": 27,
+              "Output": 9
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Intro_Table1",
+            "Intro_Table2",
+            "Revenue Model_Table1",
+            "Revenue Model_Table2",
+            "Revenue Model_Table3",
+            "Revenue Model_Table4",
+            "Revenue Model_Table5",
+            "Revenue Model_Table6",
+            "Revenue Model_Table7",
+            "FAS_Table1",
+            "FAS_Table2",
+            "FAS_Table3",
+            "FAS_Table4",
+            "Financial Statements_Table1",
+            "Financial Statements_Table2",
+            "Financial Statements_Table3",
+            "Financial Statements_Table4",
+            "Financial Statements_Table5",
+            "Financial Statements_Table6",
+            "Financial Statements_Table7",
+            "Financial Statements_Table8",
+            "Financial Statements_Table9",
+            "Financial Statements_Table10",
+            "Financial Statements_Table11",
+            "Financial Statements_Table12",
+            "Asset schedule_Table1",
+            "Asset schedule_Table2",
+            "Asset schedule_Table3",
+            "Asset schedule_Table4",
+            "Asset schedule_Table5",
+            "Asset schedule_Table6",
+            "Asset schedule_Table7",
+            "Asset schedule_Table8",
+            "Asset schedule_Table9",
+            "Asset schedule_Table10",
+            "Asset schedule_Table11",
+            "Asset schedule_Table12",
+            "Asset schedule_Table13",
+            "Asset schedule_Table14",
+            "Balance Sheet_Table1",
+            "Balance Sheet_Table2",
+            "Balance Sheet_Table3",
+            "Balance Sheet_Table4",
+            "Balance Sheet_Table5",
+            "Balance Sheet_Table6",
+            "Balance Sheet_Table7",
+            "Balance Sheet_Table8",
+            "Balance Sheet_Table9",
+            "Balance Sheet_Table10",
+            "Balance Sheet_Table11",
+            "DCF_Table1",
+            "DCF_Table2",
+            "DCF_Table3",
+            "DCF_Table4",
+            "DCF_Table5",
+            "DCF_Table6",
+            "DCF_Table7",
+            "DCF_Table8",
+            "DCF_Table9",
+            "DCF_Table10",
+            "Relative_Table1",
+            "Relative_Table2",
+            "Relative_Table3",
+            "Relative_Table4",
+            "Relative_Table5",
+            "Relative_Table6",
+            "Relative_Table7",
+            "Relative_Table8",
+            "Relative_Table9",
+            "Relative_Table10",
+            "Relative_Table11",
+            "DuPoint Analysis_Table1",
+            "DuPoint Analysis_Table2",
+            "DuPoint Analysis_Table3",
+            "DuPoint Analysis_Table4"
+          ],
+          "index_rows": 1099,
+          "config_rows": 39,
+          "table_sheets": [
+            "Intro_Table1",
+            "Intro_Table2",
+            "Revenue Model_Table1",
+            "Revenue Model_Table2",
+            "Revenue Model_Table3",
+            "Revenue Model_Table4",
+            "Revenue Model_Table5",
+            "Revenue Model_Table6",
+            "Revenue Model_Table7",
+            "FAS_Table1",
+            "FAS_Table2",
+            "FAS_Table3",
+            "FAS_Table4",
+            "Financial Statements_Table1",
+            "Financial Statements_Table2",
+            "Financial Statements_Table3",
+            "Financial Statements_Table4",
+            "Financial Statements_Table5",
+            "Financial Statements_Table6",
+            "Financial Statements_Table7",
+            "Financial Statements_Table8",
+            "Financial Statements_Table9",
+            "Financial Statements_Table10",
+            "Financial Statements_Table11",
+            "Financial Statements_Table12",
+            "Asset schedule_Table1",
+            "Asset schedule_Table2",
+            "Asset schedule_Table3",
+            "Asset schedule_Table4",
+            "Asset schedule_Table5",
+            "Asset schedule_Table6",
+            "Asset schedule_Table7",
+            "Asset schedule_Table8",
+            "Asset schedule_Table9",
+            "Asset schedule_Table10",
+            "Asset schedule_Table11",
+            "Asset schedule_Table12",
+            "Asset schedule_Table13",
+            "Asset schedule_Table14",
+            "Balance Sheet_Table1",
+            "Balance Sheet_Table2",
+            "Balance Sheet_Table3",
+            "Balance Sheet_Table4",
+            "Balance Sheet_Table5",
+            "Balance Sheet_Table6",
+            "Balance Sheet_Table7",
+            "Balance Sheet_Table8",
+            "Balance Sheet_Table9",
+            "Balance Sheet_Table10",
+            "Balance Sheet_Table11",
+            "DCF_Table1",
+            "DCF_Table2",
+            "DCF_Table3",
+            "DCF_Table4",
+            "DCF_Table5",
+            "DCF_Table6",
+            "DCF_Table7",
+            "DCF_Table8",
+            "DCF_Table9",
+            "DCF_Table10",
+            "Relative_Table1",
+            "Relative_Table2",
+            "Relative_Table3",
+            "Relative_Table4",
+            "Relative_Table5",
+            "Relative_Table6",
+            "Relative_Table7",
+            "Relative_Table8",
+            "Relative_Table9",
+            "Relative_Table10",
+            "Relative_Table11",
+            "DuPoint Analysis_Table1",
+            "DuPoint Analysis_Table2",
+            "DuPoint Analysis_Table3",
+            "DuPoint Analysis_Table4"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Aurobindo-Pharma.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/Aurobindo-Pharma/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Aurobindo-Pharma/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Aurobindo-Pharma/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Aurobindo-Pharma/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Aurobindo-Pharma/structured_calculate.py",
+        "output_unstructured": "artifacts/Aurobindo-Pharma/output_unstructured.xlsx",
+        "output_structured": "artifacts/Aurobindo-Pharma/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Cover",
+            "Directions",
+            "Company Overview",
+            "Presentation sheet",
+            "Profit & Loss Consolidated",
+            "Balance Sheet",
+            "Cash Flow Statement",
+            "Geographic Revenue Model",
+            "Segment Revenue Model",
+            "Cost Model",
+            "Debt Schedule",
+            "Fixed Asset",
+            "DCF Valuation"
+          ],
+          "cell_counts": {
+            "Cover": 200,
+            "Directions": 184,
+            "Company Overview": 543,
+            "Presentation sheet": 2289,
+            "Profit & Loss Consolidated": 2384,
+            "Balance Sheet": 703,
+            "Cash Flow Statement": 1094,
+            "Geographic Revenue Model": 1229,
+            "Segment Revenue Model": 2515,
+            "Cost Model": 684,
+            "Debt Schedule": 1462,
+            "Fixed Asset": 248,
+            "DCF Valuation": 624
+          },
+          "type_counts": {
+            "Cover": {
+              "Input": 200,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Directions": {
+              "Input": 184,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Company Overview": {
+              "Input": 380,
+              "Calculation": 23,
+              "Output": 140
+            },
+            "Presentation sheet": {
+              "Input": 801,
+              "Calculation": 304,
+              "Output": 1184
+            },
+            "Profit & Loss Consolidated": {
+              "Input": 1166,
+              "Calculation": 1053,
+              "Output": 165
+            },
+            "Balance Sheet": {
+              "Input": 434,
+              "Calculation": 230,
+              "Output": 39
+            },
+            "Cash Flow Statement": {
+              "Input": 970,
+              "Calculation": 118,
+              "Output": 6
+            },
+            "Geographic Revenue Model": {
+              "Input": 1128,
+              "Calculation": 39,
+              "Output": 62
+            },
+            "Segment Revenue Model": {
+              "Input": 1255,
+              "Calculation": 619,
+              "Output": 641
+            },
+            "Cost Model": {
+              "Input": 347,
+              "Calculation": 192,
+              "Output": 145
+            },
+            "Debt Schedule": {
+              "Input": 825,
+              "Calculation": 204,
+              "Output": 433
+            },
+            "Fixed Asset": {
+              "Input": 166,
+              "Calculation": 75,
+              "Output": 7
+            },
+            "DCF Valuation": {
+              "Input": 261,
+              "Calculation": 247,
+              "Output": 116
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Cover_Table1",
+            "Directions_Table1",
+            "Company Overview_Table1",
+            "Company Overview_Table2",
+            "Company Overview_Table3",
+            "Company Overview_Table4",
+            "Company Overview_Table5",
+            "Company Overview_Table6",
+            "Company Overview_Table7",
+            "Company Overview_Table8",
+            "Company Overview_Table9",
+            "Company Overview_Table10",
+            "Presentation sheet_Table1",
+            "Presentation sheet_Table2",
+            "Presentation sheet_Table3",
+            "Presentation sheet_Table4",
+            "Presentation sheet_Table5",
+            "Presentation sheet_Table6",
+            "Presentation sheet_Table7",
+            "Presentation sheet_Table8",
+            "Presentation sheet_Table9",
+            "Presentation sheet_Table10",
+            "Presentation sheet_Table11",
+            "Profit & Loss Consolidated_Tabl",
+            "Profit & Loss Consolidated_Ta_1",
+            "Profit & Loss Consolidated_Ta_2",
+            "Profit & Loss Consolidated_Ta_3",
+            "Profit & Loss Consolidated_Ta_4",
+            "Profit & Loss Consolidated_Ta_5",
+            "Profit & Loss Consolidated_Ta_6",
+            "Profit & Loss Consolidated_Ta_7",
+            "Profit & Loss Consolidated_Ta_8",
+            "Profit & Loss Consolidated_Ta_9",
+            "Profit & Loss Consolidated_T_10",
+            "Profit & Loss Consolidated_T_11",
+            "Profit & Loss Consolidated_T_12",
+            "Profit & Loss Consolidated_T_13",
+            "Profit & Loss Consolidated_T_14",
+            "Profit & Loss Consolidated_T_15",
+            "Profit & Loss Consolidated_T_16",
+            "Profit & Loss Consolidated_T_17",
+            "Profit & Loss Consolidated_T_18",
+            "Profit & Loss Consolidated_T_19",
+            "Profit & Loss Consolidated_T_20",
+            "Profit & Loss Consolidated_T_21",
+            "Profit & Loss Consolidated_T_22",
+            "Profit & Loss Consolidated_T_23",
+            "Balance Sheet_Table1",
+            "Balance Sheet_Table2",
+            "Balance Sheet_Table3",
+            "Balance Sheet_Table4",
+            "Balance Sheet_Table5",
+            "Balance Sheet_Table6",
+            "Balance Sheet_Table7",
+            "Balance Sheet_Table8",
+            "Balance Sheet_Table9",
+            "Balance Sheet_Table10",
+            "Cash Flow Statement_Table1",
+            "Cash Flow Statement_Table2",
+            "Cash Flow Statement_Table3",
+            "Cash Flow Statement_Table4",
+            "Cash Flow Statement_Table5",
+            "Cash Flow Statement_Table6",
+            "Cash Flow Statement_Table7",
+            "Geographic Revenue Model_Table1",
+            "Geographic Revenue Model_Table2",
+            "Geographic Revenue Model_Table3",
+            "Geographic Revenue Model_Table4",
+            "Geographic Revenue Model_Table5",
+            "Geographic Revenue Model_Table6",
+            "Geographic Revenue Model_Table7",
+            "Geographic Revenue Model_Table8",
+            "Geographic Revenue Model_Table9",
+            "Geographic Revenue Model_Tabl_1",
+            "Geographic Revenue Model_Tabl_2",
+            "Segment Revenue Model_Table1",
+            "Segment Revenue Model_Table2",
+            "Segment Revenue Model_Table3",
+            "Segment Revenue Model_Table4",
+            "Segment Revenue Model_Table5",
+            "Segment Revenue Model_Table6",
+            "Segment Revenue Model_Table7",
+            "Segment Revenue Model_Table8",
+            "Segment Revenue Model_Table9",
+            "Segment Revenue Model_Table10",
+            "Segment Revenue Model_Table11",
+            "Segment Revenue Model_Table12",
+            "Segment Revenue Model_Table13",
+            "Segment Revenue Model_Table14",
+            "Segment Revenue Model_Table15",
+            "Segment Revenue Model_Table16",
+            "Segment Revenue Model_Table17",
+            "Segment Revenue Model_Table18",
+            "Segment Revenue Model_Table19",
+            "Segment Revenue Model_Table20",
+            "Cost Model_Table1",
+            "Cost Model_Table2",
+            "Cost Model_Table3",
+            "Cost Model_Table4",
+            "Cost Model_Table5",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Debt Schedule_Table4",
+            "Debt Schedule_Table5",
+            "Debt Schedule_Table6",
+            "Debt Schedule_Table7",
+            "Debt Schedule_Table8",
+            "Debt Schedule_Table9",
+            "Debt Schedule_Table10",
+            "Debt Schedule_Table11",
+            "Debt Schedule_Table12",
+            "Debt Schedule_Table13",
+            "Debt Schedule_Table14",
+            "Debt Schedule_Table15",
+            "Debt Schedule_Table16",
+            "Debt Schedule_Table17",
+            "Debt Schedule_Table18",
+            "Debt Schedule_Table19",
+            "Debt Schedule_Table20",
+            "Debt Schedule_Table21",
+            "Debt Schedule_Table22",
+            "Debt Schedule_Table23",
+            "Debt Schedule_Table24",
+            "Debt Schedule_Table25",
+            "Fixed Asset_Table1",
+            "Fixed Asset_Table2",
+            "Fixed Asset_Table3",
+            "Fixed Asset_Table4",
+            "Fixed Asset_Table5",
+            "Fixed Asset_Table6",
+            "DCF Valuation_Table1",
+            "DCF Valuation_Table2",
+            "DCF Valuation_Table3",
+            "DCF Valuation_Table4",
+            "DCF Valuation_Table5",
+            "DCF Valuation_Table6",
+            "DCF Valuation_Table7",
+            "DCF Valuation_Table8",
+            "DCF Valuation_Table9",
+            "DCF Valuation_Table10",
+            "DCF Valuation_Table11",
+            "DCF Valuation_Table12",
+            "DCF Valuation_Table13",
+            "DCF Valuation_Table14",
+            "DCF Valuation_Table15",
+            "DCF Valuation_Table16",
+            "DCF Valuation_Table17",
+            "DCF Valuation_Table18",
+            "DCF Valuation_Table19",
+            "DCF Valuation_Table20"
+          ],
+          "index_rows": 2398,
+          "config_rows": 137,
+          "table_sheets": [
+            "Cover_Table1",
+            "Directions_Table1",
+            "Company Overview_Table1",
+            "Company Overview_Table2",
+            "Company Overview_Table3",
+            "Company Overview_Table4",
+            "Company Overview_Table5",
+            "Company Overview_Table6",
+            "Company Overview_Table7",
+            "Company Overview_Table8",
+            "Company Overview_Table9",
+            "Company Overview_Table10",
+            "Presentation sheet_Table1",
+            "Presentation sheet_Table2",
+            "Presentation sheet_Table3",
+            "Presentation sheet_Table4",
+            "Presentation sheet_Table5",
+            "Presentation sheet_Table6",
+            "Presentation sheet_Table7",
+            "Presentation sheet_Table8",
+            "Presentation sheet_Table9",
+            "Presentation sheet_Table10",
+            "Presentation sheet_Table11",
+            "Profit & Loss Consolidated_Tabl",
+            "Profit & Loss Consolidated_Ta_1",
+            "Profit & Loss Consolidated_Ta_2",
+            "Profit & Loss Consolidated_Ta_3",
+            "Profit & Loss Consolidated_Ta_4",
+            "Profit & Loss Consolidated_Ta_5",
+            "Profit & Loss Consolidated_Ta_6",
+            "Profit & Loss Consolidated_Ta_7",
+            "Profit & Loss Consolidated_Ta_8",
+            "Profit & Loss Consolidated_Ta_9",
+            "Profit & Loss Consolidated_T_10",
+            "Profit & Loss Consolidated_T_11",
+            "Profit & Loss Consolidated_T_12",
+            "Profit & Loss Consolidated_T_13",
+            "Profit & Loss Consolidated_T_14",
+            "Profit & Loss Consolidated_T_15",
+            "Profit & Loss Consolidated_T_16",
+            "Profit & Loss Consolidated_T_17",
+            "Profit & Loss Consolidated_T_18",
+            "Profit & Loss Consolidated_T_19",
+            "Profit & Loss Consolidated_T_20",
+            "Profit & Loss Consolidated_T_21",
+            "Profit & Loss Consolidated_T_22",
+            "Profit & Loss Consolidated_T_23",
+            "Balance Sheet_Table1",
+            "Balance Sheet_Table2",
+            "Balance Sheet_Table3",
+            "Balance Sheet_Table4",
+            "Balance Sheet_Table5",
+            "Balance Sheet_Table6",
+            "Balance Sheet_Table7",
+            "Balance Sheet_Table8",
+            "Balance Sheet_Table9",
+            "Balance Sheet_Table10",
+            "Cash Flow Statement_Table1",
+            "Cash Flow Statement_Table2",
+            "Cash Flow Statement_Table3",
+            "Cash Flow Statement_Table4",
+            "Cash Flow Statement_Table5",
+            "Cash Flow Statement_Table6",
+            "Cash Flow Statement_Table7",
+            "Geographic Revenue Model_Table1",
+            "Geographic Revenue Model_Table2",
+            "Geographic Revenue Model_Table3",
+            "Geographic Revenue Model_Table4",
+            "Geographic Revenue Model_Table5",
+            "Geographic Revenue Model_Table6",
+            "Geographic Revenue Model_Table7",
+            "Geographic Revenue Model_Table8",
+            "Geographic Revenue Model_Table9",
+            "Geographic Revenue Model_Tabl_1",
+            "Geographic Revenue Model_Tabl_2",
+            "Segment Revenue Model_Table1",
+            "Segment Revenue Model_Table2",
+            "Segment Revenue Model_Table3",
+            "Segment Revenue Model_Table4",
+            "Segment Revenue Model_Table5",
+            "Segment Revenue Model_Table6",
+            "Segment Revenue Model_Table7",
+            "Segment Revenue Model_Table8",
+            "Segment Revenue Model_Table9",
+            "Segment Revenue Model_Table10",
+            "Segment Revenue Model_Table11",
+            "Segment Revenue Model_Table12",
+            "Segment Revenue Model_Table13",
+            "Segment Revenue Model_Table14",
+            "Segment Revenue Model_Table15",
+            "Segment Revenue Model_Table16",
+            "Segment Revenue Model_Table17",
+            "Segment Revenue Model_Table18",
+            "Segment Revenue Model_Table19",
+            "Segment Revenue Model_Table20",
+            "Cost Model_Table1",
+            "Cost Model_Table2",
+            "Cost Model_Table3",
+            "Cost Model_Table4",
+            "Cost Model_Table5",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Debt Schedule_Table4",
+            "Debt Schedule_Table5",
+            "Debt Schedule_Table6",
+            "Debt Schedule_Table7",
+            "Debt Schedule_Table8",
+            "Debt Schedule_Table9",
+            "Debt Schedule_Table10",
+            "Debt Schedule_Table11",
+            "Debt Schedule_Table12",
+            "Debt Schedule_Table13",
+            "Debt Schedule_Table14",
+            "Debt Schedule_Table15",
+            "Debt Schedule_Table16",
+            "Debt Schedule_Table17",
+            "Debt Schedule_Table18",
+            "Debt Schedule_Table19",
+            "Debt Schedule_Table20",
+            "Debt Schedule_Table21",
+            "Debt Schedule_Table22",
+            "Debt Schedule_Table23",
+            "Debt Schedule_Table24",
+            "Debt Schedule_Table25",
+            "Fixed Asset_Table1",
+            "Fixed Asset_Table2",
+            "Fixed Asset_Table3",
+            "Fixed Asset_Table4",
+            "Fixed Asset_Table5",
+            "Fixed Asset_Table6",
+            "DCF Valuation_Table1",
+            "DCF Valuation_Table2",
+            "DCF Valuation_Table3",
+            "DCF Valuation_Table4",
+            "DCF Valuation_Table5",
+            "DCF Valuation_Table6",
+            "DCF Valuation_Table7",
+            "DCF Valuation_Table8",
+            "DCF Valuation_Table9",
+            "DCF Valuation_Table10",
+            "DCF Valuation_Table11",
+            "DCF Valuation_Table12",
+            "DCF Valuation_Table13",
+            "DCF Valuation_Table14",
+            "DCF Valuation_Table15",
+            "DCF Valuation_Table16",
+            "DCF Valuation_Table17",
+            "DCF Valuation_Table18",
+            "DCF Valuation_Table19",
+            "DCF Valuation_Table20"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Automation_Justification.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/Automation_Justification/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Automation_Justification/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Automation_Justification/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Automation_Justification/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Automation_Justification/structured_calculate.py",
+        "output_unstructured": "artifacts/Automation_Justification/output_unstructured.xlsx",
+        "output_structured": "artifacts/Automation_Justification/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "XXXXXXXXXXXXXXXXXXXXXXXXX",
+            "Instruction",
+            "Financial Inputs",
+            "Labor Savings",
+            "PM Labor Savings ",
+            "Production Increase",
+            "Scrap Savings",
+            "Miscellaneous Savings",
+            "Savings Summary",
+            "Investment Summary",
+            "Financial Spreadsheet ",
+            "Module1",
+            "YyUb15rA40OfsReezZBJfoS3m"
+          ],
+          "cell_counts": {
+            "XXXXXXXXXXXXXXXXXXXXXXXXX": 0,
+            "Instruction": 1168,
+            "Financial Inputs": 1857,
+            "Labor Savings": 2204,
+            "PM Labor Savings ": 1132,
+            "Production Increase": 2133,
+            "Scrap Savings": 1901,
+            "Miscellaneous Savings": 1779,
+            "Savings Summary": 2257,
+            "Investment Summary": 1261,
+            "Financial Spreadsheet ": 3921,
+            "Module1": 0,
+            "YyUb15rA40OfsReezZBJfoS3m": 0
+          },
+          "type_counts": {
+            "XXXXXXXXXXXXXXXXXXXXXXXXX": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Instruction": {
+              "Input": 1168,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Financial Inputs": {
+              "Input": 1856,
+              "Calculation": 0,
+              "Output": 1
+            },
+            "Labor Savings": {
+              "Input": 2194,
+              "Calculation": 7,
+              "Output": 3
+            },
+            "PM Labor Savings ": {
+              "Input": 1129,
+              "Calculation": 3,
+              "Output": 0
+            },
+            "Production Increase": {
+              "Input": 2122,
+              "Calculation": 7,
+              "Output": 4
+            },
+            "Scrap Savings": {
+              "Input": 1894,
+              "Calculation": 6,
+              "Output": 1
+            },
+            "Miscellaneous Savings": {
+              "Input": 1778,
+              "Calculation": 0,
+              "Output": 1
+            },
+            "Savings Summary": {
+              "Input": 2249,
+              "Calculation": 8,
+              "Output": 0
+            },
+            "Investment Summary": {
+              "Input": 1252,
+              "Calculation": 2,
+              "Output": 7
+            },
+            "Financial Spreadsheet ": {
+              "Input": 3712,
+              "Calculation": 182,
+              "Output": 27
+            },
+            "Module1": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "YyUb15rA40OfsReezZBJfoS3m": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Financial Inputs_Table1",
+            "Financial Inputs_Table2",
+            "Financial Inputs_Table3",
+            "Financial Inputs_Table4",
+            "Labor Savings_Table1",
+            "Labor Savings_Table2",
+            "Labor Savings_Table3",
+            "Labor Savings_Table4",
+            "Labor Savings_Table5",
+            "Labor Savings_Table6",
+            "Labor Savings_Table7",
+            "Labor Savings_Table8",
+            "PM Labor Savings _Table1",
+            "PM Labor Savings _Table2",
+            "Production Increase_Table1",
+            "Production Increase_Table2",
+            "Production Increase_Table3",
+            "Production Increase_Table4",
+            "Scrap Savings_Table1",
+            "Scrap Savings_Table2",
+            "Miscellaneous Savings_Table1",
+            "Investment Summary_Table1",
+            "Investment Summary_Table2",
+            "Investment Summary_Table3",
+            "Financial Spreadsheet _Table1",
+            "Financial Spreadsheet _Table2",
+            "Financial Spreadsheet _Table3",
+            "Financial Spreadsheet _Table4",
+            "Financial Spreadsheet _Table5",
+            "Financial Spreadsheet _Table6",
+            "Financial Spreadsheet _Table7",
+            "Financial Spreadsheet _Table8",
+            "Financial Spreadsheet _Table9",
+            "Financial Spreadsheet _Table10",
+            "Financial Spreadsheet _Table11",
+            "Financial Spreadsheet _Table12"
+          ],
+          "index_rows": 362,
+          "config_rows": 156,
+          "table_sheets": [
+            "Financial Inputs_Table1",
+            "Financial Inputs_Table2",
+            "Financial Inputs_Table3",
+            "Financial Inputs_Table4",
+            "Labor Savings_Table1",
+            "Labor Savings_Table2",
+            "Labor Savings_Table3",
+            "Labor Savings_Table4",
+            "Labor Savings_Table5",
+            "Labor Savings_Table6",
+            "Labor Savings_Table7",
+            "Labor Savings_Table8",
+            "PM Labor Savings _Table1",
+            "PM Labor Savings _Table2",
+            "Production Increase_Table1",
+            "Production Increase_Table2",
+            "Production Increase_Table3",
+            "Production Increase_Table4",
+            "Scrap Savings_Table1",
+            "Scrap Savings_Table2",
+            "Miscellaneous Savings_Table1",
+            "Investment Summary_Table1",
+            "Investment Summary_Table2",
+            "Investment Summary_Table3",
+            "Financial Spreadsheet _Table1",
+            "Financial Spreadsheet _Table2",
+            "Financial Spreadsheet _Table3",
+            "Financial Spreadsheet _Table4",
+            "Financial Spreadsheet _Table5",
+            "Financial Spreadsheet _Table6",
+            "Financial Spreadsheet _Table7",
+            "Financial Spreadsheet _Table8",
+            "Financial Spreadsheet _Table9",
+            "Financial Spreadsheet _Table10",
+            "Financial Spreadsheet _Table11",
+            "Financial Spreadsheet _Table12"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Bharti-Airtel(2).xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/Bharti-Airtel_2/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Bharti-Airtel_2/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Bharti-Airtel_2/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Bharti-Airtel_2/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Bharti-Airtel_2/structured_calculate.py",
+        "output_unstructured": "artifacts/Bharti-Airtel_2/output_unstructured.xlsx",
+        "output_structured": "artifacts/Bharti-Airtel_2/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Intro",
+            "IS",
+            "BS",
+            "CF",
+            "Debt Schedule",
+            "Segment Revenue",
+            "REVENUE METRIX",
+            "COST METRIX",
+            "Schedule",
+            "DCF - Valuation",
+            "Relative Valuation"
+          ],
+          "cell_counts": {
+            "Intro": 192,
+            "IS": 1769,
+            "BS": 1343,
+            "CF": 8311,
+            "Debt Schedule": 396,
+            "Segment Revenue": 726,
+            "REVENUE METRIX": 649,
+            "COST METRIX": 740,
+            "Schedule": 388,
+            "DCF - Valuation": 16954,
+            "Relative Valuation": 230
+          },
+          "type_counts": {
+            "Intro": {
+              "Input": 192,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "IS": {
+              "Input": 1443,
+              "Calculation": 283,
+              "Output": 43
+            },
+            "BS": {
+              "Input": 712,
+              "Calculation": 469,
+              "Output": 162
+            },
+            "CF": {
+              "Input": 7998,
+              "Calculation": 312,
+              "Output": 1
+            },
+            "Debt Schedule": {
+              "Input": 193,
+              "Calculation": 147,
+              "Output": 56
+            },
+            "Segment Revenue": {
+              "Input": 577,
+              "Calculation": 85,
+              "Output": 64
+            },
+            "REVENUE METRIX": {
+              "Input": 321,
+              "Calculation": 300,
+              "Output": 28
+            },
+            "COST METRIX": {
+              "Input": 121,
+              "Calculation": 427,
+              "Output": 192
+            },
+            "Schedule": {
+              "Input": 104,
+              "Calculation": 233,
+              "Output": 51
+            },
+            "DCF - Valuation": {
+              "Input": 16809,
+              "Calculation": 103,
+              "Output": 42
+            },
+            "Relative Valuation": {
+              "Input": 145,
+              "Calculation": 78,
+              "Output": 7
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Intro_Table1",
+            "Intro_Table2",
+            "IS_Table1",
+            "IS_Table2",
+            "IS_Table3",
+            "IS_Table4",
+            "IS_Table5",
+            "IS_Table6",
+            "IS_Table7",
+            "IS_Table8",
+            "IS_Table9",
+            "IS_Table10",
+            "IS_Table11",
+            "IS_Table12",
+            "IS_Table13",
+            "IS_Table14",
+            "IS_Table15",
+            "IS_Table16",
+            "IS_Table17",
+            "IS_Table18",
+            "IS_Table19",
+            "IS_Table20",
+            "IS_Table21",
+            "IS_Table22",
+            "IS_Table23",
+            "IS_Table24",
+            "IS_Table25",
+            "IS_Table26",
+            "IS_Table27",
+            "IS_Table28",
+            "IS_Table29",
+            "IS_Table30",
+            "IS_Table31",
+            "IS_Table32",
+            "IS_Table33",
+            "BS_Table1",
+            "BS_Table2",
+            "BS_Table3",
+            "BS_Table4",
+            "BS_Table5",
+            "BS_Table6",
+            "BS_Table7",
+            "BS_Table8",
+            "BS_Table9",
+            "BS_Table10",
+            "BS_Table11",
+            "BS_Table12",
+            "BS_Table13",
+            "BS_Table14",
+            "BS_Table15",
+            "BS_Table16",
+            "BS_Table17",
+            "BS_Table18",
+            "BS_Table19",
+            "BS_Table20",
+            "BS_Table21",
+            "BS_Table22",
+            "BS_Table23",
+            "BS_Table24",
+            "BS_Table25",
+            "CF_Table1",
+            "CF_Table2",
+            "CF_Table3",
+            "CF_Table4",
+            "CF_Table5",
+            "CF_Table6",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Debt Schedule_Table4",
+            "Debt Schedule_Table5",
+            "Segment Revenue_Table1",
+            "Segment Revenue_Table2",
+            "Segment Revenue_Table3",
+            "Segment Revenue_Table4",
+            "Segment Revenue_Table5",
+            "Segment Revenue_Table6",
+            "Segment Revenue_Table7",
+            "Segment Revenue_Table8",
+            "Segment Revenue_Table9",
+            "Segment Revenue_Table10",
+            "Segment Revenue_Table11",
+            "Segment Revenue_Table12",
+            "Segment Revenue_Table13",
+            "REVENUE METRIX_Table1",
+            "REVENUE METRIX_Table2",
+            "REVENUE METRIX_Table3",
+            "REVENUE METRIX_Table4",
+            "REVENUE METRIX_Table5",
+            "COST METRIX_Table1",
+            "COST METRIX_Table2",
+            "COST METRIX_Table3",
+            "COST METRIX_Table4",
+            "COST METRIX_Table5",
+            "COST METRIX_Table6",
+            "Schedule_Table1",
+            "Schedule_Table2",
+            "Schedule_Table3",
+            "Schedule_Table4",
+            "Schedule_Table5",
+            "Schedule_Table6",
+            "DCF - Valuation_Table1",
+            "DCF - Valuation_Table2",
+            "DCF - Valuation_Table3",
+            "DCF - Valuation_Table4",
+            "DCF - Valuation_Table5",
+            "DCF - Valuation_Table6",
+            "DCF - Valuation_Table7",
+            "DCF - Valuation_Table8",
+            "DCF - Valuation_Table9",
+            "DCF - Valuation_Table10",
+            "DCF - Valuation_Table11",
+            "DCF - Valuation_Table12",
+            "DCF - Valuation_Table13",
+            "DCF - Valuation_Table14",
+            "Relative Valuation_Table1",
+            "Relative Valuation_Table2",
+            "Relative Valuation_Table3",
+            "Relative Valuation_Table4",
+            "Relative Valuation_Table5",
+            "Relative Valuation_Table6",
+            "Relative Valuation_Table7",
+            "Relative Valuation_Table8",
+            "Relative Valuation_Table9",
+            "Relative Valuation_Table10",
+            "Relative Valuation_Table11",
+            "Relative Valuation_Table12",
+            "Relative Valuation_Table13"
+          ],
+          "index_rows": 2563,
+          "config_rows": 140,
+          "table_sheets": [
+            "Intro_Table1",
+            "Intro_Table2",
+            "IS_Table1",
+            "IS_Table2",
+            "IS_Table3",
+            "IS_Table4",
+            "IS_Table5",
+            "IS_Table6",
+            "IS_Table7",
+            "IS_Table8",
+            "IS_Table9",
+            "IS_Table10",
+            "IS_Table11",
+            "IS_Table12",
+            "IS_Table13",
+            "IS_Table14",
+            "IS_Table15",
+            "IS_Table16",
+            "IS_Table17",
+            "IS_Table18",
+            "IS_Table19",
+            "IS_Table20",
+            "IS_Table21",
+            "IS_Table22",
+            "IS_Table23",
+            "IS_Table24",
+            "IS_Table25",
+            "IS_Table26",
+            "IS_Table27",
+            "IS_Table28",
+            "IS_Table29",
+            "IS_Table30",
+            "IS_Table31",
+            "IS_Table32",
+            "IS_Table33",
+            "BS_Table1",
+            "BS_Table2",
+            "BS_Table3",
+            "BS_Table4",
+            "BS_Table5",
+            "BS_Table6",
+            "BS_Table7",
+            "BS_Table8",
+            "BS_Table9",
+            "BS_Table10",
+            "BS_Table11",
+            "BS_Table12",
+            "BS_Table13",
+            "BS_Table14",
+            "BS_Table15",
+            "BS_Table16",
+            "BS_Table17",
+            "BS_Table18",
+            "BS_Table19",
+            "BS_Table20",
+            "BS_Table21",
+            "BS_Table22",
+            "BS_Table23",
+            "BS_Table24",
+            "BS_Table25",
+            "CF_Table1",
+            "CF_Table2",
+            "CF_Table3",
+            "CF_Table4",
+            "CF_Table5",
+            "CF_Table6",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Debt Schedule_Table4",
+            "Debt Schedule_Table5",
+            "Segment Revenue_Table1",
+            "Segment Revenue_Table2",
+            "Segment Revenue_Table3",
+            "Segment Revenue_Table4",
+            "Segment Revenue_Table5",
+            "Segment Revenue_Table6",
+            "Segment Revenue_Table7",
+            "Segment Revenue_Table8",
+            "Segment Revenue_Table9",
+            "Segment Revenue_Table10",
+            "Segment Revenue_Table11",
+            "Segment Revenue_Table12",
+            "Segment Revenue_Table13",
+            "REVENUE METRIX_Table1",
+            "REVENUE METRIX_Table2",
+            "REVENUE METRIX_Table3",
+            "REVENUE METRIX_Table4",
+            "REVENUE METRIX_Table5",
+            "COST METRIX_Table1",
+            "COST METRIX_Table2",
+            "COST METRIX_Table3",
+            "COST METRIX_Table4",
+            "COST METRIX_Table5",
+            "COST METRIX_Table6",
+            "Schedule_Table1",
+            "Schedule_Table2",
+            "Schedule_Table3",
+            "Schedule_Table4",
+            "Schedule_Table5",
+            "Schedule_Table6",
+            "DCF - Valuation_Table1",
+            "DCF - Valuation_Table2",
+            "DCF - Valuation_Table3",
+            "DCF - Valuation_Table4",
+            "DCF - Valuation_Table5",
+            "DCF - Valuation_Table6",
+            "DCF - Valuation_Table7",
+            "DCF - Valuation_Table8",
+            "DCF - Valuation_Table9",
+            "DCF - Valuation_Table10",
+            "DCF - Valuation_Table11",
+            "DCF - Valuation_Table12",
+            "DCF - Valuation_Table13",
+            "DCF - Valuation_Table14",
+            "Relative Valuation_Table1",
+            "Relative Valuation_Table2",
+            "Relative Valuation_Table3",
+            "Relative Valuation_Table4",
+            "Relative Valuation_Table5",
+            "Relative Valuation_Table6",
+            "Relative Valuation_Table7",
+            "Relative Valuation_Table8",
+            "Relative Valuation_Table9",
+            "Relative Valuation_Table10",
+            "Relative Valuation_Table11",
+            "Relative Valuation_Table12",
+            "Relative Valuation_Table13"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Bharti-Airtel(3).xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/Bharti-Airtel_3/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Bharti-Airtel_3/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Bharti-Airtel_3/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Bharti-Airtel_3/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Bharti-Airtel_3/structured_calculate.py",
+        "output_unstructured": "artifacts/Bharti-Airtel_3/output_unstructured.xlsx",
+        "output_structured": "artifacts/Bharti-Airtel_3/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Intro",
+            "IS",
+            "BS",
+            "CF",
+            "Debt Schedule",
+            "Segment Revenue",
+            "REVENUE METRIX",
+            "COST METRIX",
+            "Schedule",
+            "DCF - Valuation",
+            "Relative Valuation"
+          ],
+          "cell_counts": {
+            "Intro": 192,
+            "IS": 1769,
+            "BS": 1343,
+            "CF": 8311,
+            "Debt Schedule": 396,
+            "Segment Revenue": 726,
+            "REVENUE METRIX": 649,
+            "COST METRIX": 740,
+            "Schedule": 388,
+            "DCF - Valuation": 16954,
+            "Relative Valuation": 230
+          },
+          "type_counts": {
+            "Intro": {
+              "Input": 192,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "IS": {
+              "Input": 1443,
+              "Calculation": 283,
+              "Output": 43
+            },
+            "BS": {
+              "Input": 712,
+              "Calculation": 469,
+              "Output": 162
+            },
+            "CF": {
+              "Input": 7998,
+              "Calculation": 312,
+              "Output": 1
+            },
+            "Debt Schedule": {
+              "Input": 193,
+              "Calculation": 147,
+              "Output": 56
+            },
+            "Segment Revenue": {
+              "Input": 577,
+              "Calculation": 85,
+              "Output": 64
+            },
+            "REVENUE METRIX": {
+              "Input": 321,
+              "Calculation": 300,
+              "Output": 28
+            },
+            "COST METRIX": {
+              "Input": 121,
+              "Calculation": 427,
+              "Output": 192
+            },
+            "Schedule": {
+              "Input": 104,
+              "Calculation": 233,
+              "Output": 51
+            },
+            "DCF - Valuation": {
+              "Input": 16809,
+              "Calculation": 103,
+              "Output": 42
+            },
+            "Relative Valuation": {
+              "Input": 145,
+              "Calculation": 78,
+              "Output": 7
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Intro_Table1",
+            "Intro_Table2",
+            "IS_Table1",
+            "IS_Table2",
+            "IS_Table3",
+            "IS_Table4",
+            "IS_Table5",
+            "IS_Table6",
+            "IS_Table7",
+            "IS_Table8",
+            "IS_Table9",
+            "IS_Table10",
+            "IS_Table11",
+            "IS_Table12",
+            "IS_Table13",
+            "IS_Table14",
+            "IS_Table15",
+            "IS_Table16",
+            "IS_Table17",
+            "IS_Table18",
+            "IS_Table19",
+            "IS_Table20",
+            "IS_Table21",
+            "IS_Table22",
+            "IS_Table23",
+            "IS_Table24",
+            "IS_Table25",
+            "IS_Table26",
+            "IS_Table27",
+            "IS_Table28",
+            "IS_Table29",
+            "IS_Table30",
+            "IS_Table31",
+            "IS_Table32",
+            "IS_Table33",
+            "BS_Table1",
+            "BS_Table2",
+            "BS_Table3",
+            "BS_Table4",
+            "BS_Table5",
+            "BS_Table6",
+            "BS_Table7",
+            "BS_Table8",
+            "BS_Table9",
+            "BS_Table10",
+            "BS_Table11",
+            "BS_Table12",
+            "BS_Table13",
+            "BS_Table14",
+            "BS_Table15",
+            "BS_Table16",
+            "BS_Table17",
+            "BS_Table18",
+            "BS_Table19",
+            "BS_Table20",
+            "BS_Table21",
+            "BS_Table22",
+            "BS_Table23",
+            "BS_Table24",
+            "BS_Table25",
+            "CF_Table1",
+            "CF_Table2",
+            "CF_Table3",
+            "CF_Table4",
+            "CF_Table5",
+            "CF_Table6",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Debt Schedule_Table4",
+            "Debt Schedule_Table5",
+            "Segment Revenue_Table1",
+            "Segment Revenue_Table2",
+            "Segment Revenue_Table3",
+            "Segment Revenue_Table4",
+            "Segment Revenue_Table5",
+            "Segment Revenue_Table6",
+            "Segment Revenue_Table7",
+            "Segment Revenue_Table8",
+            "Segment Revenue_Table9",
+            "Segment Revenue_Table10",
+            "Segment Revenue_Table11",
+            "Segment Revenue_Table12",
+            "Segment Revenue_Table13",
+            "REVENUE METRIX_Table1",
+            "REVENUE METRIX_Table2",
+            "REVENUE METRIX_Table3",
+            "REVENUE METRIX_Table4",
+            "REVENUE METRIX_Table5",
+            "COST METRIX_Table1",
+            "COST METRIX_Table2",
+            "COST METRIX_Table3",
+            "COST METRIX_Table4",
+            "COST METRIX_Table5",
+            "COST METRIX_Table6",
+            "Schedule_Table1",
+            "Schedule_Table2",
+            "Schedule_Table3",
+            "Schedule_Table4",
+            "Schedule_Table5",
+            "Schedule_Table6",
+            "DCF - Valuation_Table1",
+            "DCF - Valuation_Table2",
+            "DCF - Valuation_Table3",
+            "DCF - Valuation_Table4",
+            "DCF - Valuation_Table5",
+            "DCF - Valuation_Table6",
+            "DCF - Valuation_Table7",
+            "DCF - Valuation_Table8",
+            "DCF - Valuation_Table9",
+            "DCF - Valuation_Table10",
+            "DCF - Valuation_Table11",
+            "DCF - Valuation_Table12",
+            "DCF - Valuation_Table13",
+            "DCF - Valuation_Table14",
+            "Relative Valuation_Table1",
+            "Relative Valuation_Table2",
+            "Relative Valuation_Table3",
+            "Relative Valuation_Table4",
+            "Relative Valuation_Table5",
+            "Relative Valuation_Table6",
+            "Relative Valuation_Table7",
+            "Relative Valuation_Table8",
+            "Relative Valuation_Table9",
+            "Relative Valuation_Table10",
+            "Relative Valuation_Table11",
+            "Relative Valuation_Table12",
+            "Relative Valuation_Table13"
+          ],
+          "index_rows": 2563,
+          "config_rows": 140,
+          "table_sheets": [
+            "Intro_Table1",
+            "Intro_Table2",
+            "IS_Table1",
+            "IS_Table2",
+            "IS_Table3",
+            "IS_Table4",
+            "IS_Table5",
+            "IS_Table6",
+            "IS_Table7",
+            "IS_Table8",
+            "IS_Table9",
+            "IS_Table10",
+            "IS_Table11",
+            "IS_Table12",
+            "IS_Table13",
+            "IS_Table14",
+            "IS_Table15",
+            "IS_Table16",
+            "IS_Table17",
+            "IS_Table18",
+            "IS_Table19",
+            "IS_Table20",
+            "IS_Table21",
+            "IS_Table22",
+            "IS_Table23",
+            "IS_Table24",
+            "IS_Table25",
+            "IS_Table26",
+            "IS_Table27",
+            "IS_Table28",
+            "IS_Table29",
+            "IS_Table30",
+            "IS_Table31",
+            "IS_Table32",
+            "IS_Table33",
+            "BS_Table1",
+            "BS_Table2",
+            "BS_Table3",
+            "BS_Table4",
+            "BS_Table5",
+            "BS_Table6",
+            "BS_Table7",
+            "BS_Table8",
+            "BS_Table9",
+            "BS_Table10",
+            "BS_Table11",
+            "BS_Table12",
+            "BS_Table13",
+            "BS_Table14",
+            "BS_Table15",
+            "BS_Table16",
+            "BS_Table17",
+            "BS_Table18",
+            "BS_Table19",
+            "BS_Table20",
+            "BS_Table21",
+            "BS_Table22",
+            "BS_Table23",
+            "BS_Table24",
+            "BS_Table25",
+            "CF_Table1",
+            "CF_Table2",
+            "CF_Table3",
+            "CF_Table4",
+            "CF_Table5",
+            "CF_Table6",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Debt Schedule_Table4",
+            "Debt Schedule_Table5",
+            "Segment Revenue_Table1",
+            "Segment Revenue_Table2",
+            "Segment Revenue_Table3",
+            "Segment Revenue_Table4",
+            "Segment Revenue_Table5",
+            "Segment Revenue_Table6",
+            "Segment Revenue_Table7",
+            "Segment Revenue_Table8",
+            "Segment Revenue_Table9",
+            "Segment Revenue_Table10",
+            "Segment Revenue_Table11",
+            "Segment Revenue_Table12",
+            "Segment Revenue_Table13",
+            "REVENUE METRIX_Table1",
+            "REVENUE METRIX_Table2",
+            "REVENUE METRIX_Table3",
+            "REVENUE METRIX_Table4",
+            "REVENUE METRIX_Table5",
+            "COST METRIX_Table1",
+            "COST METRIX_Table2",
+            "COST METRIX_Table3",
+            "COST METRIX_Table4",
+            "COST METRIX_Table5",
+            "COST METRIX_Table6",
+            "Schedule_Table1",
+            "Schedule_Table2",
+            "Schedule_Table3",
+            "Schedule_Table4",
+            "Schedule_Table5",
+            "Schedule_Table6",
+            "DCF - Valuation_Table1",
+            "DCF - Valuation_Table2",
+            "DCF - Valuation_Table3",
+            "DCF - Valuation_Table4",
+            "DCF - Valuation_Table5",
+            "DCF - Valuation_Table6",
+            "DCF - Valuation_Table7",
+            "DCF - Valuation_Table8",
+            "DCF - Valuation_Table9",
+            "DCF - Valuation_Table10",
+            "DCF - Valuation_Table11",
+            "DCF - Valuation_Table12",
+            "DCF - Valuation_Table13",
+            "DCF - Valuation_Table14",
+            "Relative Valuation_Table1",
+            "Relative Valuation_Table2",
+            "Relative Valuation_Table3",
+            "Relative Valuation_Table4",
+            "Relative Valuation_Table5",
+            "Relative Valuation_Table6",
+            "Relative Valuation_Table7",
+            "Relative Valuation_Table8",
+            "Relative Valuation_Table9",
+            "Relative Valuation_Table10",
+            "Relative Valuation_Table11",
+            "Relative Valuation_Table12",
+            "Relative Valuation_Table13"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Financial_model_1.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/Financial_model_1/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Financial_model_1/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Financial_model_1/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Financial_model_1/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Financial_model_1/structured_calculate.py",
+        "output_unstructured": "artifacts/Financial_model_1/output_unstructured.xlsx",
+        "output_structured": "artifacts/Financial_model_1/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Table of Contents",
+            "Instructions",
+            "Assumptions",
+            "DETAIL.XLS",
+            "Summary Statements",
+            "Revenue Growth Chart",
+            "Breakeven Chart",
+            "Graph Input"
+          ],
+          "cell_counts": {
+            "Table of Contents": 92,
+            "Instructions": 68,
+            "Assumptions": 1927,
+            "DETAIL.XLS": 22049,
+            "Summary Statements": 768,
+            "Revenue Growth Chart": 0,
+            "Breakeven Chart": 0,
+            "Graph Input": 409
+          },
+          "type_counts": {
+            "Table of Contents": {
+              "Input": 68,
+              "Calculation": 18,
+              "Output": 6
+            },
+            "Instructions": {
+              "Input": 67,
+              "Calculation": 0,
+              "Output": 1
+            },
+            "Assumptions": {
+              "Input": 1789,
+              "Calculation": 49,
+              "Output": 89
+            },
+            "DETAIL.XLS": {
+              "Input": 10153,
+              "Calculation": 9717,
+              "Output": 2179
+            },
+            "Summary Statements": {
+              "Input": 350,
+              "Calculation": 321,
+              "Output": 97
+            },
+            "Revenue Growth Chart": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Breakeven Chart": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Graph Input": {
+              "Input": 317,
+              "Calculation": 23,
+              "Output": 69
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Table of Contents_Table1",
+            "Table of Contents_Table2",
+            "Table of Contents_Table3",
+            "Table of Contents_Table4",
+            "Table of Contents_Table5",
+            "Instructions_Table1",
+            "Instructions_Table2",
+            "Instructions_Table3",
+            "Instructions_Table4",
+            "Assumptions_Table1",
+            "Assumptions_Table2",
+            "Assumptions_Table3",
+            "Assumptions_Table4",
+            "Assumptions_Table5",
+            "Assumptions_Table6",
+            "Assumptions_Table7",
+            "Assumptions_Table8",
+            "Assumptions_Table9",
+            "Assumptions_Table10",
+            "Assumptions_Table11",
+            "Assumptions_Table12",
+            "Assumptions_Table13",
+            "DETAIL.XLS_Table1",
+            "DETAIL.XLS_Table2",
+            "DETAIL.XLS_Table3",
+            "DETAIL.XLS_Table4",
+            "DETAIL.XLS_Table5",
+            "DETAIL.XLS_Table6",
+            "DETAIL.XLS_Table7",
+            "DETAIL.XLS_Table8",
+            "DETAIL.XLS_Table9",
+            "DETAIL.XLS_Table10",
+            "DETAIL.XLS_Table11",
+            "DETAIL.XLS_Table12",
+            "DETAIL.XLS_Table13",
+            "DETAIL.XLS_Table14",
+            "DETAIL.XLS_Table15",
+            "DETAIL.XLS_Table16",
+            "DETAIL.XLS_Table17",
+            "DETAIL.XLS_Table18",
+            "DETAIL.XLS_Table19",
+            "DETAIL.XLS_Table20",
+            "DETAIL.XLS_Table21",
+            "DETAIL.XLS_Table22",
+            "DETAIL.XLS_Table23",
+            "DETAIL.XLS_Table24",
+            "DETAIL.XLS_Table25",
+            "DETAIL.XLS_Table26",
+            "DETAIL.XLS_Table27",
+            "DETAIL.XLS_Table28",
+            "DETAIL.XLS_Table29",
+            "DETAIL.XLS_Table30",
+            "DETAIL.XLS_Table31",
+            "DETAIL.XLS_Table32",
+            "DETAIL.XLS_Table33",
+            "DETAIL.XLS_Table34",
+            "DETAIL.XLS_Table35",
+            "DETAIL.XLS_Table36",
+            "DETAIL.XLS_Table37",
+            "DETAIL.XLS_Table38",
+            "DETAIL.XLS_Table39",
+            "DETAIL.XLS_Table40",
+            "DETAIL.XLS_Table41",
+            "DETAIL.XLS_Table42",
+            "DETAIL.XLS_Table43",
+            "DETAIL.XLS_Table44",
+            "DETAIL.XLS_Table45",
+            "DETAIL.XLS_Table46",
+            "DETAIL.XLS_Table47",
+            "DETAIL.XLS_Table48",
+            "DETAIL.XLS_Table49",
+            "DETAIL.XLS_Table50",
+            "DETAIL.XLS_Table51",
+            "DETAIL.XLS_Table52",
+            "DETAIL.XLS_Table53",
+            "DETAIL.XLS_Table54",
+            "DETAIL.XLS_Table55",
+            "DETAIL.XLS_Table56",
+            "DETAIL.XLS_Table57",
+            "DETAIL.XLS_Table58",
+            "DETAIL.XLS_Table59",
+            "DETAIL.XLS_Table60",
+            "DETAIL.XLS_Table61",
+            "DETAIL.XLS_Table62",
+            "DETAIL.XLS_Table63",
+            "DETAIL.XLS_Table64",
+            "DETAIL.XLS_Table65",
+            "DETAIL.XLS_Table66",
+            "DETAIL.XLS_Table67",
+            "DETAIL.XLS_Table68",
+            "DETAIL.XLS_Table69",
+            "DETAIL.XLS_Table70",
+            "DETAIL.XLS_Table71",
+            "DETAIL.XLS_Table72",
+            "Summary Statements_Table1",
+            "Summary Statements_Table2",
+            "Graph Input_Table1"
+          ],
+          "index_rows": 1157,
+          "config_rows": 351,
+          "table_sheets": [
+            "Table of Contents_Table1",
+            "Table of Contents_Table2",
+            "Table of Contents_Table3",
+            "Table of Contents_Table4",
+            "Table of Contents_Table5",
+            "Instructions_Table1",
+            "Instructions_Table2",
+            "Instructions_Table3",
+            "Instructions_Table4",
+            "Assumptions_Table1",
+            "Assumptions_Table2",
+            "Assumptions_Table3",
+            "Assumptions_Table4",
+            "Assumptions_Table5",
+            "Assumptions_Table6",
+            "Assumptions_Table7",
+            "Assumptions_Table8",
+            "Assumptions_Table9",
+            "Assumptions_Table10",
+            "Assumptions_Table11",
+            "Assumptions_Table12",
+            "Assumptions_Table13",
+            "DETAIL.XLS_Table1",
+            "DETAIL.XLS_Table2",
+            "DETAIL.XLS_Table3",
+            "DETAIL.XLS_Table4",
+            "DETAIL.XLS_Table5",
+            "DETAIL.XLS_Table6",
+            "DETAIL.XLS_Table7",
+            "DETAIL.XLS_Table8",
+            "DETAIL.XLS_Table9",
+            "DETAIL.XLS_Table10",
+            "DETAIL.XLS_Table11",
+            "DETAIL.XLS_Table12",
+            "DETAIL.XLS_Table13",
+            "DETAIL.XLS_Table14",
+            "DETAIL.XLS_Table15",
+            "DETAIL.XLS_Table16",
+            "DETAIL.XLS_Table17",
+            "DETAIL.XLS_Table18",
+            "DETAIL.XLS_Table19",
+            "DETAIL.XLS_Table20",
+            "DETAIL.XLS_Table21",
+            "DETAIL.XLS_Table22",
+            "DETAIL.XLS_Table23",
+            "DETAIL.XLS_Table24",
+            "DETAIL.XLS_Table25",
+            "DETAIL.XLS_Table26",
+            "DETAIL.XLS_Table27",
+            "DETAIL.XLS_Table28",
+            "DETAIL.XLS_Table29",
+            "DETAIL.XLS_Table30",
+            "DETAIL.XLS_Table31",
+            "DETAIL.XLS_Table32",
+            "DETAIL.XLS_Table33",
+            "DETAIL.XLS_Table34",
+            "DETAIL.XLS_Table35",
+            "DETAIL.XLS_Table36",
+            "DETAIL.XLS_Table37",
+            "DETAIL.XLS_Table38",
+            "DETAIL.XLS_Table39",
+            "DETAIL.XLS_Table40",
+            "DETAIL.XLS_Table41",
+            "DETAIL.XLS_Table42",
+            "DETAIL.XLS_Table43",
+            "DETAIL.XLS_Table44",
+            "DETAIL.XLS_Table45",
+            "DETAIL.XLS_Table46",
+            "DETAIL.XLS_Table47",
+            "DETAIL.XLS_Table48",
+            "DETAIL.XLS_Table49",
+            "DETAIL.XLS_Table50",
+            "DETAIL.XLS_Table51",
+            "DETAIL.XLS_Table52",
+            "DETAIL.XLS_Table53",
+            "DETAIL.XLS_Table54",
+            "DETAIL.XLS_Table55",
+            "DETAIL.XLS_Table56",
+            "DETAIL.XLS_Table57",
+            "DETAIL.XLS_Table58",
+            "DETAIL.XLS_Table59",
+            "DETAIL.XLS_Table60",
+            "DETAIL.XLS_Table61",
+            "DETAIL.XLS_Table62",
+            "DETAIL.XLS_Table63",
+            "DETAIL.XLS_Table64",
+            "DETAIL.XLS_Table65",
+            "DETAIL.XLS_Table66",
+            "DETAIL.XLS_Table67",
+            "DETAIL.XLS_Table68",
+            "DETAIL.XLS_Table69",
+            "DETAIL.XLS_Table70",
+            "DETAIL.XLS_Table71",
+            "DETAIL.XLS_Table72",
+            "Summary Statements_Table1",
+            "Summary Statements_Table2",
+            "Graph Input_Table1"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Gail-India.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/Gail-India/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Gail-India/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Gail-India/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Gail-India/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Gail-India/structured_calculate.py",
+        "output_unstructured": "artifacts/Gail-India/output_unstructured.xlsx",
+        "output_structured": "artifacts/Gail-India/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Cover",
+            "Directions",
+            "COMPANY OVERVIEW",
+            "PRESENTATION",
+            "Segment Revenue Model",
+            "INCOME STATEMENT",
+            "CASH FOW STATEMENT",
+            "BALANCESHEET",
+            "Debt Schedule",
+            "Valuation",
+            "Ratio Analysis"
+          ],
+          "cell_counts": {
+            "Cover": 208,
+            "Directions": 178,
+            "COMPANY OVERVIEW": 762,
+            "PRESENTATION": 1470,
+            "Segment Revenue Model": 2876,
+            "INCOME STATEMENT": 1677,
+            "CASH FOW STATEMENT": 1557,
+            "BALANCESHEET": 1411,
+            "Debt Schedule": 718,
+            "Valuation": 709,
+            "Ratio Analysis": 290
+          },
+          "type_counts": {
+            "Cover": {
+              "Input": 208,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Directions": {
+              "Input": 178,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "COMPANY OVERVIEW": {
+              "Input": 699,
+              "Calculation": 0,
+              "Output": 63
+            },
+            "PRESENTATION": {
+              "Input": 936,
+              "Calculation": 382,
+              "Output": 152
+            },
+            "Segment Revenue Model": {
+              "Input": 2269,
+              "Calculation": 224,
+              "Output": 383
+            },
+            "INCOME STATEMENT": {
+              "Input": 725,
+              "Calculation": 486,
+              "Output": 466
+            },
+            "CASH FOW STATEMENT": {
+              "Input": 1455,
+              "Calculation": 94,
+              "Output": 8
+            },
+            "BALANCESHEET": {
+              "Input": 1318,
+              "Calculation": 79,
+              "Output": 14
+            },
+            "Debt Schedule": {
+              "Input": 694,
+              "Calculation": 16,
+              "Output": 8
+            },
+            "Valuation": {
+              "Input": 417,
+              "Calculation": 200,
+              "Output": 92
+            },
+            "Ratio Analysis": {
+              "Input": 122,
+              "Calculation": 26,
+              "Output": 142
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Cover_Table1",
+            "Directions_Table1",
+            "COMPANY OVERVIEW_Table1",
+            "COMPANY OVERVIEW_Table2",
+            "COMPANY OVERVIEW_Table3",
+            "COMPANY OVERVIEW_Table4",
+            "COMPANY OVERVIEW_Table5",
+            "COMPANY OVERVIEW_Table6",
+            "PRESENTATION_Table1",
+            "PRESENTATION_Table2",
+            "PRESENTATION_Table3",
+            "PRESENTATION_Table4",
+            "PRESENTATION_Table5",
+            "PRESENTATION_Table6",
+            "PRESENTATION_Table7",
+            "PRESENTATION_Table8",
+            "PRESENTATION_Table9",
+            "PRESENTATION_Table10",
+            "PRESENTATION_Table11",
+            "PRESENTATION_Table12",
+            "PRESENTATION_Table13",
+            "PRESENTATION_Table14",
+            "PRESENTATION_Table15",
+            "PRESENTATION_Table16",
+            "PRESENTATION_Table17",
+            "PRESENTATION_Table18",
+            "PRESENTATION_Table19",
+            "PRESENTATION_Table20",
+            "PRESENTATION_Table21",
+            "PRESENTATION_Table22",
+            "PRESENTATION_Table23",
+            "PRESENTATION_Table24",
+            "PRESENTATION_Table25",
+            "PRESENTATION_Table26",
+            "PRESENTATION_Table27",
+            "PRESENTATION_Table28",
+            "PRESENTATION_Table29",
+            "PRESENTATION_Table30",
+            "PRESENTATION_Table31",
+            "PRESENTATION_Table32",
+            "PRESENTATION_Table33",
+            "PRESENTATION_Table34",
+            "PRESENTATION_Table35",
+            "PRESENTATION_Table36",
+            "PRESENTATION_Table37",
+            "PRESENTATION_Table38",
+            "Segment Revenue Model_Table1",
+            "Segment Revenue Model_Table2",
+            "Segment Revenue Model_Table3",
+            "Segment Revenue Model_Table4",
+            "Segment Revenue Model_Table5",
+            "Segment Revenue Model_Table6",
+            "Segment Revenue Model_Table7",
+            "Segment Revenue Model_Table8",
+            "Segment Revenue Model_Table9",
+            "Segment Revenue Model_Table10",
+            "Segment Revenue Model_Table11",
+            "Segment Revenue Model_Table12",
+            "Segment Revenue Model_Table13",
+            "Segment Revenue Model_Table14",
+            "Segment Revenue Model_Table15",
+            "Segment Revenue Model_Table16",
+            "Segment Revenue Model_Table17",
+            "Segment Revenue Model_Table18",
+            "Segment Revenue Model_Table19",
+            "Segment Revenue Model_Table20",
+            "Segment Revenue Model_Table21",
+            "Segment Revenue Model_Table22",
+            "Segment Revenue Model_Table23",
+            "Segment Revenue Model_Table24",
+            "Segment Revenue Model_Table25",
+            "Segment Revenue Model_Table26",
+            "Segment Revenue Model_Table27",
+            "INCOME STATEMENT_Table1",
+            "INCOME STATEMENT_Table2",
+            "INCOME STATEMENT_Table3",
+            "INCOME STATEMENT_Table4",
+            "INCOME STATEMENT_Table5",
+            "INCOME STATEMENT_Table6",
+            "INCOME STATEMENT_Table7",
+            "INCOME STATEMENT_Table8",
+            "INCOME STATEMENT_Table9",
+            "INCOME STATEMENT_Table10",
+            "INCOME STATEMENT_Table11",
+            "INCOME STATEMENT_Table12",
+            "INCOME STATEMENT_Table13",
+            "INCOME STATEMENT_Table14",
+            "INCOME STATEMENT_Table15",
+            "INCOME STATEMENT_Table16",
+            "INCOME STATEMENT_Table17",
+            "INCOME STATEMENT_Table18",
+            "INCOME STATEMENT_Table19",
+            "INCOME STATEMENT_Table20",
+            "INCOME STATEMENT_Table21",
+            "INCOME STATEMENT_Table22",
+            "INCOME STATEMENT_Table23",
+            "INCOME STATEMENT_Table24",
+            "INCOME STATEMENT_Table25",
+            "INCOME STATEMENT_Table26",
+            "INCOME STATEMENT_Table27",
+            "INCOME STATEMENT_Table28",
+            "INCOME STATEMENT_Table29",
+            "INCOME STATEMENT_Table30",
+            "INCOME STATEMENT_Table31",
+            "INCOME STATEMENT_Table32",
+            "INCOME STATEMENT_Table33",
+            "INCOME STATEMENT_Table34",
+            "CASH FOW STATEMENT_Table1",
+            "CASH FOW STATEMENT_Table2",
+            "CASH FOW STATEMENT_Table3",
+            "BALANCESHEET_Table1",
+            "BALANCESHEET_Table2",
+            "BALANCESHEET_Table3",
+            "BALANCESHEET_Table4",
+            "BALANCESHEET_Table5",
+            "BALANCESHEET_Table6",
+            "BALANCESHEET_Table7",
+            "BALANCESHEET_Table8",
+            "BALANCESHEET_Table9",
+            "BALANCESHEET_Table10",
+            "BALANCESHEET_Table11",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Valuation_Table1",
+            "Valuation_Table2",
+            "Valuation_Table3",
+            "Valuation_Table4",
+            "Valuation_Table5",
+            "Valuation_Table6",
+            "Valuation_Table7",
+            "Valuation_Table8",
+            "Valuation_Table9",
+            "Valuation_Table10",
+            "Valuation_Table11",
+            "Valuation_Table12",
+            "Valuation_Table13",
+            "Valuation_Table14",
+            "Valuation_Table15",
+            "Valuation_Table16",
+            "Valuation_Table17",
+            "Valuation_Table18",
+            "Ratio Analysis_Table1",
+            "Ratio Analysis_Table2"
+          ],
+          "index_rows": 2462,
+          "config_rows": 160,
+          "table_sheets": [
+            "Cover_Table1",
+            "Directions_Table1",
+            "COMPANY OVERVIEW_Table1",
+            "COMPANY OVERVIEW_Table2",
+            "COMPANY OVERVIEW_Table3",
+            "COMPANY OVERVIEW_Table4",
+            "COMPANY OVERVIEW_Table5",
+            "COMPANY OVERVIEW_Table6",
+            "PRESENTATION_Table1",
+            "PRESENTATION_Table2",
+            "PRESENTATION_Table3",
+            "PRESENTATION_Table4",
+            "PRESENTATION_Table5",
+            "PRESENTATION_Table6",
+            "PRESENTATION_Table7",
+            "PRESENTATION_Table8",
+            "PRESENTATION_Table9",
+            "PRESENTATION_Table10",
+            "PRESENTATION_Table11",
+            "PRESENTATION_Table12",
+            "PRESENTATION_Table13",
+            "PRESENTATION_Table14",
+            "PRESENTATION_Table15",
+            "PRESENTATION_Table16",
+            "PRESENTATION_Table17",
+            "PRESENTATION_Table18",
+            "PRESENTATION_Table19",
+            "PRESENTATION_Table20",
+            "PRESENTATION_Table21",
+            "PRESENTATION_Table22",
+            "PRESENTATION_Table23",
+            "PRESENTATION_Table24",
+            "PRESENTATION_Table25",
+            "PRESENTATION_Table26",
+            "PRESENTATION_Table27",
+            "PRESENTATION_Table28",
+            "PRESENTATION_Table29",
+            "PRESENTATION_Table30",
+            "PRESENTATION_Table31",
+            "PRESENTATION_Table32",
+            "PRESENTATION_Table33",
+            "PRESENTATION_Table34",
+            "PRESENTATION_Table35",
+            "PRESENTATION_Table36",
+            "PRESENTATION_Table37",
+            "PRESENTATION_Table38",
+            "Segment Revenue Model_Table1",
+            "Segment Revenue Model_Table2",
+            "Segment Revenue Model_Table3",
+            "Segment Revenue Model_Table4",
+            "Segment Revenue Model_Table5",
+            "Segment Revenue Model_Table6",
+            "Segment Revenue Model_Table7",
+            "Segment Revenue Model_Table8",
+            "Segment Revenue Model_Table9",
+            "Segment Revenue Model_Table10",
+            "Segment Revenue Model_Table11",
+            "Segment Revenue Model_Table12",
+            "Segment Revenue Model_Table13",
+            "Segment Revenue Model_Table14",
+            "Segment Revenue Model_Table15",
+            "Segment Revenue Model_Table16",
+            "Segment Revenue Model_Table17",
+            "Segment Revenue Model_Table18",
+            "Segment Revenue Model_Table19",
+            "Segment Revenue Model_Table20",
+            "Segment Revenue Model_Table21",
+            "Segment Revenue Model_Table22",
+            "Segment Revenue Model_Table23",
+            "Segment Revenue Model_Table24",
+            "Segment Revenue Model_Table25",
+            "Segment Revenue Model_Table26",
+            "Segment Revenue Model_Table27",
+            "INCOME STATEMENT_Table1",
+            "INCOME STATEMENT_Table2",
+            "INCOME STATEMENT_Table3",
+            "INCOME STATEMENT_Table4",
+            "INCOME STATEMENT_Table5",
+            "INCOME STATEMENT_Table6",
+            "INCOME STATEMENT_Table7",
+            "INCOME STATEMENT_Table8",
+            "INCOME STATEMENT_Table9",
+            "INCOME STATEMENT_Table10",
+            "INCOME STATEMENT_Table11",
+            "INCOME STATEMENT_Table12",
+            "INCOME STATEMENT_Table13",
+            "INCOME STATEMENT_Table14",
+            "INCOME STATEMENT_Table15",
+            "INCOME STATEMENT_Table16",
+            "INCOME STATEMENT_Table17",
+            "INCOME STATEMENT_Table18",
+            "INCOME STATEMENT_Table19",
+            "INCOME STATEMENT_Table20",
+            "INCOME STATEMENT_Table21",
+            "INCOME STATEMENT_Table22",
+            "INCOME STATEMENT_Table23",
+            "INCOME STATEMENT_Table24",
+            "INCOME STATEMENT_Table25",
+            "INCOME STATEMENT_Table26",
+            "INCOME STATEMENT_Table27",
+            "INCOME STATEMENT_Table28",
+            "INCOME STATEMENT_Table29",
+            "INCOME STATEMENT_Table30",
+            "INCOME STATEMENT_Table31",
+            "INCOME STATEMENT_Table32",
+            "INCOME STATEMENT_Table33",
+            "INCOME STATEMENT_Table34",
+            "CASH FOW STATEMENT_Table1",
+            "CASH FOW STATEMENT_Table2",
+            "CASH FOW STATEMENT_Table3",
+            "BALANCESHEET_Table1",
+            "BALANCESHEET_Table2",
+            "BALANCESHEET_Table3",
+            "BALANCESHEET_Table4",
+            "BALANCESHEET_Table5",
+            "BALANCESHEET_Table6",
+            "BALANCESHEET_Table7",
+            "BALANCESHEET_Table8",
+            "BALANCESHEET_Table9",
+            "BALANCESHEET_Table10",
+            "BALANCESHEET_Table11",
+            "Debt Schedule_Table1",
+            "Debt Schedule_Table2",
+            "Debt Schedule_Table3",
+            "Valuation_Table1",
+            "Valuation_Table2",
+            "Valuation_Table3",
+            "Valuation_Table4",
+            "Valuation_Table5",
+            "Valuation_Table6",
+            "Valuation_Table7",
+            "Valuation_Table8",
+            "Valuation_Table9",
+            "Valuation_Table10",
+            "Valuation_Table11",
+            "Valuation_Table12",
+            "Valuation_Table13",
+            "Valuation_Table14",
+            "Valuation_Table15",
+            "Valuation_Table16",
+            "Valuation_Table17",
+            "Valuation_Table18",
+            "Ratio Analysis_Table1",
+            "Ratio Analysis_Table2"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/Indigo.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/Indigo/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/Indigo/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/Indigo/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/Indigo/unstructured_calculate.py",
+        "structured_calculate": "artifacts/Indigo/structured_calculate.py",
+        "output_unstructured": "artifacts/Indigo/output_unstructured.xlsx",
+        "output_structured": "artifacts/Indigo/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Intro",
+            "Assumptions Sheet",
+            "Income statement",
+            "Asset Schedule ",
+            "Cost Matrix",
+            "ATF Fuel 2",
+            "Balance sheet",
+            "Revenue Matrix",
+            "Debt schedule",
+            "Incentive",
+            "CashFlow Statement",
+            "ATF fuel",
+            "Valuation"
+          ],
+          "cell_counts": {
+            "Intro": 161,
+            "Assumptions Sheet": 986,
+            "Income statement": 477,
+            "Asset Schedule ": 205,
+            "Cost Matrix": 701,
+            "ATF Fuel 2": 1740,
+            "Balance sheet": 630,
+            "Revenue Matrix": 273,
+            "Debt schedule": 138,
+            "Incentive": 127,
+            "CashFlow Statement": 1118,
+            "ATF fuel": 2176,
+            "Valuation": 655
+          },
+          "type_counts": {
+            "Intro": {
+              "Input": 161,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Assumptions Sheet": {
+              "Input": 619,
+              "Calculation": 218,
+              "Output": 149
+            },
+            "Income statement": {
+              "Input": 270,
+              "Calculation": 181,
+              "Output": 26
+            },
+            "Asset Schedule ": {
+              "Input": 118,
+              "Calculation": 62,
+              "Output": 25
+            },
+            "Cost Matrix": {
+              "Input": 389,
+              "Calculation": 197,
+              "Output": 115
+            },
+            "ATF Fuel 2": {
+              "Input": 693,
+              "Calculation": 481,
+              "Output": 566
+            },
+            "Balance sheet": {
+              "Input": 267,
+              "Calculation": 308,
+              "Output": 55
+            },
+            "Revenue Matrix": {
+              "Input": 154,
+              "Calculation": 42,
+              "Output": 77
+            },
+            "Debt schedule": {
+              "Input": 77,
+              "Calculation": 42,
+              "Output": 19
+            },
+            "Incentive": {
+              "Input": 60,
+              "Calculation": 43,
+              "Output": 24
+            },
+            "CashFlow Statement": {
+              "Input": 879,
+              "Calculation": 221,
+              "Output": 18
+            },
+            "ATF fuel": {
+              "Input": 1354,
+              "Calculation": 426,
+              "Output": 396
+            },
+            "Valuation": {
+              "Input": 407,
+              "Calculation": 148,
+              "Output": 100
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Intro_Table1",
+            "Intro_Table2",
+            "Assumptions Sheet_Table1",
+            "Assumptions Sheet_Table2",
+            "Assumptions Sheet_Table3",
+            "Assumptions Sheet_Table4",
+            "Assumptions Sheet_Table5",
+            "Assumptions Sheet_Table6",
+            "Assumptions Sheet_Table7",
+            "Assumptions Sheet_Table8",
+            "Assumptions Sheet_Table9",
+            "Assumptions Sheet_Table10",
+            "Assumptions Sheet_Table11",
+            "Assumptions Sheet_Table12",
+            "Assumptions Sheet_Table13",
+            "Assumptions Sheet_Table14",
+            "Assumptions Sheet_Table15",
+            "Assumptions Sheet_Table16",
+            "Assumptions Sheet_Table17",
+            "Assumptions Sheet_Table18",
+            "Assumptions Sheet_Table19",
+            "Assumptions Sheet_Table20",
+            "Income statement_Table1",
+            "Income statement_Table2",
+            "Income statement_Table3",
+            "Income statement_Table4",
+            "Income statement_Table5",
+            "Income statement_Table6",
+            "Income statement_Table7",
+            "Income statement_Table8",
+            "Income statement_Table9",
+            "Income statement_Table10",
+            "Income statement_Table11",
+            "Asset Schedule _Table1",
+            "Asset Schedule _Table2",
+            "Asset Schedule _Table3",
+            "Asset Schedule _Table4",
+            "Asset Schedule _Table5",
+            "Asset Schedule _Table6",
+            "Asset Schedule _Table7",
+            "Asset Schedule _Table8",
+            "Asset Schedule _Table9",
+            "Asset Schedule _Table10",
+            "Cost Matrix_Table1",
+            "Cost Matrix_Table2",
+            "Cost Matrix_Table3",
+            "Cost Matrix_Table4",
+            "Cost Matrix_Table5",
+            "Cost Matrix_Table6",
+            "Cost Matrix_Table7",
+            "Cost Matrix_Table8",
+            "Cost Matrix_Table9",
+            "Cost Matrix_Table10",
+            "Cost Matrix_Table11",
+            "Cost Matrix_Table12",
+            "Cost Matrix_Table13",
+            "Cost Matrix_Table14",
+            "Cost Matrix_Table15",
+            "Cost Matrix_Table16",
+            "Cost Matrix_Table17",
+            "Cost Matrix_Table18",
+            "Cost Matrix_Table19",
+            "ATF Fuel 2_Table1",
+            "ATF Fuel 2_Table2",
+            "ATF Fuel 2_Table3",
+            "ATF Fuel 2_Table4",
+            "ATF Fuel 2_Table5",
+            "ATF Fuel 2_Table6",
+            "ATF Fuel 2_Table7",
+            "ATF Fuel 2_Table8",
+            "Balance sheet_Table1",
+            "Balance sheet_Table2",
+            "Balance sheet_Table3",
+            "Balance sheet_Table4",
+            "Balance sheet_Table5",
+            "Balance sheet_Table6",
+            "Balance sheet_Table7",
+            "Balance sheet_Table8",
+            "Balance sheet_Table9",
+            "Balance sheet_Table10",
+            "Balance sheet_Table11",
+            "Balance sheet_Table12",
+            "Balance sheet_Table13",
+            "Balance sheet_Table14",
+            "Balance sheet_Table15",
+            "Balance sheet_Table16",
+            "Revenue Matrix_Table1",
+            "Revenue Matrix_Table2",
+            "Revenue Matrix_Table3",
+            "Revenue Matrix_Table4",
+            "Revenue Matrix_Table5",
+            "Revenue Matrix_Table6",
+            "Debt schedule_Table1",
+            "Debt schedule_Table2",
+            "Debt schedule_Table3",
+            "Debt schedule_Table4",
+            "Incentive_Table1",
+            "Incentive_Table2",
+            "Incentive_Table3",
+            "Incentive_Table4",
+            "CashFlow Statement_Table1",
+            "CashFlow Statement_Table2",
+            "CashFlow Statement_Table3",
+            "CashFlow Statement_Table4",
+            "CashFlow Statement_Table5",
+            "CashFlow Statement_Table6",
+            "CashFlow Statement_Table7",
+            "CashFlow Statement_Table8",
+            "CashFlow Statement_Table9",
+            "CashFlow Statement_Table10",
+            "CashFlow Statement_Table11",
+            "CashFlow Statement_Table12",
+            "ATF fuel_Table1",
+            "ATF fuel_Table2",
+            "ATF fuel_Table3",
+            "Valuation_Table1",
+            "Valuation_Table2",
+            "Valuation_Table3",
+            "Valuation_Table4",
+            "Valuation_Table5",
+            "Valuation_Table6",
+            "Valuation_Table7",
+            "Valuation_Table8",
+            "Valuation_Table9",
+            "Valuation_Table10",
+            "Valuation_Table11",
+            "Valuation_Table12",
+            "Valuation_Table13"
+          ],
+          "index_rows": 3933,
+          "config_rows": 76,
+          "table_sheets": [
+            "Intro_Table1",
+            "Intro_Table2",
+            "Assumptions Sheet_Table1",
+            "Assumptions Sheet_Table2",
+            "Assumptions Sheet_Table3",
+            "Assumptions Sheet_Table4",
+            "Assumptions Sheet_Table5",
+            "Assumptions Sheet_Table6",
+            "Assumptions Sheet_Table7",
+            "Assumptions Sheet_Table8",
+            "Assumptions Sheet_Table9",
+            "Assumptions Sheet_Table10",
+            "Assumptions Sheet_Table11",
+            "Assumptions Sheet_Table12",
+            "Assumptions Sheet_Table13",
+            "Assumptions Sheet_Table14",
+            "Assumptions Sheet_Table15",
+            "Assumptions Sheet_Table16",
+            "Assumptions Sheet_Table17",
+            "Assumptions Sheet_Table18",
+            "Assumptions Sheet_Table19",
+            "Assumptions Sheet_Table20",
+            "Income statement_Table1",
+            "Income statement_Table2",
+            "Income statement_Table3",
+            "Income statement_Table4",
+            "Income statement_Table5",
+            "Income statement_Table6",
+            "Income statement_Table7",
+            "Income statement_Table8",
+            "Income statement_Table9",
+            "Income statement_Table10",
+            "Income statement_Table11",
+            "Asset Schedule _Table1",
+            "Asset Schedule _Table2",
+            "Asset Schedule _Table3",
+            "Asset Schedule _Table4",
+            "Asset Schedule _Table5",
+            "Asset Schedule _Table6",
+            "Asset Schedule _Table7",
+            "Asset Schedule _Table8",
+            "Asset Schedule _Table9",
+            "Asset Schedule _Table10",
+            "Cost Matrix_Table1",
+            "Cost Matrix_Table2",
+            "Cost Matrix_Table3",
+            "Cost Matrix_Table4",
+            "Cost Matrix_Table5",
+            "Cost Matrix_Table6",
+            "Cost Matrix_Table7",
+            "Cost Matrix_Table8",
+            "Cost Matrix_Table9",
+            "Cost Matrix_Table10",
+            "Cost Matrix_Table11",
+            "Cost Matrix_Table12",
+            "Cost Matrix_Table13",
+            "Cost Matrix_Table14",
+            "Cost Matrix_Table15",
+            "Cost Matrix_Table16",
+            "Cost Matrix_Table17",
+            "Cost Matrix_Table18",
+            "Cost Matrix_Table19",
+            "ATF Fuel 2_Table1",
+            "ATF Fuel 2_Table2",
+            "ATF Fuel 2_Table3",
+            "ATF Fuel 2_Table4",
+            "ATF Fuel 2_Table5",
+            "ATF Fuel 2_Table6",
+            "ATF Fuel 2_Table7",
+            "ATF Fuel 2_Table8",
+            "Balance sheet_Table1",
+            "Balance sheet_Table2",
+            "Balance sheet_Table3",
+            "Balance sheet_Table4",
+            "Balance sheet_Table5",
+            "Balance sheet_Table6",
+            "Balance sheet_Table7",
+            "Balance sheet_Table8",
+            "Balance sheet_Table9",
+            "Balance sheet_Table10",
+            "Balance sheet_Table11",
+            "Balance sheet_Table12",
+            "Balance sheet_Table13",
+            "Balance sheet_Table14",
+            "Balance sheet_Table15",
+            "Balance sheet_Table16",
+            "Revenue Matrix_Table1",
+            "Revenue Matrix_Table2",
+            "Revenue Matrix_Table3",
+            "Revenue Matrix_Table4",
+            "Revenue Matrix_Table5",
+            "Revenue Matrix_Table6",
+            "Debt schedule_Table1",
+            "Debt schedule_Table2",
+            "Debt schedule_Table3",
+            "Debt schedule_Table4",
+            "Incentive_Table1",
+            "Incentive_Table2",
+            "Incentive_Table3",
+            "Incentive_Table4",
+            "CashFlow Statement_Table1",
+            "CashFlow Statement_Table2",
+            "CashFlow Statement_Table3",
+            "CashFlow Statement_Table4",
+            "CashFlow Statement_Table5",
+            "CashFlow Statement_Table6",
+            "CashFlow Statement_Table7",
+            "CashFlow Statement_Table8",
+            "CashFlow Statement_Table9",
+            "CashFlow Statement_Table10",
+            "CashFlow Statement_Table11",
+            "CashFlow Statement_Table12",
+            "ATF fuel_Table1",
+            "ATF fuel_Table2",
+            "ATF fuel_Table3",
+            "Valuation_Table1",
+            "Valuation_Table2",
+            "Valuation_Table3",
+            "Valuation_Table4",
+            "Valuation_Table5",
+            "Valuation_Table6",
+            "Valuation_Table7",
+            "Valuation_Table8",
+            "Valuation_Table9",
+            "Valuation_Table10",
+            "Valuation_Table11",
+            "Valuation_Table12",
+            "Valuation_Table13"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/unstructured_calculate.py",
+        "structured_calculate": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/structured_calculate.py",
+        "output_unstructured": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/output_unstructured.xlsx",
+        "output_structured": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Guide",
+            "Daily cash flow",
+            "Monthly cash flow",
+            "Annual cash flow",
+            "Income",
+            "Expenses",
+            "Discretionary",
+            "Savings"
+          ],
+          "cell_counts": {
+            "Guide": 23,
+            "Daily cash flow": 281,
+            "Monthly cash flow": 767,
+            "Annual cash flow": 193,
+            "Income": 45,
+            "Expenses": 77,
+            "Discretionary": 55,
+            "Savings": 42
+          },
+          "type_counts": {
+            "Guide": {
+              "Input": 23,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Daily cash flow": {
+              "Input": 179,
+              "Calculation": 0,
+              "Output": 102
+            },
+            "Monthly cash flow": {
+              "Input": 710,
+              "Calculation": 0,
+              "Output": 57
+            },
+            "Annual cash flow": {
+              "Input": 184,
+              "Calculation": 0,
+              "Output": 9
+            },
+            "Income": {
+              "Input": 36,
+              "Calculation": 2,
+              "Output": 7
+            },
+            "Expenses": {
+              "Input": 56,
+              "Calculation": 0,
+              "Output": 21
+            },
+            "Discretionary": {
+              "Input": 41,
+              "Calculation": 0,
+              "Output": 14
+            },
+            "Savings": {
+              "Input": 34,
+              "Calculation": 1,
+              "Output": 7
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Daily cash flow_Table1",
+            "Daily cash flow_Table2",
+            "Daily cash flow_Table3",
+            "Monthly cash flow_Table1",
+            "Monthly cash flow_Table2",
+            "Annual cash flow_Table1",
+            "Annual cash flow_Table2",
+            "Annual cash flow_Table3",
+            "Annual cash flow_Table4",
+            "Annual cash flow_Table5",
+            "Income_Table1",
+            "Income_Table2",
+            "Expenses_Table1",
+            "Expenses_Table2",
+            "Discretionary_Table1",
+            "Discretionary_Table2",
+            "Savings_Table1",
+            "Savings_Table2"
+          ],
+          "index_rows": 768,
+          "config_rows": 41,
+          "table_sheets": [
+            "Daily cash flow_Table1",
+            "Daily cash flow_Table2",
+            "Daily cash flow_Table3",
+            "Monthly cash flow_Table1",
+            "Monthly cash flow_Table2",
+            "Annual cash flow_Table1",
+            "Annual cash flow_Table2",
+            "Annual cash flow_Table3",
+            "Annual cash flow_Table4",
+            "Annual cash flow_Table5",
+            "Income_Table1",
+            "Income_Table2",
+            "Expenses_Table1",
+            "Expenses_Table2",
+            "Discretionary_Table1",
+            "Discretionary_Table2",
+            "Savings_Table1",
+            "Savings_Table2"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/unstructured_calculate.py",
+        "structured_calculate": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/structured_calculate.py",
+        "output_unstructured": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/output_unstructured.xlsx",
+        "output_structured": "artifacts/TF36836876-728a-4ad7-8de9-e6841d3954b2815b31cf_wac-7a33f0431b1c/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Income statement",
+            "Variables"
+          ],
+          "cell_counts": {
+            "Income statement": 480,
+            "Variables": 8
+          },
+          "type_counts": {
+            "Income statement": {
+              "Input": 472,
+              "Calculation": 0,
+              "Output": 8
+            },
+            "Variables": {
+              "Input": 8,
+              "Calculation": 0,
+              "Output": 0
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Income statement_Table1",
+            "Income statement_Table2",
+            "Income statement_Table3",
+            "Income statement_Table4",
+            "Income statement_Table5",
+            "Income statement_Table6",
+            "Income statement_Table7",
+            "Variables_Table1"
+          ],
+          "index_rows": 96,
+          "config_rows": 6,
+          "table_sheets": [
+            "Income statement_Table1",
+            "Income statement_Table2",
+            "Income statement_Table3",
+            "Income statement_Table4",
+            "Income statement_Table5",
+            "Income statement_Table6",
+            "Income statement_Table7",
+            "Variables_Table1"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/unstructured_calculate.py",
+        "structured_calculate": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/structured_calculate.py",
+        "output_unstructured": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/output_unstructured.xlsx",
+        "output_structured": "artifacts/TF7b509ab0-9b81-4f16-8e2f-b8fd20cd9fd56229c2f9_wac-bb7d2591b1d5/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Loan analysis"
+          ],
+          "cell_counts": {
+            "Loan analysis": 736
+          },
+          "type_counts": {
+            "Loan analysis": {
+              "Input": 220,
+              "Calculation": 0,
+              "Output": 516
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Loan analysis_Table1",
+            "Loan analysis_Table2",
+            "Loan analysis_Table3"
+          ],
+          "index_rows": 24,
+          "config_rows": 3,
+          "table_sheets": [
+            "Loan analysis_Table1",
+            "Loan analysis_Table2",
+            "Loan analysis_Table3"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/unstructured_calculate.py",
+        "structured_calculate": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/structured_calculate.py",
+        "output_unstructured": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/output_unstructured.xlsx",
+        "output_structured": "artifacts/TFb55730e7-4e7a-44bc-b0f3-ababbf53f2231b5f28b4_wac-50744284f86d/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Guide",
+            "Daily cash flow",
+            "Monthly cash flow",
+            "Annual cash flow",
+            "Income",
+            "Expenses",
+            "Discretionary",
+            "Savings"
+          ],
+          "cell_counts": {
+            "Guide": 829,
+            "Daily cash flow": 280,
+            "Monthly cash flow": 763,
+            "Annual cash flow": 174,
+            "Income": 129,
+            "Expenses": 232,
+            "Discretionary": 199,
+            "Savings": 109
+          },
+          "type_counts": {
+            "Guide": {
+              "Input": 829,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Daily cash flow": {
+              "Input": 178,
+              "Calculation": 0,
+              "Output": 102
+            },
+            "Monthly cash flow": {
+              "Input": 706,
+              "Calculation": 0,
+              "Output": 57
+            },
+            "Annual cash flow": {
+              "Input": 165,
+              "Calculation": 0,
+              "Output": 9
+            },
+            "Income": {
+              "Input": 120,
+              "Calculation": 2,
+              "Output": 7
+            },
+            "Expenses": {
+              "Input": 211,
+              "Calculation": 0,
+              "Output": 21
+            },
+            "Discretionary": {
+              "Input": 185,
+              "Calculation": 0,
+              "Output": 14
+            },
+            "Savings": {
+              "Input": 101,
+              "Calculation": 1,
+              "Output": 7
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Guide_Table1",
+            "Guide_Table2",
+            "Daily cash flow_Table1",
+            "Daily cash flow_Table2",
+            "Daily cash flow_Table3",
+            "Monthly cash flow_Table1",
+            "Monthly cash flow_Table2",
+            "Annual cash flow_Table1",
+            "Annual cash flow_Table2",
+            "Annual cash flow_Table3",
+            "Annual cash flow_Table4",
+            "Annual cash flow_Table5",
+            "Annual cash flow_Table6",
+            "Income_Table1",
+            "Income_Table2",
+            "Expenses_Table1",
+            "Expenses_Table2",
+            "Discretionary_Table1",
+            "Discretionary_Table2",
+            "Savings_Table1",
+            "Savings_Table2"
+          ],
+          "index_rows": 760,
+          "config_rows": 13,
+          "table_sheets": [
+            "Guide_Table1",
+            "Guide_Table2",
+            "Daily cash flow_Table1",
+            "Daily cash flow_Table2",
+            "Daily cash flow_Table3",
+            "Monthly cash flow_Table1",
+            "Monthly cash flow_Table2",
+            "Annual cash flow_Table1",
+            "Annual cash flow_Table2",
+            "Annual cash flow_Table3",
+            "Annual cash flow_Table4",
+            "Annual cash flow_Table5",
+            "Annual cash flow_Table6",
+            "Income_Table1",
+            "Income_Table2",
+            "Expenses_Table1",
+            "Expenses_Table2",
+            "Discretionary_Table1",
+            "Discretionary_Table2",
+            "Savings_Table1",
+            "Savings_Table2"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/unstructured_calculate.py",
+        "structured_calculate": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/structured_calculate.py",
+        "output_unstructured": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/output_unstructured.xlsx",
+        "output_structured": "artifacts/TFd14f83e2-f49d-4080-9e95-0bd4849fa63f10bd17a5_wac-6d185d203a9f/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "START",
+            "PLANNED EXPENSES",
+            "ACTUAL EXPENSES",
+            "EXPENSE VARIANCES",
+            "EXPENSE ANALYSIS"
+          ],
+          "cell_counts": {
+            "START": 24,
+            "PLANNED EXPENSES": 643,
+            "ACTUAL EXPENSES": 615,
+            "EXPENSE VARIANCES": 620,
+            "EXPENSE ANALYSIS": 251
+          },
+          "type_counts": {
+            "START": {
+              "Input": 24,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "PLANNED EXPENSES": {
+              "Input": 536,
+              "Calculation": 25,
+              "Output": 82
+            },
+            "ACTUAL EXPENSES": {
+              "Input": 506,
+              "Calculation": 25,
+              "Output": 84
+            },
+            "EXPENSE VARIANCES": {
+              "Input": 307,
+              "Calculation": 12,
+              "Output": 301
+            },
+            "EXPENSE ANALYSIS": {
+              "Input": 226,
+              "Calculation": 15,
+              "Output": 10
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "START_Table1",
+            "PLANNED EXPENSES_Table1",
+            "PLANNED EXPENSES_Table2",
+            "PLANNED EXPENSES_Table3",
+            "PLANNED EXPENSES_Table4",
+            "PLANNED EXPENSES_Table5",
+            "ACTUAL EXPENSES_Table1",
+            "ACTUAL EXPENSES_Table2",
+            "ACTUAL EXPENSES_Table3",
+            "ACTUAL EXPENSES_Table4",
+            "ACTUAL EXPENSES_Table5",
+            "EXPENSE VARIANCES_Table1",
+            "EXPENSE VARIANCES_Table2",
+            "EXPENSE VARIANCES_Table3",
+            "EXPENSE VARIANCES_Table4",
+            "EXPENSE VARIANCES_Table5",
+            "EXPENSE ANALYSIS_Table1"
+          ],
+          "index_rows": 616,
+          "config_rows": 11,
+          "table_sheets": [
+            "START_Table1",
+            "PLANNED EXPENSES_Table1",
+            "PLANNED EXPENSES_Table2",
+            "PLANNED EXPENSES_Table3",
+            "PLANNED EXPENSES_Table4",
+            "PLANNED EXPENSES_Table5",
+            "ACTUAL EXPENSES_Table1",
+            "ACTUAL EXPENSES_Table2",
+            "ACTUAL EXPENSES_Table3",
+            "ACTUAL EXPENSES_Table4",
+            "ACTUAL EXPENSES_Table5",
+            "EXPENSE VARIANCES_Table1",
+            "EXPENSE VARIANCES_Table2",
+            "EXPENSE VARIANCES_Table3",
+            "EXPENSE VARIANCES_Table4",
+            "EXPENSE VARIANCES_Table5",
+            "EXPENSE ANALYSIS_Table1"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2.xlsx",
+      "artifacts": {
+        "mapping_report": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/unstructured_calculate.py",
+        "structured_calculate": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/structured_calculate.py",
+        "output_unstructured": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/output_unstructured.xlsx",
+        "output_structured": "artifacts/TFe682f46b-5c19-460d-b913-d05f8f4d4d45316b9622_wac-f63b7bc59bc2/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Loan calculator"
+          ],
+          "cell_counts": {
+            "Loan calculator": 1268
+          },
+          "type_counts": {
+            "Loan calculator": {
+              "Input": 423,
+              "Calculation": 0,
+              "Output": 845
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Loan calculator_Table1",
+            "Loan calculator_Table2",
+            "Loan calculator_Table3",
+            "Loan calculator_Table4"
+          ],
+          "index_rows": 76,
+          "config_rows": 6,
+          "table_sheets": [
+            "Loan calculator_Table1",
+            "Loan calculator_Table2",
+            "Loan calculator_Table3",
+            "Loan calculator_Table4"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/capbudg.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/capbudg/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/capbudg/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/capbudg/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/capbudg/unstructured_calculate.py",
+        "structured_calculate": "artifacts/capbudg/structured_calculate.py",
+        "output_unstructured": "artifacts/capbudg/output_unstructured.xlsx",
+        "output_structured": "artifacts/capbudg/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "CapBudgWS"
+          ],
+          "cell_counts": {
+            "CapBudgWS": 1353
+          },
+          "type_counts": {
+            "CapBudgWS": {
+              "Input": 1139,
+              "Calculation": 199,
+              "Output": 15
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "CapBudgWS_Table1",
+            "CapBudgWS_Table2",
+            "CapBudgWS_Table3",
+            "CapBudgWS_Table4",
+            "CapBudgWS_Table5",
+            "CapBudgWS_Table6",
+            "CapBudgWS_Table7",
+            "CapBudgWS_Table8",
+            "CapBudgWS_Table9",
+            "CapBudgWS_Table10",
+            "CapBudgWS_Table11",
+            "CapBudgWS_Table12",
+            "CapBudgWS_Table13",
+            "CapBudgWS_Table14",
+            "CapBudgWS_Table15",
+            "CapBudgWS_Table16"
+          ],
+          "index_rows": 122,
+          "config_rows": 3,
+          "table_sheets": [
+            "CapBudgWS_Table1",
+            "CapBudgWS_Table2",
+            "CapBudgWS_Table3",
+            "CapBudgWS_Table4",
+            "CapBudgWS_Table5",
+            "CapBudgWS_Table6",
+            "CapBudgWS_Table7",
+            "CapBudgWS_Table8",
+            "CapBudgWS_Table9",
+            "CapBudgWS_Table10",
+            "CapBudgWS_Table11",
+            "CapBudgWS_Table12",
+            "CapBudgWS_Table13",
+            "CapBudgWS_Table14",
+            "CapBudgWS_Table15",
+            "CapBudgWS_Table16"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/carlease.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/carlease/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/carlease/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/carlease/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/carlease/unstructured_calculate.py",
+        "structured_calculate": "artifacts/carlease/structured_calculate.py",
+        "output_unstructured": "artifacts/carlease/output_unstructured.xlsx",
+        "output_structured": "artifacts/carlease/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Sheet1"
+          ],
+          "cell_counts": {
+            "Sheet1": 504
+          },
+          "type_counts": {
+            "Sheet1": {
+              "Input": 310,
+              "Calculation": 191,
+              "Output": 3
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Sheet1_Table1",
+            "Sheet1_Table2",
+            "Sheet1_Table3",
+            "Sheet1_Table4",
+            "Sheet1_Table5",
+            "Sheet1_Table6",
+            "Sheet1_Table7"
+          ],
+          "index_rows": 81,
+          "config_rows": 6,
+          "table_sheets": [
+            "Sheet1_Table1",
+            "Sheet1_Table2",
+            "Sheet1_Table3",
+            "Sheet1_Table4",
+            "Sheet1_Table5",
+            "Sheet1_Table6",
+            "Sheet1_Table7"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/fcfest.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/fcfest/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/fcfest/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/fcfest/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/fcfest/unstructured_calculate.py",
+        "structured_calculate": "artifacts/fcfest/structured_calculate.py",
+        "output_unstructured": "artifacts/fcfest/output_unstructured.xlsx",
+        "output_structured": "artifacts/fcfest/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "NewFCFEStableGrowth"
+          ],
+          "cell_counts": {
+            "NewFCFEStableGrowth": 1176
+          },
+          "type_counts": {
+            "NewFCFEStableGrowth": {
+              "Input": 1141,
+              "Calculation": 20,
+              "Output": 15
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "NewFCFEStableGrowth_Table1",
+            "NewFCFEStableGrowth_Table2",
+            "NewFCFEStableGrowth_Table3",
+            "NewFCFEStableGrowth_Table4",
+            "NewFCFEStableGrowth_Table5",
+            "NewFCFEStableGrowth_Table6",
+            "NewFCFEStableGrowth_Table7",
+            "NewFCFEStableGrowth_Table8",
+            "NewFCFEStableGrowth_Table9",
+            "NewFCFEStableGrowth_Table10"
+          ],
+          "index_rows": 76,
+          "config_rows": 18,
+          "table_sheets": [
+            "NewFCFEStableGrowth_Table1",
+            "NewFCFEStableGrowth_Table2",
+            "NewFCFEStableGrowth_Table3",
+            "NewFCFEStableGrowth_Table4",
+            "NewFCFEStableGrowth_Table5",
+            "NewFCFEStableGrowth_Table6",
+            "NewFCFEStableGrowth_Table7",
+            "NewFCFEStableGrowth_Table8",
+            "NewFCFEStableGrowth_Table9",
+            "NewFCFEStableGrowth_Table10"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/fcffst.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/fcffst/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/fcffst/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/fcffst/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/fcffst/unstructured_calculate.py",
+        "structured_calculate": "artifacts/fcffst/structured_calculate.py",
+        "output_unstructured": "artifacts/fcffst/output_unstructured.xlsx",
+        "output_structured": "artifacts/fcffst/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Sheet1",
+            "NewFCFFStableGrowth"
+          ],
+          "cell_counts": {
+            "Sheet1": 0,
+            "NewFCFFStableGrowth": 274
+          },
+          "type_counts": {
+            "Sheet1": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "NewFCFFStableGrowth": {
+              "Input": 247,
+              "Calculation": 15,
+              "Output": 12
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "NewFCFFStableGrowth_Table1",
+            "NewFCFFStableGrowth_Table2",
+            "NewFCFFStableGrowth_Table3",
+            "NewFCFFStableGrowth_Table4",
+            "NewFCFFStableGrowth_Table5",
+            "NewFCFFStableGrowth_Table6",
+            "NewFCFFStableGrowth_Table7",
+            "NewFCFFStableGrowth_Table8",
+            "NewFCFFStableGrowth_Table9",
+            "NewFCFFStableGrowth_Table10",
+            "NewFCFFStableGrowth_Table11"
+          ],
+          "index_rows": 75,
+          "config_rows": 15,
+          "table_sheets": [
+            "NewFCFFStableGrowth_Table1",
+            "NewFCFFStableGrowth_Table2",
+            "NewFCFFStableGrowth_Table3",
+            "NewFCFFStableGrowth_Table4",
+            "NewFCFFStableGrowth_Table5",
+            "NewFCFFStableGrowth_Table6",
+            "NewFCFFStableGrowth_Table7",
+            "NewFCFFStableGrowth_Table8",
+            "NewFCFFStableGrowth_Table9",
+            "NewFCFFStableGrowth_Table10",
+            "NewFCFFStableGrowth_Table11"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/infltn.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/infltn/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/infltn/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/infltn/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/infltn/unstructured_calculate.py",
+        "structured_calculate": "artifacts/infltn/structured_calculate.py",
+        "output_unstructured": "artifacts/infltn/output_unstructured.xlsx",
+        "output_structured": "artifacts/infltn/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Real rate",
+            "Infl factor",
+            "NPV"
+          ],
+          "cell_counts": {
+            "Real rate": 461,
+            "Infl factor": 98,
+            "NPV": 289
+          },
+          "type_counts": {
+            "Real rate": {
+              "Input": 455,
+              "Calculation": 4,
+              "Output": 2
+            },
+            "Infl factor": {
+              "Input": 79,
+              "Calculation": 14,
+              "Output": 5
+            },
+            "NPV": {
+              "Input": 257,
+              "Calculation": 30,
+              "Output": 2
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Real rate_Table1",
+            "Real rate_Table2",
+            "Real rate_Table3",
+            "Infl factor_Table1",
+            "Infl factor_Table2",
+            "Infl factor_Table3",
+            "Infl factor_Table4",
+            "NPV_Table1",
+            "NPV_Table2",
+            "NPV_Table3",
+            "NPV_Table4"
+          ],
+          "index_rows": 70,
+          "config_rows": 11,
+          "table_sheets": [
+            "Real rate_Table1",
+            "Real rate_Table2",
+            "Real rate_Table3",
+            "Infl factor_Table1",
+            "Infl factor_Table2",
+            "Infl factor_Table3",
+            "Infl factor_Table4",
+            "NPV_Table1",
+            "NPV_Table2",
+            "NPV_Table3",
+            "NPV_Table4"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/model.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/model/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/model/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/model/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/model/unstructured_calculate.py",
+        "structured_calculate": "artifacts/model/structured_calculate.py",
+        "output_unstructured": "artifacts/model/output_unstructured.xlsx",
+        "output_structured": "artifacts/model/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "model.xls"
+          ],
+          "cell_counts": {
+            "model.xls": 115
+          },
+          "type_counts": {
+            "model.xls": {
+              "Input": 109,
+              "Calculation": 3,
+              "Output": 3
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "model.xls_Table1",
+            "model.xls_Table2",
+            "model.xls_Table3",
+            "model.xls_Table4",
+            "model.xls_Table5",
+            "model.xls_Table6",
+            "model.xls_Table7",
+            "model.xls_Table8",
+            "model.xls_Table9",
+            "model.xls_Table10",
+            "model.xls_Table11",
+            "model.xls_Table12",
+            "model.xls_Table13",
+            "model.xls_Table14"
+          ],
+          "index_rows": 71,
+          "config_rows": 8,
+          "table_sheets": [
+            "model.xls_Table1",
+            "model.xls_Table2",
+            "model.xls_Table3",
+            "model.xls_Table4",
+            "model.xls_Table5",
+            "model.xls_Table6",
+            "model.xls_Table7",
+            "model.xls_Table8",
+            "model.xls_Table9",
+            "model.xls_Table10",
+            "model.xls_Table11",
+            "model.xls_Table12",
+            "model.xls_Table13",
+            "model.xls_Table14"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/ratings.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/ratings/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/ratings/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/ratings/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/ratings/unstructured_calculate.py",
+        "structured_calculate": "artifacts/ratings/structured_calculate.py",
+        "output_unstructured": "artifacts/ratings/output_unstructured.xlsx",
+        "output_structured": "artifacts/ratings/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Sheet1",
+            "Sheet2",
+            "Sheet3",
+            "Sheet4",
+            "Sheet5",
+            "Sheet6",
+            "Sheet7",
+            "Sheet8",
+            "Sheet9",
+            "Sheet10",
+            "Sheet11",
+            "Sheet12",
+            "Sheet13",
+            "Sheet14",
+            "Sheet15",
+            "Sheet16"
+          ],
+          "cell_counts": {
+            "Sheet1": 279,
+            "Sheet2": 0,
+            "Sheet3": 0,
+            "Sheet4": 0,
+            "Sheet5": 0,
+            "Sheet6": 0,
+            "Sheet7": 0,
+            "Sheet8": 0,
+            "Sheet9": 0,
+            "Sheet10": 0,
+            "Sheet11": 0,
+            "Sheet12": 0,
+            "Sheet13": 0,
+            "Sheet14": 0,
+            "Sheet15": 0,
+            "Sheet16": 0
+          },
+          "type_counts": {
+            "Sheet1": {
+              "Input": 275,
+              "Calculation": 2,
+              "Output": 2
+            },
+            "Sheet2": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet3": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet4": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet5": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet6": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet7": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet8": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet9": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet10": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet11": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet12": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet13": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet14": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet15": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Sheet16": {
+              "Input": 0,
+              "Calculation": 0,
+              "Output": 0
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Sheet1_Table1",
+            "Sheet1_Table2",
+            "Sheet1_Table3",
+            "Sheet1_Table4",
+            "Sheet1_Table5"
+          ],
+          "index_rows": 218,
+          "config_rows": 2,
+          "table_sheets": [
+            "Sheet1_Table1",
+            "Sheet1_Table2",
+            "Sheet1_Table3",
+            "Sheet1_Table4",
+            "Sheet1_Table5"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    },
+    {
+      "source_workbook": "ExcelFiles/statmnts.xls",
+      "artifacts": {
+        "mapping_report": "artifacts/statmnts/mapping_report.xlsx",
+        "unstructured_inputs": "artifacts/statmnts/unstructured_inputs.xlsx",
+        "structured_input": "artifacts/statmnts/structured_input.xlsx",
+        "unstructured_calculate": "artifacts/statmnts/unstructured_calculate.py",
+        "structured_calculate": "artifacts/statmnts/structured_calculate.py",
+        "output_unstructured": "artifacts/statmnts/output_unstructured.xlsx",
+        "output_structured": "artifacts/statmnts/output_structured.xlsx"
+      },
+      "intermediate_checks": {
+        "mapping": {
+          "sheets": [
+            "Instructions",
+            "Operations",
+            "Financing",
+            "Income",
+            "Balance sheet",
+            "Cash flows"
+          ],
+          "cell_counts": {
+            "Instructions": 30,
+            "Operations": 1061,
+            "Financing": 161,
+            "Income": 344,
+            "Balance sheet": 140,
+            "Cash flows": 290
+          },
+          "type_counts": {
+            "Instructions": {
+              "Input": 30,
+              "Calculation": 0,
+              "Output": 0
+            },
+            "Operations": {
+              "Input": 1038,
+              "Calculation": 23,
+              "Output": 0
+            },
+            "Financing": {
+              "Input": 132,
+              "Calculation": 24,
+              "Output": 5
+            },
+            "Income": {
+              "Input": 305,
+              "Calculation": 38,
+              "Output": 1
+            },
+            "Balance sheet": {
+              "Input": 80,
+              "Calculation": 52,
+              "Output": 8
+            },
+            "Cash flows": {
+              "Input": 234,
+              "Calculation": 55,
+              "Output": 1
+            }
+          }
+        },
+        "structured_input": {
+          "sheetnames": [
+            "Index",
+            "Config",
+            "Instructions_Table1",
+            "Instructions_Table2",
+            "Instructions_Table3",
+            "Operations_Table1",
+            "Operations_Table2",
+            "Operations_Table3",
+            "Operations_Table4",
+            "Operations_Table5",
+            "Operations_Table6",
+            "Operations_Table7",
+            "Operations_Table8",
+            "Financing_Table1",
+            "Financing_Table2",
+            "Financing_Table3",
+            "Financing_Table4",
+            "Financing_Table5",
+            "Financing_Table6",
+            "Financing_Table7",
+            "Financing_Table8",
+            "Financing_Table9",
+            "Income_Table1",
+            "Income_Table2",
+            "Income_Table3",
+            "Income_Table4",
+            "Balance sheet_Table1",
+            "Balance sheet_Table2",
+            "Balance sheet_Table3",
+            "Balance sheet_Table4",
+            "Balance sheet_Table5",
+            "Cash flows_Table1",
+            "Cash flows_Table2"
+          ],
+          "index_rows": 208,
+          "config_rows": 15,
+          "table_sheets": [
+            "Instructions_Table1",
+            "Instructions_Table2",
+            "Instructions_Table3",
+            "Operations_Table1",
+            "Operations_Table2",
+            "Operations_Table3",
+            "Operations_Table4",
+            "Operations_Table5",
+            "Operations_Table6",
+            "Operations_Table7",
+            "Operations_Table8",
+            "Financing_Table1",
+            "Financing_Table2",
+            "Financing_Table3",
+            "Financing_Table4",
+            "Financing_Table5",
+            "Financing_Table6",
+            "Financing_Table7",
+            "Financing_Table8",
+            "Financing_Table9",
+            "Income_Table1",
+            "Income_Table2",
+            "Income_Table3",
+            "Income_Table4",
+            "Balance sheet_Table1",
+            "Balance sheet_Table2",
+            "Balance sheet_Table3",
+            "Balance sheet_Table4",
+            "Balance sheet_Table5",
+            "Cash flows_Table1",
+            "Cash flows_Table2"
+          ]
+        },
+        "stage_verification": {
+          "layer1_mapping_mismatches": [],
+          "layer2a_unstructured_mismatches": [],
+          "layer2b_structured_mismatches": []
+        }
+      },
+      "mismatches": {
+        "unstructured": [],
+        "structured": []
+      },
+      "diagnosis": {
+        "unstructured": "clean",
+        "structured": "clean"
+      },
+      "success": true
+    }
+  ]
+}

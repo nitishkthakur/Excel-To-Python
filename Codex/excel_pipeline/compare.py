@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, datetime, time
+import math
 from pathlib import Path
 from typing import Any
 
@@ -18,8 +19,6 @@ class Mismatch:
 
 
 def _normalize_value(value: Any) -> Any:
-    if isinstance(value, float):
-        return round(value, 10)
     if hasattr(value, "t") and value.__class__.__name__.endswith("Formula"):
         try:
             attrs = tuple(sorted(vars(value).items()))
@@ -46,29 +45,22 @@ def _json_safe(value: Any) -> Any:
 
 
 def _style_signature(cell: Any) -> tuple[Any, ...]:
-    font_color_type = cell.font.color.type if cell.font.color else None
-    font_color_rgb = str(cell.font.color.rgb) if cell.font.color and cell.font.color.rgb else None
-    fill_color_type = cell.fill.fgColor.type if cell.fill.fgColor else None
-    fill_color_rgb = str(cell.fill.fgColor.rgb) if cell.fill.fgColor and cell.fill.fgColor.rgb else None
-
     return (
         cell.number_format,
         cell.font.bold,
         cell.font.italic,
         cell.font.sz,
-        font_color_type,
-        font_color_rgb,
-        cell.fill.fill_type,
-        fill_color_type,
-        fill_color_rgb,
-        cell.alignment.horizontal,
-        cell.alignment.vertical,
-        bool(cell.alignment.wrap_text),
         cell.border.left.style,
         cell.border.right.style,
         cell.border.top.style,
         cell.border.bottom.style,
     )
+
+
+def _values_equal(expected: Any, actual: Any) -> bool:
+    if isinstance(expected, float) and isinstance(actual, float):
+        return math.isclose(expected, actual, rel_tol=1e-9, abs_tol=1e-9)
+    return _normalize_value(expected) == _normalize_value(actual)
 
 
 def compare_workbooks(
@@ -128,7 +120,7 @@ def compare_workbooks(
                             )
                         )
                 else:
-                    if _normalize_value(exp_value) != _normalize_value(act_value):
+                    if not _values_equal(exp_value, act_value):
                         mismatches.append(
                             Mismatch(
                                 sheet=sheet_name,

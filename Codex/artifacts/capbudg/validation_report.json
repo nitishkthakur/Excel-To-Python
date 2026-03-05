@@ -1,0 +1,85 @@
+{
+  "source_workbook": "ExcelFiles/capbudg.xls",
+  "artifacts": {
+    "mapping_report": "artifacts/capbudg/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts/capbudg/unstructured_inputs.xlsx",
+    "structured_input": "artifacts/capbudg/structured_input.xlsx",
+    "unstructured_calculate": "artifacts/capbudg/unstructured_calculate.py",
+    "structured_calculate": "artifacts/capbudg/structured_calculate.py",
+    "output_unstructured": "artifacts/capbudg/output_unstructured.xlsx",
+    "output_structured": "artifacts/capbudg/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "CapBudgWS"
+      ],
+      "cell_counts": {
+        "CapBudgWS": 1353
+      },
+      "type_counts": {
+        "CapBudgWS": {
+          "Input": 1139,
+          "Calculation": 199,
+          "Output": 15
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "CapBudgWS_Table1",
+        "CapBudgWS_Table2",
+        "CapBudgWS_Table3",
+        "CapBudgWS_Table4",
+        "CapBudgWS_Table5",
+        "CapBudgWS_Table6",
+        "CapBudgWS_Table7",
+        "CapBudgWS_Table8",
+        "CapBudgWS_Table9",
+        "CapBudgWS_Table10",
+        "CapBudgWS_Table11",
+        "CapBudgWS_Table12",
+        "CapBudgWS_Table13",
+        "CapBudgWS_Table14",
+        "CapBudgWS_Table15",
+        "CapBudgWS_Table16"
+      ],
+      "index_rows": 122,
+      "config_rows": 3,
+      "table_sheets": [
+        "CapBudgWS_Table1",
+        "CapBudgWS_Table2",
+        "CapBudgWS_Table3",
+        "CapBudgWS_Table4",
+        "CapBudgWS_Table5",
+        "CapBudgWS_Table6",
+        "CapBudgWS_Table7",
+        "CapBudgWS_Table8",
+        "CapBudgWS_Table9",
+        "CapBudgWS_Table10",
+        "CapBudgWS_Table11",
+        "CapBudgWS_Table12",
+        "CapBudgWS_Table13",
+        "CapBudgWS_Table14",
+        "CapBudgWS_Table15",
+        "CapBudgWS_Table16"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

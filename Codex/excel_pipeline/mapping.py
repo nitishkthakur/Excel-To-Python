@@ -10,18 +10,16 @@ from typing import Any
 import pandas as pd
 from openpyxl import Workbook, load_workbook
 from openpyxl.formula.tokenizer import Tokenizer
+from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.utils.cell import get_column_letter, range_boundaries
 
 from .normalize import normalize_workbook
 from .types import CellRecord, MappingModel, SheetLayout
 from .utils import (
     color_to_hex,
-    deserialize_value,
     excel_bool,
     is_ref_token,
     parse_cell_ref,
-    serialize_style,
-    serialize_value,
     sheet_ref_token,
     split_sheet_ref,
     to_r1c1_token,
@@ -50,6 +48,10 @@ MAPPING_COLUMNS = [
     "GroupID",
     "GroupDirection",
     "GroupSize",
+    "IsDragged",
+    "GroupRange",
+    "DragCount",
+    "DragSummary",
     "PatternFormula",
     "StyleJSON",
 ]
@@ -68,32 +70,10 @@ def _should_capture_cell(cell: Any) -> bool:
 
 
 def _extract_sheet_layout(ws: Any, index: int) -> SheetLayout:
+    # Layout dimensions can be very large; keep metadata compact because
+    # reconstruction uses the template workbook path from _Metadata.
     row_dimensions: list[dict[str, Any]] = []
     col_dimensions: list[dict[str, Any]] = []
-
-    for row_idx, dim in ws.row_dimensions.items():
-        if dim.height is None and not dim.hidden and dim.outlineLevel in (None, 0):
-            continue
-        row_dimensions.append(
-            {
-                "row": int(row_idx),
-                "height": dim.height,
-                "hidden": bool(dim.hidden),
-                "outline_level": int(dim.outlineLevel or 0),
-            }
-        )
-
-    for col_idx, dim in ws.column_dimensions.items():
-        if dim.width is None and not dim.hidden and dim.outlineLevel in (None, 0):
-            continue
-        col_dimensions.append(
-            {
-                "column": str(col_idx),
-                "width": dim.width,
-                "hidden": bool(dim.hidden),
-                "outline_level": int(dim.outlineLevel or 0),
-            }
-        )
 
     tab_color = None
     if ws.sheet_properties and ws.sheet_properties.tabColor is not None:
@@ -316,6 +296,65 @@ def _assign_formula_groups(records_by_sheet: dict[str, list[CellRecord]]) -> Non
                     record.pattern_formula = pattern
 
 
+def _formula_group_details(records_by_sheet: dict[str, list[CellRecord]]) -> dict[str, dict[str, Any]]:
+    groups: dict[str, list[CellRecord]] = defaultdict(list)
+    for records in records_by_sheet.values():
+        for record in records:
+            if record.group_id:
+                groups[record.group_id].append(record)
+
+    details: dict[str, dict[str, Any]] = {}
+    for group_id, records in sorted(groups.items()):
+        rows_sorted = sorted(records, key=lambda r: (r.row, r.column))
+        anchor = rows_sorted[0]
+        sheet = anchor.sheet
+        direction = anchor.group_direction
+        size = anchor.group_size
+        pattern = anchor.pattern_formula
+        row_nums = [r.row for r in rows_sorted]
+        col_nums = [r.column for r in rows_sorted]
+        min_row, max_row = min(row_nums), max(row_nums)
+        min_col, max_col = min(col_nums), max(col_nums)
+        cell_range = (
+            f"{sheet}!{get_column_letter(min_col)}{min_row}:{get_column_letter(max_col)}{max_row}"
+        )
+
+        anchor_formula = anchor.formula
+        if isinstance(anchor_formula, str) and anchor_formula.startswith("="):
+            anchor_formula_display = f"'{anchor_formula}"
+        else:
+            anchor_formula_display = anchor_formula
+
+        if isinstance(pattern, str) and pattern.startswith("="):
+            pattern_display = f"'{pattern}"
+        else:
+            pattern_display = pattern
+
+        details[group_id] = {
+            "GroupID": group_id,
+            "Sheet": sheet,
+            "Direction": direction,
+            "GroupSize": size,
+            "DragCount": size,
+            "CellRange": cell_range,
+            "AnchorCell": anchor.cell,
+            "AnchorFormula": anchor_formula_display,
+            "PatternFormula": pattern_display,
+            "VectorizationHint": "Vectorizable",
+            "DragSummary": (
+                f"Dragged formula {size} times across {cell_range} "
+                f"(anchor {anchor.cell}: {anchor_formula_display})"
+            ),
+        }
+
+    return details
+
+
+def _formula_group_rows(records_by_sheet: dict[str, list[CellRecord]]) -> list[dict[str, Any]]:
+    details = _formula_group_details(records_by_sheet)
+    return [details[group_id] for group_id in sorted(details)]
+
+
 def _classify_formula_cells(records_by_sheet: dict[str, list[CellRecord]]) -> None:
     formula_cells_by_sheet: dict[str, set[tuple[int, int]]] = defaultdict(set)
     record_lookup: dict[tuple[str, int, int], CellRecord] = {}
@@ -428,8 +467,8 @@ def build_mapping_model(
                     horizontal_alignment=cell.alignment.horizontal,
                     vertical_alignment=cell.alignment.vertical,
                     wrap_text=excel_bool(cell.alignment.wrap_text),
-                    style_json=serialize_style(cell),
-                    value_json=serialize_value(value),
+                    style_json=None,
+                    value_json="",
                 )
             )
 
@@ -457,44 +496,68 @@ def write_mapping_report(model: MappingModel, mapping_report_path: Path) -> Path
     wb = Workbook()
     default_sheet = wb.active
     wb.remove(default_sheet)
+    group_details = _formula_group_details(model.cells_by_sheet)
 
     for sheet_name in model.sheet_order:
         ws = wb.create_sheet(sheet_name)
-        ws.append(MAPPING_COLUMNS)
 
         records = sorted(
             model.cells_by_sheet.get(sheet_name, []),
             key=lambda x: (x.row, x.column),
         )
 
+        frame_rows = []
         for record in records:
-            ws.append(
-                [
-                    record.sheet,
-                    record.cell,
-                    record.row,
-                    record.column,
-                    record.cell_type,
-                    record.formula,
-                    record.value,
-                    record.value_json,
-                    record.number_format,
-                    record.font_bold,
-                    record.font_italic,
-                    record.font_size,
-                    record.font_color,
-                    record.fill_color,
-                    record.horizontal_alignment,
-                    record.vertical_alignment,
-                    record.wrap_text,
-                    record.include_flag,
-                    record.group_id,
-                    record.group_direction,
-                    record.group_size,
-                    record.pattern_formula,
-                    record.style_json,
-                ]
+            formula_display = record.formula
+            if isinstance(formula_display, str) and formula_display.startswith("="):
+                formula_display = f"'{formula_display}"
+
+            pattern_display = record.pattern_formula
+            if isinstance(pattern_display, str) and pattern_display.startswith("="):
+                pattern_display = f"'{pattern_display}"
+
+            detail = group_details.get(record.group_id or "")
+            drag_summary = ""
+            if detail and detail.get("AnchorCell") == record.cell and detail.get("Sheet") == record.sheet:
+                drag_summary = detail.get("DragSummary", "")
+
+            frame_rows.append(
+                {
+                    "Sheet": record.sheet,
+                    "Cell": record.cell,
+                    "Row": record.row,
+                    "Column": record.column,
+                    "Type": record.cell_type,
+                    "Formula": formula_display,
+                    "Value": record.value,
+                    "ValueJSON": record.value_json,
+                    "NumberFormat": record.number_format,
+                    "FontBold": record.font_bold,
+                    "FontItalic": record.font_italic,
+                    "FontSize": record.font_size,
+                    "FontColor": record.font_color,
+                    "FillColor": record.fill_color,
+                    "HorizontalAlignment": record.horizontal_alignment,
+                    "VerticalAlignment": record.vertical_alignment,
+                    "WrapText": record.wrap_text,
+                    "IncludeFlag": record.include_flag,
+                    "GroupID": record.group_id,
+                    "GroupDirection": record.group_direction,
+                    "GroupSize": record.group_size,
+                    "IsDragged": bool(record.group_id),
+                    "GroupRange": detail.get("CellRange") if detail else "",
+                    "DragCount": detail.get("DragCount") if detail else None,
+                    "DragSummary": drag_summary,
+                    "PatternFormula": pattern_display,
+                    "StyleJSON": record.style_json,
+                }
             )
+
+        df = pd.DataFrame(frame_rows, columns=MAPPING_COLUMNS)
+        for row in dataframe_to_rows(df, index=False, header=True):
+            if not any(item is not None for item in row):
+                continue
+            ws.append(row)
 
     ws_meta = wb.create_sheet("_Metadata")
     ws_meta.append(METADATA_COLUMNS)
@@ -533,6 +596,38 @@ def write_mapping_report(model: MappingModel, mapping_report_path: Path) -> Path
                 sheet_name,
                 "ColumnDimensions",
                 json.dumps(layout.column_dimensions),
+            ]
+        )
+
+    formula_group_rows = _formula_group_rows(model.cells_by_sheet)
+    ws_groups = wb.create_sheet("_FormulaGroups")
+    ws_groups.append(
+        [
+            "GroupID",
+            "Sheet",
+            "Direction",
+            "GroupSize",
+            "DragCount",
+            "CellRange",
+            "AnchorCell",
+            "AnchorFormula",
+            "PatternFormula",
+            "VectorizationHint",
+        ]
+    )
+    for group_row in formula_group_rows:
+        ws_groups.append(
+            [
+                group_row["GroupID"],
+                group_row["Sheet"],
+                group_row["Direction"],
+                group_row["GroupSize"],
+                group_row["DragCount"],
+                group_row["CellRange"],
+                group_row["AnchorCell"],
+                group_row["AnchorFormula"],
+                group_row["PatternFormula"],
+                group_row["VectorizationHint"],
             ]
         )
 

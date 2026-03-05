@@ -1,0 +1,81 @@
+{
+  "source_workbook": "ExcelFiles/model.xls",
+  "artifacts": {
+    "mapping_report": "artifacts/model/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts/model/unstructured_inputs.xlsx",
+    "structured_input": "artifacts/model/structured_input.xlsx",
+    "unstructured_calculate": "artifacts/model/unstructured_calculate.py",
+    "structured_calculate": "artifacts/model/structured_calculate.py",
+    "output_unstructured": "artifacts/model/output_unstructured.xlsx",
+    "output_structured": "artifacts/model/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "model.xls"
+      ],
+      "cell_counts": {
+        "model.xls": 115
+      },
+      "type_counts": {
+        "model.xls": {
+          "Input": 109,
+          "Calculation": 3,
+          "Output": 3
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "model.xls_Table1",
+        "model.xls_Table2",
+        "model.xls_Table3",
+        "model.xls_Table4",
+        "model.xls_Table5",
+        "model.xls_Table6",
+        "model.xls_Table7",
+        "model.xls_Table8",
+        "model.xls_Table9",
+        "model.xls_Table10",
+        "model.xls_Table11",
+        "model.xls_Table12",
+        "model.xls_Table13",
+        "model.xls_Table14"
+      ],
+      "index_rows": 71,
+      "config_rows": 8,
+      "table_sheets": [
+        "model.xls_Table1",
+        "model.xls_Table2",
+        "model.xls_Table3",
+        "model.xls_Table4",
+        "model.xls_Table5",
+        "model.xls_Table6",
+        "model.xls_Table7",
+        "model.xls_Table8",
+        "model.xls_Table9",
+        "model.xls_Table10",
+        "model.xls_Table11",
+        "model.xls_Table12",
+        "model.xls_Table13",
+        "model.xls_Table14"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

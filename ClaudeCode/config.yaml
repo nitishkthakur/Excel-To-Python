@@ -1,0 +1,20 @@
+pipeline:
+  input_folder: "ExcelFiles/"
+  output_folder: "output/"
+  temp_folder: "temp/"
+
+logging:
+  level: "INFO"
+  file: "pipeline.log"
+
+performance:
+  vectorization_threshold: 10  # Min cells to vectorize
+  chunk_size: 10000           # For large file processing
+
+validation:
+  tolerance: 1e-9             # Numerical comparison tolerance
+  check_formatting: true
+  check_formulas: true
+
+# Pipeline version
+version: "1.0.0"

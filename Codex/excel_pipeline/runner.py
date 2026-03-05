@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +17,12 @@ from .mapping import create_mapping_report
 from .mapping_io import read_mapping_report
 from .runtime import run_structured_calculation, run_unstructured_calculation
 from .types import PipelineArtifacts
+from .verify import (
+    diagnose_stage,
+    verify_mapping_against_original,
+    verify_structured_input,
+    verify_unstructured_inputs,
+)
 
 
 def _safe_name(value: str) -> str:
@@ -92,9 +100,15 @@ def run_pipeline_for_workbook(
         mapping_report_path=mapping_report,
         cache_dir=cache_dir,
     )
+    mapping_stage_mismatches = verify_mapping_against_original(mapping_report)
 
     create_unstructured_inputs(mapping_report, unstructured_inputs)
+    unstructured_stage_mismatches = verify_unstructured_inputs(
+        mapping_report, unstructured_inputs
+    )
+
     create_structured_input(mapping_report, structured_input)
+    structured_stage_mismatches = verify_structured_input(mapping_report, structured_input)
 
     generate_unstructured_calculate(
         mapping_report_path=mapping_report,
@@ -131,6 +145,21 @@ def run_pipeline_for_workbook(
     mismatches_unstructured = compare_workbooks(baseline, output_unstructured)
     mismatches_structured = compare_workbooks(baseline, output_structured)
 
+    diagnosis = {
+        "unstructured": diagnose_stage(
+            mapping_mismatches=mapping_stage_mismatches,
+            stage2_mismatches=unstructured_stage_mismatches,
+            final_mismatches=[m.__dict__ for m in mismatches_unstructured],
+            mode="unstructured",
+        ),
+        "structured": diagnose_stage(
+            mapping_mismatches=mapping_stage_mismatches,
+            stage2_mismatches=structured_stage_mismatches,
+            final_mismatches=[m.__dict__ for m in mismatches_structured],
+            mode="structured",
+        ),
+    }
+
     artifact = PipelineArtifacts(
         mapping_report=mapping_report,
         unstructured_inputs=unstructured_inputs,
@@ -155,12 +184,24 @@ def run_pipeline_for_workbook(
         "intermediate_checks": {
             "mapping": _inspect_mapping(mapping_report),
             "structured_input": _inspect_structured_input(structured_input),
+            "stage_verification": {
+                "layer1_mapping_mismatches": mapping_stage_mismatches,
+                "layer2a_unstructured_mismatches": unstructured_stage_mismatches,
+                "layer2b_structured_mismatches": structured_stage_mismatches,
+            },
         },
         "mismatches": {
             "unstructured": [m.__dict__ for m in mismatches_unstructured],
             "structured": [m.__dict__ for m in mismatches_structured],
         },
-        "success": not mismatches_unstructured and not mismatches_structured,
+        "diagnosis": diagnosis,
+        "success": (
+            not mapping_stage_mismatches
+            and not unstructured_stage_mismatches
+            and not structured_stage_mismatches
+            and not mismatches_unstructured
+            and not mismatches_structured
+        ),
     }
 
     report_path = model_dir / "validation_report.json"
@@ -169,11 +210,22 @@ def run_pipeline_for_workbook(
     return report
 
 
+def _pipeline_worker(task: tuple[Path, Path, Path, Path | None]) -> dict[str, Any]:
+    source_workbook, output_root, cache_dir, python_executable = task
+    return run_pipeline_for_workbook(
+        source_workbook=source_workbook,
+        output_root=output_root,
+        cache_dir=cache_dir,
+        python_executable=python_executable,
+    )
+
+
 def run_pipeline_for_directory(
     excel_dir: Path,
     output_root: Path,
     cache_dir: Path,
     python_executable: Path | None = None,
+    workers: int = 1,
 ) -> dict[str, Any]:
     files = sorted(
         [
@@ -183,15 +235,49 @@ def run_pipeline_for_directory(
         ]
     )
 
-    results = []
-    for workbook in files:
-        result = run_pipeline_for_workbook(
-            source_workbook=workbook,
-            output_root=output_root,
-            cache_dir=cache_dir,
-            python_executable=python_executable,
-        )
-        results.append(result)
+    results: list[dict[str, Any]] = []
+
+    if workers <= 1:
+        for idx, workbook in enumerate(files, start=1):
+            result = run_pipeline_for_workbook(
+                source_workbook=workbook,
+                output_root=output_root,
+                cache_dir=cache_dir,
+                python_executable=python_executable,
+            )
+            print(f"[{idx}/{len(files)}] completed: {workbook.name}")
+            results.append(result)
+    else:
+        tasks = [
+            (workbook, output_root, cache_dir, python_executable)
+            for workbook in files
+        ]
+        with ProcessPoolExecutor(max_workers=workers) as executor:
+            future_map = {
+                executor.submit(_pipeline_worker, task): task[0]
+                for task in tasks
+            }
+            completed = 0
+            for future in as_completed(future_map):
+                workbook = future_map[future]
+                completed += 1
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    result = {
+                        "source_workbook": str(workbook),
+                        "success": False,
+                        "error": str(exc),
+                        "artifacts": {},
+                        "mismatches": {"unstructured": [], "structured": []},
+                        "intermediate_checks": {},
+                    }
+                print(f"[{completed}/{len(files)}] completed: {workbook.name}")
+                results.append(result)
+
+        # Keep summary stable and predictable.
+        result_lookup = {item.get("source_workbook"): item for item in results}
+        results = [result_lookup.get(str(workbook), {}) for workbook in files]
 
     summary = {
         "excel_dir": str(excel_dir),
@@ -219,6 +305,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cache-dir", type=Path, default=Path(".cache/normalized"))
     parser.add_argument("--single-file", type=Path, default=None)
     parser.add_argument("--verify-generated", action="store_true")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=max(1, (os.cpu_count() or 2) // 2),
+        help="Parallel workers for directory mode",
+    )
     args = parser.parse_args(argv)
 
     python_executable = Path(sys.executable) if args.verify_generated else None
@@ -238,6 +330,7 @@ def main(argv: list[str] | None = None) -> int:
         output_root=args.output_root,
         cache_dir=args.cache_dir,
         python_executable=python_executable,
+        workers=max(1, args.workers),
     )
     print(json.dumps(summary, indent=2, ensure_ascii=True))
     return 0 if summary.get("failure_count", 0) == 0 else 1

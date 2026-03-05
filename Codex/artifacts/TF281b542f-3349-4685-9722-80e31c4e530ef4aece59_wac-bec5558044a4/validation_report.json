@@ -1,0 +1,138 @@
+{
+  "source_workbook": "ExcelFiles/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4.xlsx",
+  "artifacts": {
+    "mapping_report": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/unstructured_inputs.xlsx",
+    "structured_input": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/structured_input.xlsx",
+    "unstructured_calculate": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/unstructured_calculate.py",
+    "structured_calculate": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/structured_calculate.py",
+    "output_unstructured": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/output_unstructured.xlsx",
+    "output_structured": "artifacts/TF281b542f-3349-4685-9722-80e31c4e530ef4aece59_wac-bec5558044a4/output_structured.xlsx"
+  },
+  "intermediate_checks": {
+    "mapping": {
+      "sheets": [
+        "Guide",
+        "Daily cash flow",
+        "Monthly cash flow",
+        "Annual cash flow",
+        "Income",
+        "Expenses",
+        "Discretionary",
+        "Savings"
+      ],
+      "cell_counts": {
+        "Guide": 23,
+        "Daily cash flow": 281,
+        "Monthly cash flow": 767,
+        "Annual cash flow": 193,
+        "Income": 45,
+        "Expenses": 77,
+        "Discretionary": 55,
+        "Savings": 42
+      },
+      "type_counts": {
+        "Guide": {
+          "Input": 23,
+          "Calculation": 0,
+          "Output": 0
+        },
+        "Daily cash flow": {
+          "Input": 179,
+          "Calculation": 0,
+          "Output": 102
+        },
+        "Monthly cash flow": {
+          "Input": 710,
+          "Calculation": 0,
+          "Output": 57
+        },
+        "Annual cash flow": {
+          "Input": 184,
+          "Calculation": 0,
+          "Output": 9
+        },
+        "Income": {
+          "Input": 36,
+          "Calculation": 2,
+          "Output": 7
+        },
+        "Expenses": {
+          "Input": 56,
+          "Calculation": 0,
+          "Output": 21
+        },
+        "Discretionary": {
+          "Input": 41,
+          "Calculation": 0,
+          "Output": 14
+        },
+        "Savings": {
+          "Input": 34,
+          "Calculation": 1,
+          "Output": 7
+        }
+      }
+    },
+    "structured_input": {
+      "sheetnames": [
+        "Index",
+        "Config",
+        "Daily cash flow_Table1",
+        "Daily cash flow_Table2",
+        "Daily cash flow_Table3",
+        "Monthly cash flow_Table1",
+        "Monthly cash flow_Table2",
+        "Annual cash flow_Table1",
+        "Annual cash flow_Table2",
+        "Annual cash flow_Table3",
+        "Annual cash flow_Table4",
+        "Annual cash flow_Table5",
+        "Income_Table1",
+        "Income_Table2",
+        "Expenses_Table1",
+        "Expenses_Table2",
+        "Discretionary_Table1",
+        "Discretionary_Table2",
+        "Savings_Table1",
+        "Savings_Table2"
+      ],
+      "index_rows": 768,
+      "config_rows": 41,
+      "table_sheets": [
+        "Daily cash flow_Table1",
+        "Daily cash flow_Table2",
+        "Daily cash flow_Table3",
+        "Monthly cash flow_Table1",
+        "Monthly cash flow_Table2",
+        "Annual cash flow_Table1",
+        "Annual cash flow_Table2",
+        "Annual cash flow_Table3",
+        "Annual cash flow_Table4",
+        "Annual cash flow_Table5",
+        "Income_Table1",
+        "Income_Table2",
+        "Expenses_Table1",
+        "Expenses_Table2",
+        "Discretionary_Table1",
+        "Discretionary_Table2",
+        "Savings_Table1",
+        "Savings_Table2"
+      ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
+    }
+  },
+  "mismatches": {
+    "unstructured": [],
+    "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
+  },
+  "success": true
+}

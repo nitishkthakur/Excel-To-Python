@@ -150,7 +150,7 @@
         "Financial Spreadsheet _Table11",
         "Financial Spreadsheet _Table12"
       ],
-      "index_rows": 470,
+      "index_rows": 362,
       "config_rows": 156,
       "table_sheets": [
         "Financial Inputs_Table1",
@@ -190,11 +190,20 @@
         "Financial Spreadsheet _Table11",
         "Financial Spreadsheet _Table12"
       ]
+    },
+    "stage_verification": {
+      "layer1_mapping_mismatches": [],
+      "layer2a_unstructured_mismatches": [],
+      "layer2b_structured_mismatches": []
     }
   },
   "mismatches": {
     "unstructured": [],
     "structured": []
+  },
+  "diagnosis": {
+    "unstructured": "clean",
+    "structured": "clean"
   },
   "success": true
 }
