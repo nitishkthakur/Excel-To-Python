@@ -64,7 +64,7 @@ Classify every cell into exactly one of three types:
 
 - For dragged/repeated formulas, detect the pattern and group them. Record: `GroupID`, `GroupDirection`, `GroupSize`, `PatternFormula`.
 - Per-cell metadata: `Sheet`, `Cell`, `Type`, `Formula`, `Value`, number format, font (bold / italic / size / color), fill color, alignment, `WrapText`, `IncludeFlag`.
-- Important: Detect and record when a formula has been dragged across multiple cells (rows or columns).Document it in the mapping_report.xlsx. This is crucial for vectorization.
+- **Important:** Detect and record when a formula has been dragged across multiple cells (rows or columns).Document it in the mapping_report.xlsx. This is crucial for vectorization.
 
 ### Output Structure
 
