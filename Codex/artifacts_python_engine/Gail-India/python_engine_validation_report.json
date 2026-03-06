@@ -1,0 +1,11 @@
+{
+  "source_workbook": "ExcelFiles/Gail-India.xls",
+  "artifacts": {
+    "mapping_report": "artifacts_python_engine/Gail-India/mapping_report.xlsx",
+    "unstructured_inputs": "artifacts_python_engine/Gail-India/unstructured_inputs.xlsx",
+    "unstructured_python_engine": "artifacts_python_engine/Gail-India/unstructured_python_engine.py",
+    "output_unstructured_python": "artifacts_python_engine/Gail-India/unstructured_output_python.xlsx"
+  },
+  "mismatches": [],
+  "success": true
+}

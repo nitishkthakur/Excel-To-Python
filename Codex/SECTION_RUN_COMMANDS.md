@@ -18,6 +18,17 @@ This single command produces:
 - `unstructured_calculate.py` (generated Python calculator/runner script)
 - `output_unstructured.xlsx` (Layer 3a computed result workbook)
 
+## One Command (True Python Engine, Unstructured Only)
+```bash
+.venv/bin/python run_python_pipeline.py --file ExcelFiles/Gail-India.xls --output-root artifacts_python_engine --cache-dir .cache/normalized
+```
+
+This single command produces:
+- `mapping_report.xlsx`
+- `unstructured_inputs.xlsx`
+- `unstructured_python_engine.py` (deterministic generated Python formula code)
+- `unstructured_output_python.xlsx` (computed by Python engine)
+
 ## 1) Only Layer 1
 ```bash
 .venv/bin/python run_stage.py \

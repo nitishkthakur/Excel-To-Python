@@ -116,16 +116,41 @@ Original Excel (.xlsx)
         │
         ▼
  excel_to_mapping.mapper.generate_mapping_report()
-                                           → mapping_report.xlsx
+                                           → mapping_report.xlsx  [Layer 1]
         │
-        ▼
- excel_to_mapping.structured_input_generator.generate_structured_input()
-                                           → structured_input.xlsx
-        │
-        ▼
- excel_to_mapping.regenerator.regenerate_workbook()
-                                           → regenerated.xlsx
+        ├─────────────────────────────────────────────┐
+        ▼  (Path a)                                   ▼  (Path b)
+ unstructured_inputs.xlsx  [Layer 2a]    structured_input.xlsx  [Layer 2b]
+        │                                             │
+        ▼  [Layer 3a — Engine Creator]                ▼  [Layer 3b — Engine Creator]
+ python_engine_creator_unstructured.py    python_engine_creator_structured.py
+   reads mapping_report.xlsx               reads mapping_report.xlsx +
+   ↓ generates                             structured_input.xlsx
+ unstructured_calculate.py                 ↓ generates
+   pure Python calculations               structured_calculate.py
+   reads unstructured_inputs.xlsx          pure Python calculations
+        │                                  reads structured_input.xlsx
+        └──────────────────┬───────────────────────────┘
+                           ▼
+                      output.xlsx
+              (matches original workbook)
 ```
+
+> **Python is the only execution engine.** The generated `calculate.py` files contain real Python
+> arithmetic — no formula strings are passed to Excel, no COM automation, no openpyxl formula
+> evaluation. The input template files (`unstructured_inputs.xlsx` / `structured_input.xlsx`)
+> are data stores only; all calculations happen in Python.
+
+### Layer 3 — Two-Stage Code Generation Pattern
+
+Layer 3 follows a **generate-then-run** pattern:
+
+| Stage | Script | Role |
+|-------|--------|------|
+| Code generation (run once per workbook) | `python_engine_creator_unstructured.py` or `python_engine_creator_structured.py` | Reads `mapping_report.xlsx`; writes a bespoke `calculate.py` containing all formulas translated to Python |
+| Runtime (run each time inputs change) | `unstructured_calculate.py` or `structured_calculate.py` | Reads the input template; executes Python calculations; writes `output.xlsx` |
+
+The `calculate.py` files are **generated artifacts** — they are workbook-specific and must never be hand-written. They must not call any Excel API or evaluate any formula string.
 
 ---
 

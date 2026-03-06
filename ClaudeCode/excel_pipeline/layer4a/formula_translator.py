@@ -49,6 +49,24 @@ class FormulaTranslator:
         'AND': 'all',
         'OR': 'any',
         'NOT': 'not',
+        # Date functions
+        'EOMONTH': 'xl_eomonth',
+        'YEAR': 'xl_year',
+        'MONTH': 'xl_month',
+        'DAY': 'xl_day',
+        'DATE': 'xl_date',
+        'TODAY': 'xl_today',
+        'DAYS': 'xl_days',
+        'EDATE': 'xl_edate',
+        # Text / other
+        'LEN': 'len',
+        'IFERROR': 'xl_iferror',
+        'SUMIF': 'xl_sumif',
+        'SUMPRODUCT': 'xl_sumproduct',
+        'COUNTA': 'xl_counta',
+        'ISNUMBER': 'xl_isnumber',
+        'ISBLANK': 'xl_isblank',
+        'CONCATENATE': 'xl_concatenate',
     }
 
     def __init__(self):
@@ -127,6 +145,32 @@ class FormulaTranslator:
         logger.warning(f"Cannot vectorize formula: {formula}")
         return f"# TODO: Cannot vectorize: {formula}"
 
+    def _expand_ranges(self, formula: str, sheet: str) -> str:
+        """
+        Pre-expand range references before individual cell substitution.
+
+        Replaces A1:B3 with comma-separated cell references so that
+        xl_sum(D7:D8) becomes xl_sum(D7, D8) → xl_sum(c.get(...), c.get(...)).
+        Must be called before the cell-reference substitution pass.
+        """
+        from openpyxl.utils import column_index_from_string, get_column_letter
+
+        def expand_range(match):
+            start_col = match.group(1)
+            start_row = int(match.group(2))
+            end_col   = match.group(3)
+            end_row   = int(match.group(4))
+            start_idx = column_index_from_string(start_col)
+            end_idx   = column_index_from_string(end_col)
+            cells = []
+            for ci in range(start_idx, end_idx + 1):
+                col_letter = get_column_letter(ci)
+                for ri in range(start_row, end_row + 1):
+                    cells.append(f"{col_letter}{ri}")
+            return ", ".join(cells)
+
+        return re.sub(r'\b([A-Z]+)(\d+):([A-Z]+)(\d+)\b', expand_range, formula)
+
     def _translate_cell_by_cell(self, formula: str, sheet: str, row_var: Optional[str] = None) -> str:
         """
         Translate formula for cell-by-cell evaluation.
@@ -139,8 +183,8 @@ class FormulaTranslator:
         Returns:
             Python expression using c.get() for cell access
         """
-        # Replace cell references with c.get() calls
-        result = formula
+        # Pre-expand range references (e.g. D7:D8 → D7, D8) before cell substitution
+        result = self._expand_ranges(formula, sheet)
 
         # Handle cross-sheet references: Sheet!A1 or 'Sheet Name'!A1
         result = re.sub(
@@ -176,26 +220,63 @@ class FormulaTranslator:
 
         return result
 
+    @staticmethod
+    def _split_args(content: str) -> list:
+        """
+        Split a comma-separated argument string respecting nested parentheses.
+
+        e.g. "c.get(('S', 'A', 1), 0)>0, -c.get(('S', 'A', 2), 0), 0"
+             → ["c.get(('S', 'A', 1), 0)>0", "-c.get(('S', 'A', 2), 0)", "0"]
+        """
+        args, depth, buf = [], 0, []
+        for ch in content:
+            if ch == '(':
+                depth += 1
+                buf.append(ch)
+            elif ch == ')':
+                depth -= 1
+                buf.append(ch)
+            elif ch == ',' and depth == 0:
+                args.append(''.join(buf).strip())
+                buf = []
+            else:
+                buf.append(ch)
+        if buf:
+            args.append(''.join(buf).strip())
+        return args
+
     def _translate_if_function(self, formula: str) -> str:
-        """Translate IF function to Python ternary or xl_if()."""
-        # Simple IF: IF(cond, true_val, false_val) → (true_val if cond else false_val)
-        # For complex cases, use helper function
-
-        # Try to extract IF arguments
-        if_pattern = r'IF\(([^,]+),([^,]+),([^)]+)\)'
-        match = re.search(if_pattern, formula)
-
-        if match:
-            cond = match.group(1).strip()
-            true_val = match.group(2).strip()
-            false_val = match.group(3).strip()
-
-            # Use ternary if simple, otherwise use helper
-            if len(cond) < 50:  # Simple condition
+        """Translate IF( ) to Python ternary using a parenthesis-aware splitter."""
+        result = formula
+        # Iteratively replace all IF( ) calls from innermost outward
+        # by scanning for 'IF(' and extracting the balanced-paren content.
+        while 'IF(' in result:
+            idx = result.find('IF(')
+            if idx == -1:
+                break
+            # Find the matching closing paren
+            depth, end = 0, idx + 3  # start after 'IF('
+            for i, ch in enumerate(result[idx + 3:], start=idx + 3):
+                if ch == '(':
+                    depth += 1
+                elif ch == ')':
+                    if depth == 0:
+                        end = i
+                        break
+                    depth -= 1
+            inner = result[idx + 3: end]
+            args = self._split_args(inner)
+            if len(args) == 3:
+                cond, true_val, false_val = args
                 replacement = f"({true_val} if {cond} else {false_val})"
-                formula = formula.replace(match.group(0), replacement)
-
-        return formula
+            elif len(args) == 2:
+                cond, true_val = args
+                replacement = f"({true_val} if {cond} else None)"
+            else:
+                # Can't parse — leave as xl_if call
+                replacement = f"xl_if({inner})"
+            result = result[:idx] + replacement + result[end + 1:]
+        return result
 
     def detect_vectorization_complexity(self, formula: str) -> str:
         """
@@ -301,4 +382,127 @@ def xl_count(*args):
 def xl_if(condition, true_value, false_value):
     """Excel IF function."""
     return true_value if condition else false_value
+
+def xl_iferror(value, value_if_error):
+    """Excel IFERROR function."""
+    try:
+        return value
+    except Exception:
+        return value_if_error
+
+def xl_sumif(rng, criteria, sum_range=None):
+    """Excel SUMIF — simplified: sum values in rng equal to criteria."""
+    if sum_range is None:
+        sum_range = rng
+    if not isinstance(rng, (list, tuple)):
+        rng = [rng]
+    if not isinstance(sum_range, (list, tuple)):
+        sum_range = [sum_range]
+    return sum(v for c2, v in zip(rng, sum_range)
+               if isinstance(v, (int, float)) and c2 == criteria)
+
+def xl_sumproduct(*arrays):
+    """Excel SUMPRODUCT."""
+    if not arrays:
+        return 0
+    arrays = [a if isinstance(a, (list, tuple)) else [a] for a in arrays]
+    length = min(len(a) for a in arrays)
+    total = 0
+    for i in range(length):
+        product = 1
+        for a in arrays:
+            v = a[i]
+            product *= (v if isinstance(v, (int, float)) else 0)
+        total += product
+    return total
+
+def xl_counta(*args):
+    """Excel COUNTA — count non-empty values."""
+    flat = []
+    for a in args:
+        if isinstance(a, (list, tuple)):
+            flat.extend(a)
+        else:
+            flat.append(a)
+    return sum(1 for x in flat if x is not None and x != "")
+
+def xl_isnumber(value):
+    """Excel ISNUMBER."""
+    return isinstance(value, (int, float))
+
+def xl_isblank(value):
+    """Excel ISBLANK."""
+    return value is None or value == ""
+
+def xl_concatenate(*args):
+    """Excel CONCATENATE."""
+    return "".join(str(a) if a is not None else "" for a in args)
+
+# ---- Date helpers ----
+import calendar as _calendar
+from datetime import date as _date, datetime as _datetime, timedelta as _timedelta
+
+def _to_date(v):
+    """Convert Excel serial number or date object to Python date."""
+    if isinstance(v, (_date, _datetime)):
+        return v if isinstance(v, _date) else v.date()
+    if isinstance(v, (int, float)) and v > 0:
+        return (_date(1899, 12, 30) + _timedelta(days=int(v)))
+    return None
+
+def xl_eomonth(start_date, months):
+    """Excel EOMONTH — last day of month N months from start_date."""
+    d = _to_date(start_date)
+    if d is None:
+        return None
+    month = d.month - 1 + int(months)
+    year = d.year + month // 12
+    month = month % 12 + 1
+    last_day = _calendar.monthrange(year, month)[1]
+    return _date(year, month, last_day)
+
+def xl_edate(start_date, months):
+    """Excel EDATE — same day N months from start_date."""
+    d = _to_date(start_date)
+    if d is None:
+        return None
+    month = d.month - 1 + int(months)
+    year = d.year + month // 12
+    month = month % 12 + 1
+    last_day = _calendar.monthrange(year, month)[1]
+    return _date(year, month, min(d.day, last_day))
+
+def xl_year(value):
+    """Excel YEAR."""
+    d = _to_date(value)
+    return d.year if d else None
+
+def xl_month(value):
+    """Excel MONTH."""
+    d = _to_date(value)
+    return d.month if d else None
+
+def xl_day(value):
+    """Excel DAY."""
+    d = _to_date(value)
+    return d.day if d else None
+
+def xl_date(year, month, day):
+    """Excel DATE."""
+    try:
+        return _date(int(year), int(month), int(day))
+    except Exception:
+        return None
+
+def xl_today():
+    """Excel TODAY."""
+    return _date.today()
+
+def xl_days(end_date, start_date):
+    """Excel DAYS — number of days between two dates."""
+    e = _to_date(end_date)
+    s = _to_date(start_date)
+    if e is None or s is None:
+        return None
+    return (e - s).days
 '''

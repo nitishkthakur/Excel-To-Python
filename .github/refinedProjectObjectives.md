@@ -29,18 +29,30 @@ Original Excel (.xlsx)
         │                                      │
         ▼                                      ▼
 ┌──────────────────────┐          ┌────────────────────────┐
-│  Layer 3a            │          │  Layer 3b              │
+│  Layer 3a — Engine   │          │  Layer 3b — Engine     │
+│  python_engine_      │          │  python_engine_        │
+│  creator_            │          │  creator_              │
+│  unstructured.py     │          │  structured.py         │
+└──────────────────────┘          └────────────────────────┘
+        │  (generates)                  │  (generates)
+        ▼                               ▼
+┌──────────────────────┐          ┌────────────────────────┐
 │  unstructured_       │          │  structured_           │
 │  calculate.py        │          │  calculate.py          │
+│  (pure Python calcs) │          │  (pure Python calcs)   │
 └──────────────────────┘          └────────────────────────┘
-        │                                      │
-        └──────────────┬───────────────────────┘
+        │  reads                        │  reads
+        │  unstructured_inputs.xlsx     │  structured_input.xlsx
+        │                               │
+        └──────────────┬────────────────┘
                        ▼
                   output.xlsx
           (matches original workbook)
 ```
 
 Both paths must produce an identical `output.xlsx` that matches the original workbook in formulas, formatting, and values.
+
+> **Critical Constraint — Python is the only execution engine.** At no point do any calculations happen inside Excel or by evaluating Excel formulas. The generated `calculate.py` files contain real, executable Python arithmetic and logic that replicates every formula from the original workbook. The input template files (`unstructured_inputs.xlsx` / `structured_input.xlsx`) hold only raw input values — they are data stores, not calculators.
 
 ---
 
@@ -122,23 +134,63 @@ Produce a clean, tabular input file organised by source sheet — suitable for b
 
 ---
 
-## Layer 3a — Unstructured Code Generation
+## Layer 3a — Unstructured Engine Creator
 
-**Output:** `unstructured_calculate.py`
+**Output (stage deliverable):** `python_engine_creator_unstructured.py`
+**Generated artifact:** `unstructured_calculate.py`
 
-- Write Python code that accepts `mapping_report.xlsx` and emits `unstructured_calculate.py`.
-- `unstructured_calculate.py` must accept `unstructured_inputs.xlsx` at runtime and produce `output.xlsx` matching the original workbook in formulas, formatting, and values.
-- **Test against every Excel file in the `ExcelFiles/` folder.** Write helper functions to compare output values cell-by-cell against the original. Resolve every mismatch before proceeding.
+### What Layer 3a must build
+
+Layer 3a produces `python_engine_creator_unstructured.py` — a code-generation script that reads `mapping_report.xlsx` and writes a new Python file called `unstructured_calculate.py` specifically tailored to the workbook being converted.
+
+```
+mapping_report.xlsx  ──▶  python_engine_creator_unstructured.py  ──▶  unstructured_calculate.py
+```
+
+### What `unstructured_calculate.py` must contain
+
+`unstructured_calculate.py` is the runtime calculation engine for the unstructured path. It must:
+
+1. **Read inputs from `unstructured_inputs.xlsx`** — load every cell value from its exact original sheet position and cell address.
+2. **Re-implement every formula as native Python code.** Each formula from `mapping_report.xlsx` must become a Python expression or statement. No formula string is ever passed back to Excel for evaluation — Python is the sole execution engine.
+3. **Respect dependency order.** Calculations must be emitted in topological order so that every cell is computed after all cells it depends on.
+4. **Apply vectorization wherever possible.** Dragged formula groups (`GroupID` / `GroupSize`) must be expressed as vectorised operations (e.g. NumPy array ops or list comprehensions), not cell-by-cell loops.
+5. **Write `output.xlsx`** — reconstruct the full workbook with all original formatting, number formats, fonts, fills, and alignment sourced from `mapping_report.xlsx`. Cell values come from Python computation results, not from Excel.
+
+> **Absolute rule:** `unstructured_calculate.py` must not trigger any Excel calculation or open any Excel application. It is a standalone Python script. Every numeric result is produced by Python arithmetic.
+
+- **Test against every Excel file in the `ExcelFiles/` folder.** Write helper functions to compare `output.xlsx` values cell-by-cell against the original. Resolve every mismatch before proceeding.
 
 ---
 
-## Layer 3b — Structured Code Generation
+## Layer 3b — Structured Engine Creator
 
-**Output:** `structured_calculate.py`
+**Output (stage deliverable):** `python_engine_creator_structured.py`
+**Generated artifact:** `structured_calculate.py`
 
-- Write Python code that accepts `mapping_report.xlsx` and `structured_input.xlsx` and emits `structured_calculate.py`.
-- `structured_calculate.py` must accept `structured_input.xlsx` at runtime and produce `output.xlsx` matching the original workbook in formulas, formatting, and values.
-- **Test against every Excel file in the `ExcelFiles/` folder.** Write helper functions to compare output values cell-by-cell against the original. Resolve every mismatch before proceeding.
+### What Layer 3b must build
+
+Layer 3b produces `python_engine_creator_structured.py` — a code-generation script that reads `mapping_report.xlsx` alongside `structured_input.xlsx` (to understand the layout of the structured input) and writes a new Python file called `structured_calculate.py` specifically tailored to the workbook being converted.
+
+```
+mapping_report.xlsx  ─┐
+                       ├▶  python_engine_creator_structured.py  ──▶  structured_calculate.py
+structured_input.xlsx ─┘
+```
+
+### What `structured_calculate.py` must contain
+
+`structured_calculate.py` is the runtime calculation engine for the structured path. It must:
+
+1. **Read inputs from `structured_input.xlsx`** — parse the Config sheet for scalars and each per-source-sheet tab for vector/table inputs. Map every value back to its original cell address using the Index sheet.
+2. **Re-implement every formula as native Python code.** Each formula from `mapping_report.xlsx` must become a Python expression or statement. No formula string is ever passed back to Excel — Python is the sole execution engine.
+3. **Respect dependency order.** Calculations must be emitted in topological order so that every cell is computed after all cells it depends on.
+4. **Apply vectorization wherever possible.** Dragged formula groups must be expressed as vectorised operations (e.g. pandas / NumPy), not cell-by-cell loops.
+5. **Write `output.xlsx`** — reconstruct the full workbook with all original formatting, number formats, fonts, fills, and alignment sourced from `mapping_report.xlsx`. Cell values come from Python computation results, not from Excel.
+
+> **Absolute rule:** `structured_calculate.py` must not trigger any Excel calculation or open any Excel application. It is a standalone Python script. Every numeric result is produced by Python arithmetic.
+
+- **Test against every Excel file in the `ExcelFiles/` folder.** Write helper functions to compare `output.xlsx` values cell-by-cell against the original. Resolve every mismatch before proceeding.
 
 ---
 
@@ -178,3 +230,62 @@ Produce a clean, tabular input file organised by source sheet — suitable for b
 ### Other Notes
 - Use Vectorization at every stage possible - avoid cell-by-cell processing when generating intermediate files or final output. This is to ensure the pipeline can scale to large workbooks and that the python code is readable and maintainable. **This is a must**
 - When testing, if polling takes too long, try to understand why and mayne consider checking progress.
+- **Never let any calculation happen inside Excel.** If you find yourself writing a formula into a cell in any output file and relying on Excel to evaluate it, that is a bug. All arithmetic must happen in Python.
+
+---
+
+## Pipeline Flow Diagram
+
+```mermaid
+flowchart TD
+    A(["Original Excel\n.xlsx"]) --> L1
+
+    subgraph L1["Layer 1 — Mapping Report"]
+        direction TB
+        L1P["parse + classify cells"] --> L1O["mapping_report.xlsx"]
+    end
+
+    L1O --> L2a
+    L1O --> L2b
+
+    subgraph L2a["Layer 2a — Unstructured Inputs"]
+        direction TB
+        L2aP["strip formulas, keep\nInput cells in original layout"] --> L2aO["unstructured_inputs.xlsx"]
+    end
+
+    subgraph L2b["Layer 2b — Structured Inputs"]
+        direction TB
+        L2bP["group inputs into scalars,\nvectors, patches; auto-transpose"] --> L2bO["structured_input.xlsx"]
+    end
+
+    L1O --> L3aE
+    L2aO --> L3aE
+
+    subgraph L3a["Layer 3a — Unstructured Engine Creator"]
+        direction TB
+        L3aE["python_engine_creator_unstructured.py\n(code-generation script)"]
+        L3aE -->|"generates"| L3aC["unstructured_calculate.py\n⚙ pure Python calculations\nreads unstructured_inputs.xlsx"]
+    end
+
+    L1O --> L3bE
+    L2bO --> L3bE
+
+    subgraph L3b["Layer 3b — Structured Engine Creator"]
+        direction TB
+        L3bE["python_engine_creator_structured.py\n(code-generation script)"]
+        L3bE -->|"generates"| L3bC["structured_calculate.py\n⚙ pure Python calculations\nreads structured_input.xlsx"]
+    end
+
+    L3aC -->|"runtime: reads\nunstructured_inputs.xlsx"| OUT
+    L3bC -->|"runtime: reads\nstructured_input.xlsx"| OUT
+
+    OUT(["output.xlsx\nmatches original workbook"])
+
+    style L3aC fill:#d4edda,stroke:#28a745
+    style L3bC fill:#d4edda,stroke:#28a745
+    style L3aE fill:#fff3cd,stroke:#ffc107
+    style L3bE fill:#fff3cd,stroke:#ffc107
+    style OUT fill:#cce5ff,stroke:#004085
+```
+
+> **Key:** Yellow boxes = code-generation scripts (run once per workbook to produce the calculate file). Green boxes = generated calculation engines (run at runtime with user-edited inputs). The calculate files contain **only Python** — no Excel formulas, no Excel COM, no openpyxl formula evaluation.

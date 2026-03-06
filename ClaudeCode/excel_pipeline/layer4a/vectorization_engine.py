@@ -146,19 +146,17 @@ class VectorizationEngine:
         )]
 
         code.append(f"# Vectorized group {group.group_id}: {len(group.cells)} cells (horizontal)")
-
-        # For horizontal, often have absolute references - generate efficient loop
         code.append(f"for col in {columns}:")
 
-        # Replace {col} in pattern formula
-        formula_with_col = group.pattern_formula.replace('{col}', "' + col + '")
-
-        # Translate to Python
+        # Translate using the first column, then swap that column letter for `col`.
+        # (The old string-concat trick produced broken Python for function calls like YEAR.)
+        formula_for_first = group.pattern_formula.replace('{col}', columns[0])
         python_expr = self.translator.translate_formula(
-            formula_with_col,
+            formula_for_first,
             group.sheet,
             is_vectorized=False
         )
+        python_expr = python_expr.replace(f"'{columns[0]}'", "col")
 
         code.append(f"    c[('{group.sheet}', col, {row})] = {python_expr}")
         code.append("")
