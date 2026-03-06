@@ -7,6 +7,17 @@ Use these exact commands from repo root.
 - Output root: `artifacts_sections`
 - Cache: `.cache/normalized`
 
+## One Command (1 -> 2a -> 3a)
+```bash
+.venv/bin/python run_stage.py --mode 1-2a-3a --file ExcelFiles/Gail-India.xls --output-root artifacts_sections --cache-dir .cache/normalized
+```
+
+This single command produces:
+- `mapping_report.xlsx` (Layer 1)
+- `unstructured_inputs.xlsx` (Layer 2a)
+- `unstructured_calculate.py` (generated Python calculator/runner script)
+- `output_unstructured.xlsx` (Layer 3a computed result workbook)
+
 ## 1) Only Layer 1
 ```bash
 .venv/bin/python run_stage.py \
